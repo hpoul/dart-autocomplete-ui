@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <element name="x-input-autocomplete" constructor="InputAutocompleteComponentProxy" extends="div">
+      <template>
+        This is some autocomplete! ;-)
+        <template iterate="choice in choices">
+          <p>we have a choice!! {{ choice }}</p>
+        </template>
+        <script type="application/dart" src="input_autocomplete_component_proxy.dart"></script>
+      </template>
+    </element>
+  </body>
+</html>
