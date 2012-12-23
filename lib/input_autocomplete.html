@@ -3,12 +3,49 @@
   <body>
     <element name="x-input-autocomplete" constructor="InputAutocompleteComponentProxy" extends="div">
       <template>
-        This is some autocomplete! ;-)
-        <template iterate="choice in choices">
-          <p>we have a choice!! {{ choice }}</p>
-        </template>
-        <script type="application/dart" src="input_autocomplete_component_proxy.dart"></script>
+        <div class="autocomplete-wrapper">
+          <template instantiate="if inputHasFocus && matches != null">
+            <ul class="autocomplete-content">
+              <template iterate="choice in matches">
+                <li choice-key="{{ choice.key }}">
+                  <p>{{ choice.label }}</p>
+                  <content select=".choiceTemplate"></content>
+                </li>
+              </template>
+            </ul>
+          </template>
+          <input type="text" on-focus="inputFocus($event)" on-blur="inputBlur($event)" on-key-up="keyPressed($event)" />
+        </div>
+        <style>
+          .autocomplete-wrapper input {
+            border: 1px solid black;
+            padding: 3px;
+          }
+          .autocomplete-content {
+            //display: none;
+            position: absolute;
+            border: 1px solid black;
+            padding: 0px;
+            margin: 0px;
+            background-color: #fff;
+          }
+          .autocomplete-content li {
+            list-style-type: none;
+            padding: 2px;
+            margin: 0px;
+            margin-top: 2px;
+            background-color: #fafafa;
+          }
+          .autocomplete-content li:hover {
+            background-color: #ddd;
+          }
+          .autocomplete-content p {
+            padding: 0px;
+            margin: 0px;
+          }
+        </style>
       </template>
+      <script type="application/dart" src="input_autocomplete_component_proxy.dart"></script>
     </element>
   </body>
 </html>

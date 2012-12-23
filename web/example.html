@@ -5,14 +5,16 @@
     <meta charset="utf-8">
     <title>Autocomplete_ui</title>
     <link rel="components" href="lib/input_autocomplete.html">
-    <link rel="stylesheet" href="autocomplete_ui.css">
+    <link rel="stylesheet" href="example.css">
   </head>
   <body>
     <h1>Autocomplete_ui</h1>
     
     <p>Hello world from Dart! {{exampleData.test}}</p>
     
-    <x-input-autocomplete choices="exampleData.autocompleteChoices"></x-input-autocomplete>
+    <x-input-autocomplete choices="{{exampleData.autocompleteChoices}}">
+      <div class="choiceTemplate">Hehe</div>
+    </x-input-autocomplete>
 
     <script type="application/dart" src="example.dart"></script>
     <script type="text/javascript" src="https://dart.googlecode.com/svn/branches/bleeding_edge/dart/client/dart.js"></script>
