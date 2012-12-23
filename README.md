@@ -36,3 +36,11 @@ example dart code:
 
 todo write documentation.
 
+
+Future
+-------
+
+* Support for lazy loading of choices
+* Support for object choices (which have a separate key / label attribute)
+* Support for formatting of choices (however this can work? the coolest would be to provide html fragments inside the <x-input-autocomplete> tag)
+* Helper methods to create a multi-value input (like input for tags)
