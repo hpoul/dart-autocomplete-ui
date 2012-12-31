@@ -1,19 +1,59 @@
 part of input_autocomplete;
 
 
-class AutocompleteChoice {
+
+abstract class AutocompleteChoice {
+  String get key;
+}
+
+class AutocompleteChoiceImpl implements AutocompleteChoice {
   String key;
   String label;
+  var obj;
   
-  AutocompleteChoice(this.key, this.label);
+  AutocompleteChoiceImpl(this.key, this.label, [this.obj]);
+}
+
+abstract class AutocompleteChoiceRenderer {
+  Element renderChoice(AutocompleteChoice choice, String query);
+  
+}
+
+abstract class BaseAutocompleteChoiceRenderer implements AutocompleteChoiceRenderer {
+  String highlightTextAndHtmlEscape(String text, String query) {
+    Element span = new Element.tag("span")
+      ..text = text;
+    String html = span.innerHtml;
+    if (query.isEmpty) {
+      return html;
+    }
+    int idx = html.toLowerCase().indexOf(query);
+    if (idx >= 0) {
+      String prefix = html.substring(0, idx);
+      String value = html.substring(idx, idx+query.length);
+      String postfix = html.substring(idx+query.length);
+      html = "${prefix}<strong>${value}</strong>${postfix}";
+    }
+//    html = html.replaceAll(query, "<strong>${query}</strong>");
+    return html;
+  }
+}
+
+class AutocompleteChoiceRendererImpl extends BaseAutocompleteChoiceRenderer
+      implements AutocompleteChoiceRenderer {
+  Element renderChoice(AutocompleteChoice choice, String query) {
+    if (choice is AutocompleteChoiceImpl) {
+      return new Element.tag("div")..innerHtml = highlightTextAndHtmlEscape("${choice.label}", query);
+    }
+    throw new ArgumentError("Invalid choice ${choice}");
+  }
 }
 
 class InputAutocompleteComponent extends WebComponent {
   bool inputHasFocus = false;
-  List _givenChoices;
-  /// sanitized choices
-  List<AutocompleteChoice> _choices;
   List<AutocompleteChoice> _matches;
+  AutocompleteChoiceRenderer _renderer;
+  AutocompleteDatasource _datasource;
   
   InputAutocompleteComponent();
   
@@ -21,27 +61,27 @@ class InputAutocompleteComponent extends WebComponent {
     //super.forElement(element);
   }
   
+  void set renderer (AutocompleteChoiceRenderer renderer) {
+    _renderer = renderer;
+    print("a renderer was set: ${_renderer}");
+  }
+  
+  AutocompleteChoiceRenderer get renderer {
+    if (_renderer == null) {
+      _renderer = new AutocompleteChoiceRendererImpl();
+    }
+    return _renderer;
+  }
+  
+  void set datasource (AutocompleteDatasource ds) {
+    _datasource = ds;
+  }
+  
+  AutocompleteDatasource get datasource => _datasource;
+  
   void set choices(List choices) {
-    _givenChoices = choices;
+    this.datasource = new SimpleStringDatasource(choices);
     print('Choices have been set.');
-  }
-  
-  _sanitzeChoices() {
-    if (_givenChoices != null) {
-      _choices = new List();
-      for (var obj in _givenChoices) {
-        // for now simply use the toString as key and label :-)
-        _choices.add(new AutocompleteChoice(obj.toString(), obj.toString()));
-      }
-    }
-  }
-  
-  List get choices {
-    print("Somebody wants to get the choices.");
-    if (_choices == null) {
-      _sanitzeChoices();
-    }
-    return _choices;
   }
   
   List<AutocompleteChoice> get matches {
@@ -58,6 +98,12 @@ class InputAutocompleteComponent extends WebComponent {
   
   void _doSearch() {
     var input = this.query('input');
+    this.datasource.query(input.value.toLowerCase()).then((matches) {
+      _matches = matches;
+      watchers.dispatch();
+      _positionCompleteBox();
+    });
+    /*
     var choices = this.choices;
     if (input.text.length == 0) {
       _matches = choices;
@@ -67,8 +113,7 @@ class InputAutocompleteComponent extends WebComponent {
     if (_matches.length > 10) {
       _matches = _matches.getRange(0, 10);
     }
-    watchers.dispatch();
-    _positionCompleteBox();
+    */
   }
   
   void inputFocus(Event event) {
@@ -84,6 +129,12 @@ class InputAutocompleteComponent extends WebComponent {
   
   void inserted() {
     //_positionCompleteBox();
+  }
+  
+  renderChoice(AutocompleteChoice choice) {
+    var input = this.query('input');
+    Element tmp = this.renderer.renderChoice(choice, input.value);
+    return new SafeHtml.unsafe(tmp.outerHtml);
   }
   
   num _parseStyleInt(String styleValue) {

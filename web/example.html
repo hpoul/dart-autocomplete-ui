@@ -10,10 +10,17 @@
   <body>
     <h1>Dart AutoComplete UI</h1>
     
-    <p>Example for a ver simple auto complete input dialog for dart web components. Enter the cursor in the following input field and start typing:</p>
+    <p>Example for a very simple auto complete input dialog for dart web components. Enter the cursor in the following input field and start typing:</p>
     
     <x-input-autocomplete choices="{{exampleData.autocompleteChoices}}">
     </x-input-autocomplete>
+    
+    
+    <p>Custom datasource example (1 seconds delayed)</p>
+    
+    <x-input-autocomplete datasource="{{exampleDatasource}}">
+    </x-input-autocomplete>
+    
 
     <script type="application/dart" src="example.dart"></script>
     <script type="text/javascript" src="https://dart.googlecode.com/svn/branches/bleeding_edge/dart/client/dart.js"></script>

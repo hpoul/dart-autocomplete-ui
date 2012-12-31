@@ -8,8 +8,8 @@
             <ul class="autocomplete-content">
               <template iterate="choice in matches">
                 <li choice-key="{{ choice.key }}">
-                  <p>{{ choice.label }}</p>
-                  <content select=".choiceTemplate"></content>
+                  <div>{{ renderChoice(choice) }}</div>
+                  <!--content select=".choiceTemplate"></content-->
                 </li>
               </template>
             </ul>
@@ -28,6 +28,7 @@
             padding: 0px;
             margin: 0px;
             background-color: #fff;
+            overflow-x: scroll;
           }
           .autocomplete-content li {
             list-style-type: none;
@@ -39,7 +40,7 @@
           .autocomplete-content li:hover {
             background-color: #ddd;
           }
-          .autocomplete-content p {
+          .autocomplete-content div {
             padding: 0px;
             margin: 0px;
           }

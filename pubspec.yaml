@@ -3,5 +3,6 @@ description:  A sample application
 
 dependencies:
   web_ui: any
+  logging: any
 #  js: any
 #  unittest: any
