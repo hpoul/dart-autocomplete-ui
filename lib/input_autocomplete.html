@@ -7,14 +7,14 @@
           <template instantiate="if inputHasFocus && matches != null">
             <ul class="autocomplete-content">
               <template iterate="choice in matches">
-                <li choice-key="{{ choice.key }}">
+                <li class="{{ isFocused(choice) ? 'focused' : 'notfocused' }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-up="selectChoice(choice)">
                   <div>{{ renderChoice(choice) }}</div>
                   <!--content select=".choiceTemplate"></content-->
                 </li>
               </template>
             </ul>
           </template>
-          <input type="text" on-focus="inputFocus($event)" on-blur="inputBlur($event)" on-key-up="keyPressed($event)" />
+          <input type="text" on-focus="inputFocus($event)" on-blur="inputBlur($event)" on-key-down="keyDown($event)" on-key-up="keyUp($event)" />
         </div>
         <style>
           .autocomplete-wrapper input {
@@ -37,7 +37,7 @@
             margin-top: 2px;
             background-color: #fafafa;
           }
-          .autocomplete-content li:hover {
+          .autocomplete-content li.focused {
             background-color: #ddd;
           }
           .autocomplete-content div {

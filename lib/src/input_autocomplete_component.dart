@@ -2,58 +2,15 @@ part of input_autocomplete;
 
 
 
-abstract class AutocompleteChoice {
-  String get key;
-}
-
-class AutocompleteChoiceImpl implements AutocompleteChoice {
-  String key;
-  String label;
-  var obj;
-  
-  AutocompleteChoiceImpl(this.key, this.label, [this.obj]);
-}
-
-abstract class AutocompleteChoiceRenderer {
-  Element renderChoice(AutocompleteChoice choice, String query);
-  
-}
-
-abstract class BaseAutocompleteChoiceRenderer implements AutocompleteChoiceRenderer {
-  String highlightTextAndHtmlEscape(String text, String query) {
-    Element span = new Element.tag("span")
-      ..text = text;
-    String html = span.innerHtml;
-    if (query.isEmpty) {
-      return html;
-    }
-    int idx = html.toLowerCase().indexOf(query);
-    if (idx >= 0) {
-      String prefix = html.substring(0, idx);
-      String value = html.substring(idx, idx+query.length);
-      String postfix = html.substring(idx+query.length);
-      html = "${prefix}<strong>${value}</strong>${postfix}";
-    }
-//    html = html.replaceAll(query, "<strong>${query}</strong>");
-    return html;
-  }
-}
-
-class AutocompleteChoiceRendererImpl extends BaseAutocompleteChoiceRenderer
-      implements AutocompleteChoiceRenderer {
-  Element renderChoice(AutocompleteChoice choice, String query) {
-    if (choice is AutocompleteChoiceImpl) {
-      return new Element.tag("div")..innerHtml = highlightTextAndHtmlEscape("${choice.label}", query);
-    }
-    throw new ArgumentError("Invalid choice ${choice}");
-  }
-}
-
+/**
+ * autocomplete component for input fields.
+ */
 class InputAutocompleteComponent extends WebComponent {
   bool inputHasFocus = false;
   List<AutocompleteChoice> _matches;
   AutocompleteChoiceRenderer _renderer;
   AutocompleteDatasource _datasource;
+  int _focusedItemIndex = -1;
   
   InputAutocompleteComponent();
   
@@ -79,6 +36,14 @@ class InputAutocompleteComponent extends WebComponent {
   
   AutocompleteDatasource get datasource => _datasource;
   
+  bool isFocused(AutocompleteChoice choice) {
+    if (_focusedItemIndex < 0 || _focusedItemIndex >= _matches.length) {
+      return false;
+    }
+    //print("isFocused? ${_matches[_focusedItemIndex] == choice}");
+    return _matches[_focusedItemIndex] == choice;
+  }
+  
   void set choices(List choices) {
     this.datasource = new SimpleStringDatasource(choices);
     print('Choices have been set.');
@@ -92,28 +57,65 @@ class InputAutocompleteComponent extends WebComponent {
   }
   
   
-  void keyPressed(Event event) {
+  void _focusNext(int next) {
+    var newfocus = _focusedItemIndex + next;
+    if (newfocus < 0) {
+      newfocus = 0;
+    }
+    if (newfocus >= _matches.length) {
+      newfocus = _matches.length - 1;
+    }
+    _focusedItemIndex = newfocus;
+    watchers.dispatch();
+  }
+  
+  void keyDown(KeyEvent event) {
+    switch(event.keyCode) {
+      case KeyCode.DOWN:
+        _focusNext(1);
+        event.preventDefault();
+        break;
+      case KeyCode.UP:
+        _focusNext(-1);
+        event.preventDefault();
+        break;
+      case KeyCode.ENTER:
+        selectCurrentFocus();
+        break;
+    }
+  }
+  
+  void selectCurrentFocus() {
+    selectChoice(_matches[_focusedItemIndex]);
+  }
+  
+  void selectChoice(AutocompleteChoice choice) {
+    print("We have selected a choice: ${choice.key}");
+    _input.value = choice.key;
+  }
+  
+  void mouseOverChoice(AutocompleteChoice choice, Event event) {
+    var idx = _matches.indexOf(choice);
+    if (idx == _focusedItemIndex || idx < 0) {
+      return;
+    }
+    _focusedItemIndex = idx;
+    watchers.dispatch();
+  }
+  
+  void keyUp(Event event) {
     _doSearch();
   }
   
+  /// returns the current inputfield (TODO: add caching?)
+  InputElement get _input => this.query('input');
+  
   void _doSearch() {
-    var input = this.query('input');
-    this.datasource.query(input.value.toLowerCase()).then((matches) {
+    this.datasource.query(_input.value.toLowerCase()).then((matches) {
       _matches = matches;
       watchers.dispatch();
       _positionCompleteBox();
     });
-    /*
-    var choices = this.choices;
-    if (input.text.length == 0) {
-      _matches = choices;
-    }
-    print("value: ${input.value}");
-    _matches = choices.filter((e) => e.label.indexOf(input.value) != -1);
-    if (_matches.length > 10) {
-      _matches = _matches.getRange(0, 10);
-    }
-    */
   }
   
   void inputFocus(Event event) {

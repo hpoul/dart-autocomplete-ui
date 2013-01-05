@@ -6,6 +6,8 @@ import 'dart:math';
 import 'package:web_ui/watcher.dart' as watchers;
 
 part 'src/input_autocomplete_component.dart';
+part 'src/autocomplete_choice.dart';
+part 'src/autocomplete_choice_renderer.dart';
 part 'src/autocomplete_datasource.dart';
 
 
