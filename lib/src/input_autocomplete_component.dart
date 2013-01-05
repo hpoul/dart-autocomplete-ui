@@ -69,7 +69,7 @@ class InputAutocompleteComponent extends WebComponent {
     watchers.dispatch();
   }
   
-  void keyDown(KeyEvent event) {
+  void keyDown(KeyboardEvent event) {
     switch(event.keyCode) {
       case KeyCode.DOWN:
         _focusNext(1);
