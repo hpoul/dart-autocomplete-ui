@@ -49,7 +49,7 @@ class InputAutocompleteComponent extends WebComponent {
     print('Choices have been set.');
   }
   
-  List<AutocompleteChoice> get matches {
+  List<AutocompleteChoice> get filteredChoices {
     if (_matches == null) {
       _doSearch();
     }
@@ -112,7 +112,7 @@ class InputAutocompleteComponent extends WebComponent {
   
   void _doSearch() {
     this.datasource.query(_input.value.toLowerCase()).then((matches) {
-      _matches = matches;
+      _matches = matches.toList();
       watchers.dispatch();
       _positionCompleteBox();
     });
@@ -134,7 +134,7 @@ class InputAutocompleteComponent extends WebComponent {
   }
   
   renderChoice(AutocompleteChoice choice) {
-    var input = this.query('input');
+    InputElement input = this.query('input');
     Element tmp = this.renderer.renderChoice(choice, input.value);
     return new SafeHtml.unsafe(tmp.outerHtml);
   }
@@ -144,7 +144,7 @@ class InputAutocompleteComponent extends WebComponent {
     if (pos > 0) {
       styleValue = styleValue.substring(0, pos);
     }
-    return parseInt(styleValue);
+    return int.parse(styleValue);
   }
   
   void _positionCompleteBox() {

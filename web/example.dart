@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'dart:async';
 
 import 'package:autocomplete_ui/input_autocomplete.dart';
 
@@ -24,8 +25,8 @@ class ExampleData {
 class ExampleDatasource extends SimpleStringDatasource {
   ExampleDatasource(givenChoices) : super(givenChoices);
 
-  Future<Collection<AutocompleteChoice>> query(String query) {
-    var completer = new Completer<Collection<AutocompleteChoice>>();
+  Future<Iterable<AutocompleteChoice>> query(String query) {
+    var completer = new Completer<Iterable<AutocompleteChoice>>();
     var future = super.query(query);
     window.setTimeout(() {
       future.then((coll) => completer.complete(coll));

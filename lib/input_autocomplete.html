@@ -4,9 +4,9 @@
     <element name="x-input-autocomplete" constructor="InputAutocompleteComponentProxy" extends="div">
       <template>
         <div class="autocomplete-wrapper">
-          <template instantiate="if inputHasFocus && matches != null">
+          <template instantiate="if inputHasFocus && filteredChoices != null">
             <ul class="autocomplete-content">
-              <template iterate="choice in matches">
+              <template iterate="choice in filteredChoices">
                 <li class="{{ isFocused(choice) ? 'focused' : 'notfocused' }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-up="selectChoice(choice)">
                   <div>{{ renderChoice(choice) }}</div>
                   <!--content select=".choiceTemplate"></content-->

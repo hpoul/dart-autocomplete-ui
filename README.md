@@ -37,6 +37,14 @@ example dart code:
 todo write documentation.
 
 
+Changelog
+-------
+
+* HEAD:
+* 0.0.3: Support for Dart Libraries v2 (M3 preparation)
+* 0.0.2: support for custom datasources, formatting
+* 0.0.1: initial "release"
+
 Future
 -------
 

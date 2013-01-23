@@ -22,12 +22,12 @@ class SimpleStringDatasource implements AutocompleteDatasource {
     }
   }
   
-  Future<Collection<AutocompleteChoice>> query(String query) {
-    var completer = new Completer<Collection<AutocompleteChoice>>();
+  Future<Iterable<AutocompleteChoice>> query(String query) {
+    var completer = new Completer<Iterable<AutocompleteChoice>>();
     if (query.isEmpty) {
       completer.complete(_choices);
     } else {
-      completer.complete(_choices.filter((choice) => choice.key.toLowerCase().contains(query)));
+      completer.complete(_choices.where((choice) => choice.key.toLowerCase().contains(query)));
     }
     return completer.future;
   }
