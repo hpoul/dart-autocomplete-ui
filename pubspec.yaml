@@ -6,9 +6,9 @@ description: >
 author: Herbert Poul <herbert.poul@gmail.com>
 homepage: https://github.com/hpoul/dart-autocomplete-ui
 dependencies:
-  web_ui: any
-  logging: any
-  browser: any
-  html5lib: any
+  web_ui: ">=0.3.0+1 <0.4.0"
+  logging: ">=0.3.1+1 <0.4.0"
+  browser: ">=0.0.1 <0.0.2"
+  html5lib: ">=0.3.0+1 <0.4.0"
 #  js: any
 #  unittest: any

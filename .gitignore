@@ -4,3 +4,4 @@ web/out
 *.dart.js.map
 *.dart.js.deps
 tmp
+.buildlog
