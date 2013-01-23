@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <element name="x-input-autocomplete" constructor="InputAutocompleteComponentProxy" extends="div">
+      <template>
+        <div class="autocomplete-wrapper">
+          <template instantiate="if inputHasFocus && filteredChoices != null">
+            <ul class="autocomplete-content">
+              <template iterate="choice in filteredChoices">
+                <li class="{{ isFocused(choice) ? 'focused' : 'notfocused' }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-up="selectChoice(choice)">
+                  <div>{{ renderChoice(choice) }}</div>
+                  <!--content select=".choiceTemplate"></content-->
+                </li>
+              </template>
+            </ul>
+          </template>
+          <input type="text" on-focus="inputFocus($event)" on-blur="inputBlur($event)" on-key-down="keyDown($event)" on-key-up="keyUp($event)" />
+        </div>
+        <style>
+          .autocomplete-wrapper input {
+            border: 1px solid black;
+            padding: 3px;
+          }
+          .autocomplete-content {
+            //display: none;
+            position: absolute;
+            border: 1px solid black;
+            padding: 0px;
+            margin: 0px;
+            background-color: #fff;
+            overflow-x: scroll;
+          }
+          .autocomplete-content li {
+            list-style-type: none;
+            padding: 2px;
+            margin: 0px;
+            margin-top: 2px;
+            background-color: #fafafa;
+          }
+          .autocomplete-content li.focused {
+            background-color: #ddd;
+          }
+          .autocomplete-content div {
+            padding: 0px;
+            margin: 0px;
+          }
+        </style>
+      </template>
+      <script type="application/dart" src="input_autocomplete_component_proxy.dart"></script>
+    </element>
+  </body>
+</html>
