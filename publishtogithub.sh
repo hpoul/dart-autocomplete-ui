@@ -31,7 +31,10 @@ export GIT_DIR=$tmpdir/gh-pages/.git
 rm -rf $tmpdir/gh-pages/examples
 mkdir -p $tmpdir/gh-pages/examples
 
+cp -r $basedir/out/packages $tmpdir/gh-pages/examples/
 cp -a $basedir/out/* $tmpdir/gh-pages/examples/
+
+sed -e "s#../packages/browser/dart.js#packages/browser/dart.js#" -i '' $tmpdir/gh-pages/examples/example.html
 
 git add -A
 
