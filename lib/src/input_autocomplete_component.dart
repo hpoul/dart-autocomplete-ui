@@ -91,6 +91,7 @@ class InputAutocompleteComponent extends WebComponent {
   
   void selectChoice(AutocompleteChoice choice) {
     print("We have selected a choice: ${choice.key}");
+    _input.blur();
     _input.value = choice.key;
   }
   
@@ -101,6 +102,11 @@ class InputAutocompleteComponent extends WebComponent {
     }
     _focusedItemIndex = idx;
     watchers.dispatch();
+  }
+  
+  void mouseDownChoice(AutocompleteChoice choice, Event event) {
+    // prevent default action, which would blur our input field.
+    event.preventDefault();
   }
   
   void keyUp(Event event) {

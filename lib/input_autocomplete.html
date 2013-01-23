@@ -7,7 +7,7 @@
           <template instantiate="if inputHasFocus && filteredChoices != null">
             <ul class="autocomplete-content">
               <template iterate="choice in filteredChoices">
-                <li class="{{ isFocused(choice) ? 'focused' : 'notfocused' }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-up="selectChoice(choice)">
+                <li class="{{ isFocused(choice) ? 'focused' : 'notfocused' }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-down="mouseDownChoice(choice, $event)" on-mouse-up="selectChoice(choice)">
                   <div>{{ renderChoice(choice) }}</div>
                   <!--content select=".choiceTemplate"></content-->
                 </li>
