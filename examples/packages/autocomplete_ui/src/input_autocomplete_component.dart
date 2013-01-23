@@ -91,6 +91,7 @@ class InputAutocompleteComponent extends WebComponent {
   
   void selectChoice(AutocompleteChoice choice) {
     print("We have selected a choice: ${choice.key}");
+    _input.blur();
     _input.value = choice.key;
   }
   
@@ -103,6 +104,11 @@ class InputAutocompleteComponent extends WebComponent {
     watchers.dispatch();
   }
   
+  void mouseDownChoice(AutocompleteChoice choice, Event event) {
+    // prevent default action, which would blur our input field.
+    event.preventDefault();
+  }
+  
   void keyUp(Event event) {
     _doSearch();
   }
@@ -111,8 +117,11 @@ class InputAutocompleteComponent extends WebComponent {
   InputElement get _input => this.query('input');
   
   void _doSearch() {
-    this.datasource.query(_input.value.toLowerCase()).then((matches) {
+    // TODO would it be nicer to do this in HTML?
+    this._input.classes.add("loading");
+    this.datasource.query(this._input.value.toLowerCase()).then((matches) {
       _matches = matches.toList();
+      this._input.classes.remove("loading");
       watchers.dispatch();
       _positionCompleteBox();
     });

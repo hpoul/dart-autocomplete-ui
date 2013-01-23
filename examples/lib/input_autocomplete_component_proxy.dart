@@ -39,6 +39,11 @@ class InputAutocompleteComponentProxy extends InputAutocompleteComponent {
       border: 1px solid black;
       padding: 3px;
     }
+    .autocomplete-wrapper input.loading {
+      background-image: url(\'data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH+GkNyZWF0ZWQgd2l0aCBhamF4bG9hZC5pbmZvACH5BAAKAAAAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQACgABACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkEAAoAAgAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkEAAoAAwAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkEAAoABAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQACgAFACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQACgAGACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAAKAAcALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==\');
+      background-repeat: no-repeat;
+      background-position: right center;
+    }
     .autocomplete-content {
       //display: none;
       position: absolute;
@@ -75,6 +80,7 @@ class InputAutocompleteComponentProxy extends InputAutocompleteComponent {
         __e3 = __e4.query('#__e-3');
         var __binding2 = __t.contentBind(() => ( renderChoice(choice) ));
         __e3.nodes.add(__binding2);
+        __t.listen(__e4.on.mouseDown, ($event) { mouseDownChoice(choice, $event); });
         __t.listen(__e4.on.mouseOver, ($event) { mouseOverChoice(choice, $event); });
         __t.listen(__e4.on.mouseUp, ($event) { selectChoice(choice); });
         __t.oneWayBind(() => ( choice.key ), (e) { __e4.attributes['choice-key'] = e; }, false);
