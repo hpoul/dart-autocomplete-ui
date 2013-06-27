@@ -28,9 +28,10 @@ class ExampleDatasource extends SimpleStringDatasource {
   Future<Iterable<AutocompleteChoice>> query(String query) {
     var completer = new Completer<Iterable<AutocompleteChoice>>();
     var future = super.query(query);
-    window.setTimeout(() {
+    
+    new Future.delayed(const Duration(seconds: 1), () {
       future.then((coll) => completer.complete(coll));
-    }, 1000);
+    });
     return completer.future;
   }
 }

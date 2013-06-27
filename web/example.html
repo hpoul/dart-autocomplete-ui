@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <title>Autocomplete_ui</title>
-    <link rel="components" href="lib/input_autocomplete.html">
+    <link rel="import" href="lib/input_autocomplete.html">
     <link rel="stylesheet" href="example.css">
   </head>
   <body>
@@ -13,14 +13,14 @@
     <p>Example for a very simple auto complete input dialog for dart web components. Enter the cursor in the following input field and start typing:</p>
     <p>(You can also use cursor up/down to select options.)</p>
     
-    <x-input-autocomplete choices="{{exampleData.autocompleteChoices}}">
-    </x-input-autocomplete>
+    <tapo-input-autocomplete choices="{{ exampleData.autocompleteChoices }}">
+    </tapo-input-autocomplete>
     
     
     <p>Custom datasource example (1 seconds delayed)</p>
     
-    <x-input-autocomplete datasource="{{exampleDatasource}}">
-    </x-input-autocomplete>
+    <tapo-input-autocomplete datasource="{{ exampleDatasource }}">
+    </tapo-input-autocomplete>
     
 
     <script type="application/dart" src="example.dart"></script>

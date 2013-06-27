@@ -5,7 +5,7 @@ part of input_autocomplete;
  * Datasource is responsible for returning all choices suitable for the given query string.
  **/
 abstract class AutocompleteDatasource {
-  Future<Collection<AutocompleteChoice>> query(String query);
+  Future<List<AutocompleteChoice>> query(String query);
   AutocompleteChoice objectByKey(String key);
 }
 
@@ -21,6 +21,8 @@ class SimpleStringDatasource implements AutocompleteDatasource {
       _choices.add(new AutocompleteChoiceImpl(choice.toString(), choice.toString(), choice));
     }
   }
+  
+  List get givenChoices => _givenChoices;
   
   Future<Iterable<AutocompleteChoice>> query(String query) {
     var completer = new Completer<Iterable<AutocompleteChoice>>();
