@@ -41,6 +41,7 @@ Changelog
 -------
 
 * HEAD:
+* 0.0.4 (2013-06-27): Fixed support for Latest Dart Libraries & Web UI (0.4.12+3)
 * 0.0.3: Support for Dart Libraries v2 (M3 preparation)
 * 0.0.2: support for custom datasources, formatting
 * 0.0.1: initial "release"
