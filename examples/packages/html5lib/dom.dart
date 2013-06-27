@@ -4,9 +4,14 @@
  */
 library dom;
 
+import 'dart:collection';
 import 'package:meta/meta.dart';
+import 'package:source_maps/span.dart' show FileSpan;
+
 import 'src/constants.dart';
 import 'src/list_proxy.dart';
+import 'src/token.dart';
+import 'src/tokenizer.dart';
 import 'src/treebuilder.dart';
 import 'src/utils.dart';
 import 'dom_parsing.dart';
@@ -101,13 +106,39 @@ abstract class Node {
   // TODO(jmesserly): consider using an Expando for this, and put it in
   // dom_parsing. Need to check the performance affect.
   /** The source span of this node, if it was created by the [HtmlParser]. */
-  SourceSpan sourceSpan;
+  FileSpan sourceSpan;
+
+  /** The attribute spans if requested. Otherwise null. */
+  LinkedHashMap<dynamic, FileSpan> _attributeSpans;
+  LinkedHashMap<dynamic, FileSpan> _attributeValueSpans;
 
   Node(this.tagName) {
     nodes._parent = this;
   }
 
-  List<Element> get elements {
+  /**
+   * If [sourceSpan] is available, this contains the spans of each attribute.
+   * The span of an attribute is the entire attribute, including the name and
+   * quotes (if any). For example, the span of "attr" in `<a attr="value">`
+   * would be the text `attr="value"`.
+   */
+  LinkedHashMap<dynamic, FileSpan> get attributeSpans {
+    _ensureAttributeSpans();
+    return _attributeSpans;
+  }
+
+  /**
+   * If [sourceSpan] is available, this contains the spans of each attribute's
+   * value. Unlike [attributeSpans], this span will inlcude only the value.
+   * For example, the value span of "attr" in `<a attr="value">` would be the
+   * text `value`.
+   */
+  LinkedHashMap<dynamic, FileSpan> get attributeValueSpans {
+    _ensureAttributeSpans();
+    return _attributeValueSpans;
+  }
+
+  List<Element> get children {
     if (_elements == null) {
       _elements = new FilteredElementList(this);
     }
@@ -121,19 +152,6 @@ abstract class Node {
    */
   Node clone();
 
-  String get id {
-    var result = attributes['id'];
-    return result != null ? result : '';
-  }
-
-  set id(String value) {
-    if (value == null) {
-      attributes.remove('id');
-    } else {
-      attributes['id'] = value;
-    }
-  }
-
   String get namespace => null;
 
   // TODO(jmesserly): do we need this here?
@@ -145,19 +163,19 @@ abstract class Node {
 
   int get nodeType;
 
-  String get outerHTML {
+  String get outerHtml {
     var str = new StringBuffer();
     _addOuterHtml(str);
     return str.toString();
   }
 
-  String get innerHTML {
+  String get innerHtml {
     var str = new StringBuffer();
     _addInnerHtml(str);
     return str.toString();
   }
 
-  set innerHTML(String value) {
+  set innerHtml(String value) {
     nodes.clear();
     // TODO(jmesserly): should be able to get the same effect by adding the
     // fragment directly.
@@ -190,7 +208,7 @@ abstract class Node {
     if (refNode == null) {
       nodes.add(node);
     } else {
-      nodes.insertAt(nodes.indexOf(refNode), node);
+      nodes.insert(nodes.indexOf(refNode), node);
     }
   }
 
@@ -230,7 +248,7 @@ abstract class Node {
   Element query(String selectors) => _queryType(_typeSelector(selectors));
 
   /**
-   * Retursn all descendant nodes matching the given selectors, using a
+   * Returns all descendant nodes matching the given selectors, using a
    * preorder traversal. NOTE: right now, this supports only a single type
    * selectors, e.g. `node.queryAll('div')`.
    */
@@ -239,6 +257,10 @@ abstract class Node {
     _queryAllType(_typeSelector(selectors), results);
     return results;
   }
+
+  bool hasChildNodes() => !nodes.isEmpty;
+
+  bool contains(Node node) => nodes.contains(node);
 
   String _typeSelector(String selectors) {
     selectors = selectors.trim();
@@ -276,13 +298,13 @@ abstract class Node {
 
     int i = 0;
     const int DASH = 45;
-    if (selector.charCodeAt(i) == DASH) i++;
+    if (selector.codeUnitAt(i) == DASH) i++;
 
     if (i >= len || !isLetter(selector[i])) return false;
     i++;
 
     for (; i < len; i++) {
-      if (!isLetterOrDigit(selector[i]) && selector.charCodeAt(i) != DASH) {
+      if (!isLetterOrDigit(selector[i]) && selector.codeUnitAt(i) != DASH) {
         return false;
       }
     }
@@ -305,6 +327,34 @@ abstract class Node {
       if (node is! Element) continue;
       if (node.tagName == tag) results.add(node);
       node._queryAllType(tag, results);
+    }
+  }
+
+  /** Initialize [attributeSpans] using [sourceSpan]. */
+  void _ensureAttributeSpans() {
+    if (_attributeSpans != null) return;
+
+    _attributeSpans = new LinkedHashMap<dynamic, FileSpan>();
+    _attributeValueSpans = new LinkedHashMap<dynamic, FileSpan>();
+
+    if (sourceSpan == null) return;
+
+    var tokenizer = new HtmlTokenizer(sourceSpan.text, generateSpans: true,
+        attributeSpans: true);
+
+    tokenizer.moveNext();
+    var token = tokenizer.current as StartTagToken;
+
+    if (token.attributeSpans == null) return; // no attributes
+
+    for (var attr in token.attributeSpans) {
+      var offset = sourceSpan.start.offset;
+      _attributeSpans[attr.name] = sourceSpan.file.span(
+          offset + attr.start, offset + attr.end);
+      if (attr.startValue != null) {
+        _attributeValueSpans[attr.name] = sourceSpan.file.span(
+            offset + attr.startValue, offset + attr.endValue);
+      }
     }
   }
 }
@@ -359,7 +409,7 @@ class DocumentType extends Node {
 
 
   void _addOuterHtml(StringBuffer str) {
-    str.add(toString());
+    str.write(toString());
   }
 
   DocumentType clone() => new DocumentType(tagName, publicId, systemId);
@@ -379,9 +429,9 @@ class Text extends Node {
     // Don't escape text for certain elements, notably <script>.
     if (rcdataElements.contains(parent.tagName) ||
         parent.tagName == 'plaintext') {
-      str.add(value);
+      str.write(value);
     } else {
-      str.add(htmlSerializeEscape(value));
+      str.write(htmlSerializeEscape(value));
     }
   }
 
@@ -437,13 +487,13 @@ class Element extends Node {
 
     var fragment = parseFragment(html, container: parentTag);
     Element element;
-    if (fragment.elements.length == 1) {
-      element = fragment.elements[0];
-    } else if (parentTag == 'html' && fragment.elements.length == 2) {
+    if (fragment.children.length == 1) {
+      element = fragment.children[0];
+    } else if (parentTag == 'html' && fragment.children.length == 2) {
       // You'll always get a head and a body when starting from html.
-      element = fragment.elements[tag == 'head' ? 0 : 1];
+      element = fragment.children[tag == 'head' ? 0 : 1];
     } else {
-      throw new ArgumentError('HTML had ${fragment.elements.length} '
+      throw new ArgumentError('HTML had ${fragment.children.length} '
           'top level elements but 1 expected');
     }
     element.remove();
@@ -464,29 +514,29 @@ class Element extends Node {
         namespace == Namespaces.html ||
         namespace == Namespaces.mathml ||
         namespace == Namespaces.svg) {
-      str.add('<$tagName');
+      str.write('<$tagName');
     } else {
       // TODO(jmesserly): the spec doesn't define "qualified name".
       // I'm not sure if this is correct, but it should parse reasonably.
-      str.add('<${Namespaces.getPrefix(namespace)}:$tagName');
+      str.write('<${Namespaces.getPrefix(namespace)}:$tagName');
     }
 
     if (attributes.length > 0) {
       attributes.forEach((key, v) {
         // Note: AttributeName.toString handles serialization of attribute
         // namespace, if needed.
-        str.add(' $key="${htmlSerializeEscape(v, attributeMode: true)}"');
+        str.write(' $key="${htmlSerializeEscape(v, attributeMode: true)}"');
       });
     }
 
-    str.add('>');
+    str.write('>');
 
     if (nodes.length > 0) {
       if (tagName == 'pre' || tagName == 'textarea' || tagName == 'listing') {
         if (nodes[0] is Text && nodes[0].value.startsWith('\n')) {
           // These nodes will remove a leading \n at parse time, so if we still
           // have one, it means we started with two. Add it back.
-          str.add('\n');
+          str.write('\n');
         }
       }
 
@@ -495,11 +545,24 @@ class Element extends Node {
 
     // void elements must not have an end tag
     // http://dev.w3.org/html5/markup/syntax.html#void-elements
-    if (!isVoidElement(tagName)) str.add('</$tagName>');
+    if (!isVoidElement(tagName)) str.write('</$tagName>');
   }
 
   Element clone() => new Element(tagName, namespace)
       ..attributes = new LinkedHashMap.from(attributes);
+
+  String get id {
+    var result = attributes['id'];
+    return result != null ? result : '';
+  }
+
+  set id(String value) {
+    if (value == null) {
+      attributes.remove('id');
+    } else {
+      attributes['id'] = value;
+    }
+  }
 }
 
 class Comment extends Node {
@@ -512,12 +575,15 @@ class Comment extends Node {
   String toString() => "<!-- $data -->";
 
   void _addOuterHtml(StringBuffer str) {
-    str.add("<!--$data-->");
+    str.write("<!--$data-->");
   }
 
   Comment clone() => new Comment(data);
 }
 
+
+// TODO(jmesserly): fix this to extend one of the corelib classes if possible.
+// (The requirement to remove the node from the old node list makes it tricky.)
 // TODO(jmesserly): is there any way to share code with the _NodeListImpl?
 class NodeList extends ListProxy<Node> {
   // Note: this is conceptually final, but because of circular reference
@@ -542,18 +608,21 @@ class NodeList extends ListProxy<Node> {
 
   void addLast(Node value) => add(value);
 
-  void addAll(Collection<Node> collection) {
+  void addAll(Iterable<Node> collection) {
     // Note: we need to be careful if collection is another NodeList.
     // In particular:
     //   1. we need to copy the items before updating their parent pointers,
     //   2. we should update parent pointers in reverse order. That way they
     //      are removed from the original NodeList (if any) from the end, which
     //      is faster.
-    if (collection is NodeList) {
-      collection = new List<Node>.from(collection);
-    }
-    for (var node in reversed(collection)) _setParent(node);
-    super.addAll(collection);
+    var list = (collection is NodeList || collection is! List)
+        ? collection.toList() : collection as List;
+    for (var node in list.reversed) _setParent(node);
+    super.addAll(list);
+  }
+
+  void insert(int index, Node value) {
+    super.insert(index, _setParent(value));
   }
 
   Node removeLast() => super.removeLast()..parent = null;
@@ -576,7 +645,7 @@ class NodeList extends ListProxy<Node> {
                 [int startFrom = 0]) {
     if (from is NodeList) {
       // Note: this is presumed to make a copy
-      from = from.getRange(startFrom, rangeLength);
+      from = from.sublist(startFrom, startFrom + rangeLength);
     }
     // Note: see comment in [addAll]. We need to be careful about the order of
     // operations if [from] is also a NodeList.
@@ -586,35 +655,70 @@ class NodeList extends ListProxy<Node> {
     }
   }
 
+  void replaceRange(int start, int end, Iterable<Node> newContents) {
+    removeRange(start, end);
+    insertAll(start, newContents);
+  }
+
   void removeRange(int start, int rangeLength) {
     for (int i = start; i < rangeLength; i++) this[i].parent = null;
     super.removeRange(start, rangeLength);
   }
 
-  void insertRange(int start, int rangeLength, [Node initialValue]) {
-    if (initialValue == null) {
-      throw new ArgumentError('cannot add null node.');
+  void removeWhere(bool test(Element e)) {
+    for (var node in where(test)) {
+      node.parent = null;
     }
-    if (rangeLength > 1) {
-      throw new UnsupportedError('cannot add the same node multiple times.');
+    super.removeWhere(test);
+  }
+
+  void retainWhere(bool test(Element e)) {
+    for (var node in where((n) => !test(n))) {
+      node.parent = null;
     }
-    super.insertRange(start, 1, _setParent(initialValue));
+    super.retainWhere(test);
+  }
+
+  void insertAll(int index, List<Node> nodes) {
+    for (var node in nodes) _setParent(node);
+    super.insertAll(index, nodes);
   }
 }
 
 
+/**
+ * An indexable collection of a node's descendants in the document tree,
+ * filtered so that only elements are in the collection.
+ */
 // TODO(jmesserly): this was copied from dart:html
-// I fixed this to extend Collection and implement removeAt and first.
-class FilteredElementList extends Collection<Element> implements List<Element> {
+// TODO(jmesserly): "implements List<Element>" is a workaround for analyzer bug.
+class FilteredElementList extends IterableBase<Element> with ListMixin<Element>
+    implements List<Element> {
+
   final Node _node;
   final List<Node> _childNodes;
 
+  /**
+   * Creates a collection of the elements that descend from a node.
+   *
+   * Example usage:
+   *
+   *     var filteredElements = new FilteredElementList(query("#container"));
+   *     // filteredElements is [a, b, c].
+   */
   FilteredElementList(Node node): _childNodes = node.nodes, _node = node;
 
   // We can't memoize this, since it's possible that children will be messed
   // with externally to this class.
+  //
+  // TODO(nweiz): we don't always need to create a new list. For example
+  // forEach, every, any, ... could directly work on the _childNodes.
   List<Element> get _filtered =>
-      new List<Element>.from(_childNodes.where((n) => n is Element));
+    new List<Element>.from(_childNodes.where((n) => n is Element));
+
+  void forEach(void f(Element element)) {
+    _filtered.forEach(f);
+  }
 
   void operator []=(int index, Element value) {
     this[index].replaceWith(value);
@@ -628,44 +732,46 @@ class FilteredElementList extends Collection<Element> implements List<Element> {
       throw new ArgumentError("Invalid list length");
     }
 
-    removeRange(newLength, len - newLength);
+    removeRange(newLength, len);
   }
+
+  String join([String separator = ""]) => _filtered.join(separator);
 
   void add(Element value) {
     _childNodes.add(value);
   }
 
-  void remove(Element value) {
-    _childNodes.remove(value);
-  }
-
-  void addAll(Iterable<Element> collection) {
-    collection.forEach(add);
-  }
-
-  void addLast(Element value) {
-    add(value);
+  void addAll(Iterable<Element> iterable) {
+    for (Element element in iterable) {
+      add(element);
+    }
   }
 
   bool contains(Element element) {
     return element is Element && _childNodes.contains(element);
   }
 
+  Iterable<Element> get reversed => _filtered.reversed;
+
   void sort([int compare(Element a, Element b)]) {
-    // TODO(jacobr): should we impl?
+    throw new UnsupportedError('TODO(jacobr): should we impl?');
+  }
+
+  void setRange(int start, int end, Iterable<Element> iterable,
+                [int skipCount = 0]) {
     throw new UnimplementedError();
   }
 
-  void setRange(int start, int rangeLength, List from, [int startFrom = 0]) {
+  void fillRange(int start, int end, [Element fillValue]) {
     throw new UnimplementedError();
   }
 
-  void removeRange(int start, int rangeLength) {
-    _filtered.getRange(start, rangeLength).forEach((el) => el.remove());
+  void replaceRange(int start, int end, Iterable<Element> iterable) {
+    throw new UnimplementedError();
   }
 
-  void insertRange(int start, int rangeLength, [initialValue = null]) {
-    throw new UnimplementedError();
+  void removeRange(int start, int end) {
+    _filtered.sublist(start, end).forEach((el) => el.remove());
   }
 
   void clear() {
@@ -682,19 +788,85 @@ class FilteredElementList extends Collection<Element> implements List<Element> {
     return result;
   }
 
-  Element removeAt(int index) => this[index]..remove();
+  Iterable map(f(Element element)) => _filtered.map(f);
+  Iterable<Element> where(bool f(Element element)) => _filtered.where(f);
+  Iterable expand(Iterable f(Element element)) => _filtered.expand(f);
 
-  Iterator<Element> get iterator => _filtered.iterator;
+  void insert(int index, Element value) {
+    _childNodes.insert(index, value);
+  }
+
+  void insertAll(int index, Iterable<Element> iterable) {
+    _childNodes.insertAll(index, iterable);
+  }
+
+  Element removeAt(int index) {
+    final result = this[index];
+    result.remove();
+    return result;
+  }
+
+  bool remove(Object element) {
+    if (element is! Element) return false;
+    for (int i = 0; i < length; i++) {
+      Element indexElement = this[i];
+      if (identical(indexElement, element)) {
+        indexElement.remove();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Element reduce(Element combine(Element value, Element element)) {
+    return _filtered.reduce(combine);
+  }
+
+  dynamic fold(dynamic initialValue,
+      dynamic combine(dynamic previousValue, Element element)) {
+    return _filtered.fold(initialValue, combine);
+  }
+
+  bool every(bool f(Element element)) => _filtered.every(f);
+  bool any(bool f(Element element)) => _filtered.any(f);
+  List<Element> toList({ bool growable: true }) =>
+      new List<Element>.from(this, growable: growable);
+  Set<Element> toSet() => new Set<Element>.from(this);
+  Element firstWhere(bool test(Element value), {Element orElse()}) {
+    return _filtered.firstWhere(test, orElse: orElse);
+  }
+
+  Element lastWhere(bool test(Element value), {Element orElse()}) {
+    return _filtered.lastWhere(test, orElse: orElse);
+  }
+
+  Element singleWhere(bool test(Element value)) {
+    return _filtered.singleWhere(test);
+  }
+
+  Element elementAt(int index) {
+    return this[index];
+  }
+
+  bool get isEmpty => _filtered.isEmpty;
+  int get length => _filtered.length;
   Element operator [](int index) => _filtered[index];
-
-  List<Element> getRange(int start, int rangeLength) =>
-    _filtered.getRange(start, rangeLength);
+  Iterator<Element> get iterator => _filtered.iterator;
+  List<Element> sublist(int start, [int end]) =>
+    _filtered.sublist(start, end);
+  Iterable<Element> getRange(int start, int end) =>
+    _filtered.getRange(start, end);
   int indexOf(Element element, [int start = 0]) =>
     _filtered.indexOf(element, start);
 
-  int lastIndexOf(Element element, [int start]) {
+  int lastIndexOf(Element element, [int start = null]) {
     if (start == null) start = length - 1;
     return _filtered.lastIndexOf(element, start);
   }
-}
 
+  Element get first => _filtered.first;
+
+  Element get last => _filtered.last;
+
+  Element get single => _filtered.single;
+}

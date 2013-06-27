@@ -16,6 +16,9 @@ class SafeHtml {
   SafeHtml.unsafe(this._html);
 
   String toString() => _html;
+
+  operator ==(other) => other is SafeHtml && _html == other._html;
+  int get hashCode => _html.hashCode;
 }
 
 /**
@@ -30,4 +33,7 @@ class SafeUri {
   SafeUri.unsafe(this._uri);
 
   String toString() => _uri;
+
+  operator ==(other) => other is SafeUri && _uri == other._uri;
+  int get hashCode => _uri.hashCode;
 }

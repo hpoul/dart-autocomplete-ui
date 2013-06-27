@@ -1,8 +1,9 @@
 /** Internals to the tree builders. */
 library treebuilder;
 
+import 'dart:collection';
 import 'package:html5lib/dom.dart';
-import 'package:html5lib/dom_parsing.dart';
+import 'package:source_maps/span.dart' show FileSpan;
 import 'constants.dart';
 import 'list_proxy.dart';
 import 'token.dart';
@@ -13,14 +14,18 @@ import 'utils.dart';
 // from "leaking" into tables, object elements, and marquees.
 final Node Marker = null;
 
+// TODO(jmesserly): this should extend ListBase<Node>, but my simple attempt
+// didn't work.
 class ActiveFormattingElements extends ListProxy<Node> {
   ActiveFormattingElements() : super();
 
-  void addLast(Node node) => add(node);
+  // Override the "add" method.
+  // TODO(jmesserly): I'd rather not override this; can we do this in the
+  // calling code instead?
   void add(Node node) {
     int equalCount = 0;
     if (node != Marker) {
-      for (Node element in reversed(this)) {
+      for (Node element in reversed) {
         if (element == Marker) {
           break;
         }
@@ -67,10 +72,9 @@ class TreeBuilder {
 
   Document document;
 
-  final ListProxy<Node> openElements = new ListProxy<Node>();
+  final openElements = <Node>[];
 
-  final ActiveFormattingElements activeFormattingElements
-      = new ActiveFormattingElements();
+  final activeFormattingElements = new ActiveFormattingElements();
 
   Node headPointer;
 
@@ -130,7 +134,7 @@ class TreeBuilder {
       }
     }
 
-    for (Node node in reversed(openElements)) {
+    for (Node node in openElements.reversed) {
       if (node.tagName == target && !exactNode ||
           node == target && exactNode) {
         return true;
@@ -213,7 +217,7 @@ class TreeBuilder {
    * return null.
    */
   Node elementInActiveFormattingElements(String name) {
-    for (Node item in reversed(activeFormattingElements)) {
+    for (Node item in activeFormattingElements.reversed) {
       // Check for Marker first because if it's a Marker it doesn't have a
       // name attribute.
       if (item == Marker) {
@@ -237,7 +241,7 @@ class TreeBuilder {
     document.nodes.add(doctype);
   }
 
-  void insertComment(Token token, [Node parent]) {
+  void insertComment(StringToken token, [Node parent]) {
     if (parent == null) {
       parent = openElements.last;
     }
@@ -295,7 +299,7 @@ class TreeBuilder {
   }
 
   /** Insert text data. */
-  void insertText(String data, SourceSpan span) {
+  void insertText(String data, FileSpan span) {
     var parent = openElements.last;
 
     if (!insertFromTable || insertFromTable &&
@@ -313,13 +317,18 @@ class TreeBuilder {
    * Insert [data] as text in the current node, positioned before the
    * start of node [refNode] or to the end of the node's text.
    */
-  static void _insertText(Node parent, String data, SourceSpan span,
+  static void _insertText(Node parent, String data, FileSpan span,
       [Element refNode]) {
     var nodes = parent.nodes;
     if (refNode == null) {
       if (nodes.length > 0 && nodes.last is Text) {
         Text last = nodes.last;
         last.value = '${last.value}$data';
+
+        if (span != null) {
+          last.sourceSpan = span.file.span(last.sourceSpan.start.offset,
+              span.end.offset);
+        }
       } else {
         nodes.add(new Text(data)..sourceSpan = span);
       }
@@ -329,7 +338,7 @@ class TreeBuilder {
         Text last = nodes[index - 1];
         last.value = '${last.value}$data';
       } else {
-        nodes.insertAt(index, new Text(data)..sourceSpan = span);
+        nodes.insert(index, new Text(data)..sourceSpan = span);
       }
     }
   }
@@ -345,7 +354,7 @@ class TreeBuilder {
     Node lastTable = null;
     Node fosterParent = null;
     var insertBefore = null;
-    for (Node elm in reversed(openElements)) {
+    for (Node elm in openElements.reversed) {
       if (elm.tagName == "table") {
         lastTable = elm;
         break;

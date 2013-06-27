@@ -2,12 +2,11 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+part of matcher;
+
 /**
  * Returns a matcher which matches maps containing the given [value].
  */
-
-part of matcher;
-
 Matcher containsValue(value) => new _ContainsValue(value);
 
 class _ContainsValue extends BaseMatcher {
@@ -15,7 +14,7 @@ class _ContainsValue extends BaseMatcher {
 
   const _ContainsValue(this._value);
 
-  bool matches(item, MatchState matchState) => item.containsValue(_value);
+  bool matches(item, Map matchState) => item.containsValue(_value);
   Description describe(Description description) =>
       description.add('contains value ').addDescriptionOf(_value);
 }
@@ -33,7 +32,7 @@ class _ContainsMapping extends BaseMatcher {
 
   const _ContainsMapping(this._key, Matcher this._valueMatcher);
 
-  bool matches(item, MatchState matchState) =>
+  bool matches(item, Map matchState) =>
       item.containsKey(_key) &&
       _valueMatcher.matches(item[_key], matchState);
 
@@ -43,10 +42,10 @@ class _ContainsMapping extends BaseMatcher {
   }
 
   Description describeMismatch(item, Description mismatchDescription,
-                               MatchState matchState, bool verbose) {
+                               Map matchState, bool verbose) {
     if (!item.containsKey(_key)) {
-      return mismatchDescription.addDescriptionOf(item).
-          add(" doesn't contain key ").addDescriptionOf(_key);
+      return mismatchDescription.add(" doesn't contain key ")
+          .addDescriptionOf(_key);
     } else {
       mismatchDescription.add(' contains key ').addDescriptionOf(_key).
           add(' but with value ');

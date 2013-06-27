@@ -33,11 +33,11 @@ List<int> readAllBytesFromFile(RandomAccessFile file) {
 
   int bytesRead = 0;
   while (bytesRead < length) {
-    int read = file.readListSync(bytes, bytesRead, length - bytesRead);
+    int read = file.readIntoSync(bytes, bytesRead, length - bytesRead);
     if (read <= 0) {
       // This could happen if, for example, the file was resized while
       // we're reading. Just shrink the bytes array and move on.
-      bytes = bytes.getRange(0, bytesRead);
+      bytes = bytes.sublist(0, bytesRead);
       break;
     }
     bytesRead += read;

@@ -8,43 +8,40 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:utf';
 import 'package:web_ui/src/file_system.dart';
-import 'path.dart' as internal;
 
 /** File system implementation for console VM (i.e. no browser). */
 class ConsoleFileSystem implements FileSystem {
 
   /** Pending futures for file write requests. */
-  List<Future> _pending = <Future>[];
+  final _pending = <String, Future>{};
 
-  Future flush() {
-    var pending = _pending;
-    _pending = <Future>[];
-    return Future.wait(pending);
-  }
+  Future flush() => Future.wait(_pending.values.toList());
 
-  void writeString(internal.Path path, String text) {
-    var future = new File(path.toString()).open(FileMode.WRITE).then((file) {
-      return file.writeString(text).then((_) => file.close());
-    });
-    _pending.add(future);
+  void writeString(String path, String text) {
+    if(!_pending.containsKey(path)) {
+      _pending[path] = new File(path).open(mode: FileMode.WRITE)
+          .then((file) => file.writeString(text))
+          .then((file) => file.close())
+          .whenComplete(() { _pending.remove(path); });
+    }
   }
 
   // TODO(jmesserly): even better would be to pass the RandomAccessFile directly
   // to html5lib. This will require a further restructuring of FileSystem.
   // Probably it just needs "readHtml" and "readText" methods.
-  Future<List<int>> readTextOrBytes(internal.Path path) {
-    return new File(path.toString()).open().then(
+  Future<List<int>> readTextOrBytes(String path) {
+    return new File(path).open().then(
         (file) => file.length().then((length) {
       // TODO(jmesserly): is this guaranteed to read all of the bytes?
       var buffer = new List<int>(length);
-      return file.readList(buffer, 0, length)
+      return file.readInto(buffer, 0, length)
           .then((_) => file.close())
           .then((_) => buffer);
     }));
   }
 
   // TODO(jmesserly): do we support any encoding other than UTF-8 for Dart?
-  Future<String> readText(internal.Path path) {
+  Future<String> readText(String path) {
     return readTextOrBytes(path).then(decodeUtf8);
   }
 }

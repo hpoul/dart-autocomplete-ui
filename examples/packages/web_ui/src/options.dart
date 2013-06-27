@@ -34,11 +34,37 @@ class CompilerOptions {
   /** Directory where all output will be generated. */
   final String outputDir;
 
+  /** Directory where to look for 'package:' imports. */
+  final String packageRoot;
+
+  /**
+   * Adjust resource URLs in the output HTML to point back to the original
+   * location in the file system. Commonly this is enabled during development,
+   * but disabled for deployment.
+   */
+  final bool rewriteUrls;
+
   /**
    * Whether to print error messages using the json format understood by the
    * Dart editor.
    */
   final bool jsonFormat;
+
+  /** Emulate scoped styles using a CSS polyfill. */
+  final bool processCss;
+
+  /** Emit debugging information for CSS processing. */
+  final bool debugCss;
+
+  // TODO(terry): Delete this option; temporary for a transition period.
+  /** If true, emit mangled CSS otherwise emits component scoped CSS. **/
+  final bool mangleCss;
+
+  /** Use CSS file for CSS Reset. */
+  final String resetCssFile;
+
+  /** Whether to analyze the input for warnings without generating any code. */
+  final bool analysisOnly;
 
   // We could make this faster, if it ever matters.
   factory CompilerOptions() => parse(['']);
@@ -50,15 +76,27 @@ class CompilerOptions {
       useColors = args['colors'],
       baseDir = args['basedir'],
       outputDir = args['out'],
+      packageRoot = args['package-root'],
+      rewriteUrls = args['rewrite-urls'],
       forceMangle = args['unique_output_filenames'],
       jsonFormat = args['json_format'],
       componentsOnly = args['components_only'],
+      processCss = args['css'],
+      debugCss = args['debug_css'],
+      resetCssFile = args['css-reset'],
+      mangleCss = args['css-mangle'],
+      analysisOnly = args['analysis-only'],
       inputFile = args.rest.length > 0 ? args.rest[0] : null;
 
-  static CompilerOptions parse(List<String> arguments) {
+  /**
+   * Returns the compiler options parsed from [arguments]. Set [checkUsage] to
+   * false to suppress checking of correct usage or printing help messages.
+   */
+  // TODO(sigmund): convert all flags to use dashes instead of underscores
+  static CompilerOptions parse(List<String> arguments,
+      {bool checkUsage: true}) {
     var parser = new ArgParser()
-      ..addFlag('verbose', abbr: 'v',
-          defaultsTo: false, negatable: false)
+      ..addFlag('verbose', abbr: 'v')
       ..addFlag('clean', help: 'Remove all generated files',
           defaultsTo: false, negatable: false)
       ..addFlag('warnings_as_errors', abbr: 'e',
@@ -66,10 +104,15 @@ class CompilerOptions {
           defaultsTo: false, negatable: false)
       ..addFlag('colors', help: 'Display errors/warnings in colored text',
           defaultsTo: true)
+      ..addFlag('rewrite-urls',
+          help: 'Adjust every resource url to point to the original location in'
+          ' the filesystem.\nThis on by default during development and can be'
+          ' disabled to make the generated code easier to deploy.',
+          defaultsTo: true)
       ..addFlag('unique_output_filenames', abbr: 'u',
           help: 'Use unique names for all generated files, so they will not '
-                'have the same name as your input files, even if they are in a '
-                'different directory',
+                'have the\nsame name as your input files, even if they are in a'
+                ' different directory',
           defaultsTo: false, negatable: false)
       ..addFlag('json_format',
           help: 'Print error messsages in a json format easy to parse by tools,'
@@ -79,15 +122,26 @@ class CompilerOptions {
           help: 'Generate only the code for component classes, do not generate '
                 'HTML files or the main bootstrap code.',
           defaultsTo: false, negatable: false)
+      ..addFlag('css', help: 'Emulate scoped styles with CSS polyfill',
+          defaultsTo: true)
+      ..addFlag('debug_css', help: 'Debug information for CSS polyfill',
+          defaultsTo: false, negatable: false)
+      ..addOption('css-reset', abbr: 'r', help: 'CSS file used to reset CSS')
+      ..addFlag('css-mangle', help: 'Mangle component\'s CSS', defaultsTo: true,
+          negatable: true)
+      ..addFlag('analysis-only', help: 'Don\'t emit code, just show warnings '
+          'and errors (unset by default)', defaultsTo: false, negatable: false)
       ..addOption('out', abbr: 'o', help: 'Directory where to generate files'
           ' (defaults to the same directory as the source file)')
       ..addOption('basedir', help: 'Base directory where to find all source '
           'files (defaults to the source file\'s directory)')
+      ..addOption('package-root', help: 'Where to find "package:" imports'
+          '(defaults to the "packages/" subdirectory next to the source file)')
       ..addFlag('help', abbr: 'h', help: 'Displays this help message',
           defaultsTo: false, negatable: false);
     try {
       var results = parser.parse(arguments);
-      if (results['help'] || results.rest.length == 0) {
+      if (checkUsage && (results['help'] || results.rest.length == 0)) {
         showUsage(parser);
         return null;
       }

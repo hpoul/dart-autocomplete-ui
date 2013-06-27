@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+part of matcher;
+
 // To decouple the reporting of errors, and allow for extensibility of
 // matchers, we make use of some interfaces.
 
@@ -13,11 +15,8 @@
  * is replaced it may be desirable to replace the [stringDescription]
  * error formatter with another.
  */
-
-part of matcher;
-
 typedef String ErrorFormatter(actual, Matcher matcher, String reason,
-    MatchState matchState, bool verbose);
+    Map matchState, bool verbose);
 
 /**
  * Matchers build up their error messages by appending to
@@ -59,7 +58,7 @@ abstract class Matcher {
    * and may be used to add details about the mismatch that are too
    * costly to determine in [describeMismatch].
    */
-  bool matches(item, MatchState matchState);
+  bool matches(item, Map matchState);
 
   /** This builds a textual description of the matcher. */
   Description describe(Description description);
@@ -67,7 +66,7 @@ abstract class Matcher {
   /**
    * This builds a textual description of a specific mismatch. [item]
    * is the value that was tested by [matches]; [matchState] is
-   * the [MatchState] that was passed to and supplemented by [matches]
+   * the [Map] that was passed to and supplemented by [matches]
    * with additional information about the mismact, and [mismatchDescription]
    * is the [Description] that is being built to decribe the mismatch.
    * A few matchers make use of the [verbose] flag to provide detailed
@@ -75,12 +74,12 @@ abstract class Matcher {
    * diagnosing failures, such as stack traces.
    */
   Description describeMismatch(item, Description mismatchDescription,
-      MatchState matchState, bool verbose);
+      Map matchState, bool verbose);
 }
 
 /**
  * Failed matches are reported using a default IFailureHandler.
- * The default implementation simply throws ExpectExceptions;
+ * The default implementation simply throws [TestFailure]s;
  * this can be replaced by some other implementation of
  * IFailureHandler by calling configureExpectHandler.
  */
@@ -97,6 +96,6 @@ abstract class FailureHandler {
    * an [ErrorFormatter]) and then call [fail] with this message.
    */
   void failMatch(actual, Matcher matcher, String reason,
-                 MatchState matchState, bool verbose);
+                 Map matchState, bool verbose);
 }
 

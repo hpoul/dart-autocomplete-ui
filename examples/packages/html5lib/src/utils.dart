@@ -1,7 +1,7 @@
 /** Misc things that were useful when porting the code from Python. */
 library utils;
 
-import 'package:unittest/unittest.dart';
+import 'dart:collection';
 import 'constants.dart';
 
 typedef bool Predicate();
@@ -19,7 +19,7 @@ class Pair<F, S> {
 int parseIntRadix(String str, [int radix = 10]) {
   int val = 0;
   for (int i = 0; i < str.length; i++) {
-    var digit = str.charCodeAt(i);
+    var digit = str.codeUnitAt(i);
     if (digit >= LOWER_A) {
       digit += 10 - LOWER_A;
     } else if (digit >= UPPER_A) {
@@ -51,22 +51,12 @@ List slice(List list, int start, [int end]) {
   // Ensure the indexes are in bounds.
   if (end < start) end = start;
   if (end > list.length) end = list.length;
-  return list.getRange(start, end - start);
-}
-
-/** Makes a dictionary, where the first key wins. */
-LinkedHashMap makeDict(List<List> items) {
-  var result = new LinkedHashMap();
-  for (var item in items) {
-    expect(item.length, equals(2));
-    result.putIfAbsent(item[0], () => item[1]);
-  }
-  return result;
+  return list.sublist(start, end);
 }
 
 bool allWhitespace(String str) {
   for (int i = 0; i < str.length; i++) {
-    if (!isWhitespaceCC(str.charCodeAt(i))) return false;
+    if (!isWhitespaceCC(str.codeUnitAt(i))) return false;
   }
   return true;
 }
@@ -75,8 +65,8 @@ String padWithZeros(String str, int size) {
   if (str.length == size) return str;
   var result = new StringBuffer();
   size -= str.length;
-  for (int i = 0; i < size; i++) result.add('0');
-  result.add(str);
+  for (int i = 0; i < size; i++) result.write('0');
+  result.write(str);
   return result.toString();
 }
 
@@ -94,7 +84,7 @@ String formatStr(String format, Map data) {
     var search = '%($key)';
     int last = 0, match;
     while ((match = format.indexOf(search, last)) >= 0) {
-      result.add(format.substring(last, match));
+      result.write(format.substring(last, match));
       match += search.length;
 
       int digits = match;
@@ -109,15 +99,15 @@ String formatStr(String format, Map data) {
 
       switch (format[match]) {
         case 's':
-          result.add(value);
+          result.write(value);
           break;
         case 'd':
           var number = value.toString();
-          result.add(padWithZeros(number, numberSize));
+          result.write(padWithZeros(number, numberSize));
           break;
         case 'x':
           var number = value.toRadixString(16);
-          result.add(padWithZeros(number, numberSize));
+          result.write(padWithZeros(number, numberSize));
           break;
         default: throw "not implemented: formatStr does not support format "
             "character ${format[match]}";
@@ -126,30 +116,9 @@ String formatStr(String format, Map data) {
       last = match + 1;
     }
 
-    result.add(format.substring(last, format.length));
+    result.write(format.substring(last, format.length));
     format = result.toString();
   });
 
   return format;
-}
-
-_ReverseIterable reversed(List list) => new _ReverseIterable(list);
-
-class _ReverseIterable<E> extends Iterable<E> implements Iterator<E> {
-  int _index;
-  List<E> _list;
-  _ReverseIterable(this._list);
-  Iterator<E> get iterator {
-    if (_index == null) {
-      _index = _list.length;
-      return this;
-    } else {
-      return new _ReverseIterable(_list).iterator;
-    }
-  }
-
-  E get current =>
-      (_index == _list.length || _index < 0) ? null : _list[_index];
-
-  bool moveNext() => --_index >= 0;
 }

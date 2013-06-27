@@ -2,13 +2,12 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+part of matcher;
+
 /**
  * Returns a matcher which matches if the match argument is greater
  * than the given [value].
  */
-
-part of matcher;
-
 Matcher greaterThan(value) =>
   new _OrderingComparison(value, false, false, true, 'a value greater than');
 
@@ -101,7 +100,7 @@ class _OrderingComparison extends BaseMatcher {
     [valueInDescription = true]) :
       this._valueInDescription = valueInDescription;
 
-  bool matches(item, MatchState matchState) {
+  bool matches(item, Map matchState) {
     if (item == _value) {
       return _equalValue;
     } else if (item < _value) {
@@ -119,6 +118,12 @@ class _OrderingComparison extends BaseMatcher {
       return description.add(_comparisonDescription);
     }
   }
+
+  Description describeMismatch(item, Description mismatchDescription,
+                               Map matchState, bool verbose) {
+    mismatchDescription.add('is not ');
+    return describe(mismatchDescription);
+  }
 }
 
 /**
@@ -133,7 +138,7 @@ class _IsCloseTo extends BaseMatcher {
 
   const _IsCloseTo(this._value, this._delta);
 
-  bool matches(item, MatchState matchState) {
+  bool matches(item, Map matchState) {
     if (!_isNumeric(item)) {
       return false;
     }
@@ -149,17 +154,14 @@ class _IsCloseTo extends BaseMatcher {
         addDescriptionOf(_value);
 
   Description describeMismatch(item, Description mismatchDescription,
-                               MatchState matchState, bool verbose) {
+                               Map matchState, bool verbose) {
     if (item is !num) {
-      return mismatchDescription.
-          addDescriptionOf(item).
-          add(' not numeric');
+      return mismatchDescription.add(' not numeric');
     } else {
       var diff = item - _value;
       if (diff < 0) diff = -diff;
       return mismatchDescription.
-          addDescriptionOf(item).
-          add(' differed by ').
+          add(' differs by ').
           addDescriptionOf(diff);
     }
   }
@@ -196,7 +198,7 @@ class _InRange extends BaseMatcher {
   const _InRange(this._low, this._high,
     this._lowMatchValue, this._highMatchValue);
 
-  bool matches(value, MatchState matchState) {
+  bool matches(value, Map matchState) {
     if (value is !num) {
       return false;
     }
@@ -218,7 +220,7 @@ class _InRange extends BaseMatcher {
         "$_high (${_highMatchValue ? 'inclusive' : 'exclusive'})");
 
   Description describeMismatch(item, Description mismatchDescription,
-                               MatchState matchState, bool verbose) {
+                               Map matchState, bool verbose) {
     if (item is !num) {
       return mismatchDescription.
           addDescriptionOf(item).

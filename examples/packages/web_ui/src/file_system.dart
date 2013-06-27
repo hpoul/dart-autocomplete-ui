@@ -6,7 +6,6 @@
 library file_system;
 
 import 'dart:async';
-import 'file_system/path.dart';
 
 /**
  * Abstraction around file system access to work in a variety of different
@@ -23,13 +22,14 @@ abstract class FileSystem {
    * Reads bytes if possible, but falls back to text if running in a browser.
    * Return type is either [Future<List<int>>] or [Future<String>].
    */
-  Future readTextOrBytes(Path filename);
+  Future readTextOrBytes(String path);
 
   /* Like [readTextOrBytes], but decodes bytes as UTF-8. Used for Dart code. */
-  Future<String> readText(Path filename);
+  Future<String> readText(String path);
 
   /**
-   * Writes [text] to [outfile]. Call flush to insure that changes are visible.
+   * Writes [text] to file at [path]. Call flush to insure that changes are
+   * visible.
    */
-  void writeString(Path outfile, String text);
+  void writeString(String path, String text);
 }

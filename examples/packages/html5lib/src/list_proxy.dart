@@ -4,10 +4,11 @@
 /** A [List] proxy that you can subclass. */
 library list_proxy;
 
-// TODO(jmesserly): this should extend the base list.
-// See http://code.google.com/p/dart/issues/detail?id=949
-/** A [List<T>] proxy that you can subclass. */
-class ListProxy<E> extends Collection<E> implements List<E> {
+import 'dart:collection';
+import 'package:meta/meta.dart';
+
+// TOOD(jmesserly): this needs to be removed, but fixing NodeList is tricky.
+class ListProxy<E> extends IterableBase<E> implements List<E> {
 
   /** The inner [List<T>] with the actual storage. */
   final List<E> _list;
@@ -29,9 +30,7 @@ class ListProxy<E> extends Collection<E> implements List<E> {
     return true;
   }
 
-  // TODO(jmesserly): This should be on List, to match removeAt.
-  // See http://code.google.com/p/dart/issues/detail?id=5375
-  void insertAt(int index, E item) => insertRange(index, 1, item);
+  void insert(int index, E item) => _list.insert(index, item);
 
   // Override from Iterable to fix performance
   // Length and last become O(1) instead of O(N)
@@ -49,7 +48,8 @@ class ListProxy<E> extends Collection<E> implements List<E> {
   operator []=(int index, E value) { _list[index] = value; }
   set length(int value) { _list.length = value; }
   void add(E value) { _list.add(value); }
-  void addLast(E value) { _list.addLast(value); }
+
+  void addLast(E value) { add(value); }
   void addAll(Iterable<E> collection) { _list.addAll(collection); }
   void sort([int compare(E a, E b)]) { _list.sort(compare); }
 
@@ -57,19 +57,33 @@ class ListProxy<E> extends Collection<E> implements List<E> {
   int lastIndexOf(E element, [int start]) => _list.lastIndexOf(element, start);
   void clear() { _list.clear(); }
 
-  E removeAt(int index) {
-    // TODO(jmesserly): removeAt not implemented on the VM?
-    var result = _list[index];
-    _list.removeRange(index, 1);
-    return result;
-  }
+  E removeAt(int index) => _list.removeAt(index);
   E removeLast() => _list.removeLast();
-  List<E> getRange(int start, int length) => _list.getRange(start, length);
-  void setRange(int start, int length, List<E> from, [int startFrom]) {
+
+  void removeWhere(bool test(E element)) => _list.removeWhere(test);
+  void retainWhere(bool test(E element)) => _list.retainWhere(test);
+
+  List<E> sublist(int start, [int end]) => _list.sublist(start, end);
+
+  List<E> getRange(int start, int end) => _list.getRange(start, end);
+
+  void setRange(int start, int length, List<E> from, [int startFrom = 0]) {
     _list.setRange(start, length, from, startFrom);
   }
   void removeRange(int start, int length) { _list.removeRange(start, length); }
-  void insertRange(int start, int length, [E initialValue]) {
-    _list.insertRange(start, length, initialValue);
+  void insertAll(int index, Iterable<E> iterable) {
+    _list.insertAll(index, iterable);
   }
+
+  Iterable<E> get reversed => _list.reversed;
+
+  Map<int, E> asMap() => _list.asMap();
+
+  void replaceRange(int start, int end, Iterable<E> newContents) =>
+      _list.replaceRange(start, end, newContents);
+
+  void setAll(int index, Iterable<E> iterable) => _list.setAll(index, iterable);
+
+  void fillRange(int start, int end, [E fillValue])
+      => _list.fillRange(start, end, fillValue);
 }

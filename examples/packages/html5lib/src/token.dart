@@ -1,49 +1,49 @@
 /** This library contains token types used by the html5 tokenizer. */
 library token;
 
-import 'package:html5lib/dom_parsing.dart' show SourceSpan;
+import 'dart:collection';
+import 'package:source_maps/span.dart' show FileSpan;
 
 /** An html5 token. */
 abstract class Token {
-  SourceSpan span;
+  FileSpan span;
 
   int get kind;
-
-  // TODO(jmesserly): it'd be nice to remove this and always use the ".data"
-  // on the particular token type, since they store different kinds of data.
-  get data;
-  set data(value);
 }
 
 abstract class TagToken extends Token {
   String name;
 
-  // TODO(jmesserly): this starts as a List, but becomes a Map of attributes.
-  // Should probably separate these into different named fields.
-  var data;
-
   bool selfClosing;
 
-  TagToken(this.name, data, this.selfClosing)
-      : data = data == null ? [] : data;
+  TagToken(this.name, this.selfClosing);
 }
 
 class StartTagToken extends TagToken {
+  /**
+   * The tag's attributes. A map from the name to the value, where the name
+   * can be a [String] or [AttributeName].
+   */
+  LinkedHashMap<dynamic, String> data;
+
+  /** The attribute spans if requested. Otherwise null. */
+  List<TagAttribute> attributeSpans;
+
   bool selfClosingAcknowledged;
 
   /** The namespace. This is filled in later during tree building. */
   String namespace;
 
-  StartTagToken(String name, {data, bool selfClosing: false,
+  StartTagToken(String name, {this.data, bool selfClosing: false,
       this.selfClosingAcknowledged: false, this.namespace})
-      : super(name, data, selfClosing);
+      : super(name, selfClosing);
 
   int get kind => TokenKind.startTag;
 }
 
 class EndTagToken extends TagToken {
-  EndTagToken(String name, {data, bool selfClosing: false})
-      : super(name, data, selfClosing);
+  EndTagToken(String name, {bool selfClosing: false})
+      : super(name, selfClosing);
 
   int get kind => TokenKind.endTag;
 }
@@ -89,10 +89,25 @@ class DoctypeToken extends Token {
   DoctypeToken({this.publicId, this.systemId, this.correct: false});
 
   int get kind => TokenKind.doctype;
+}
 
-  // TODO(jmesserly): remove. These are only here because of Token.data
-  String get data { throw new UnsupportedError("data"); }
-  set data(value) { throw new UnsupportedError("data"); }
+/**
+ * These are used by the tokenizer to build up the attribute map.
+ * They're also used by [StartTagToken.attributeSpans] if attribute spans are
+ * requested.
+ */
+class TagAttribute {
+  String name;
+  String value;
+
+  // The spans of the attribute. This is not used unless we are computing an
+  // attribute span on demand.
+  int start;
+  int end;
+  int startValue;
+  int endValue;
+
+  TagAttribute(this.name, [this.value = '']);
 }
 
 

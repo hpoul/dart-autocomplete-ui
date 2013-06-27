@@ -6,17 +6,14 @@ part of input_autocomplete;
  * autocomplete component for input fields.
  */
 class InputAutocompleteComponent extends WebComponent {
+  @observable
   bool inputHasFocus = false;
-  List<AutocompleteChoice> _matches;
   AutocompleteChoiceRenderer _renderer;
   AutocompleteDatasource _datasource;
   int _focusedItemIndex = -1;
+  @observable
+  List<AutocompleteChoice> filteredChoices;
   
-  InputAutocompleteComponent();
-  
-  InputAutocompleteComponent.forElement(Element element) : super.forElement(element) {
-    //super.forElement(element);
-  }
   
   void set renderer (AutocompleteChoiceRenderer renderer) {
     _renderer = renderer;
@@ -37,11 +34,11 @@ class InputAutocompleteComponent extends WebComponent {
   AutocompleteDatasource get datasource => _datasource;
   
   bool isFocused(AutocompleteChoice choice) {
-    if (_focusedItemIndex < 0 || _focusedItemIndex >= _matches.length) {
+    if (_focusedItemIndex < 0 || _focusedItemIndex >= filteredChoices.length) {
       return false;
     }
     //print("isFocused? ${_matches[_focusedItemIndex] == choice}");
-    return _matches[_focusedItemIndex] == choice;
+    return filteredChoices[_focusedItemIndex] == choice;
   }
   
   void set choices(List choices) {
@@ -49,11 +46,8 @@ class InputAutocompleteComponent extends WebComponent {
     print('Choices have been set.');
   }
   
-  List<AutocompleteChoice> get filteredChoices {
-    if (_matches == null) {
-      _doSearch();
-    }
-    return _matches;
+  List get choices {
+    return datasource == null ? null : (datasource as SimpleStringDatasource).givenChoices;
   }
   
   
@@ -62,11 +56,10 @@ class InputAutocompleteComponent extends WebComponent {
     if (newfocus < 0) {
       newfocus = 0;
     }
-    if (newfocus >= _matches.length) {
-      newfocus = _matches.length - 1;
+    if (newfocus >= filteredChoices.length) {
+      newfocus = filteredChoices.length - 1;
     }
     _focusedItemIndex = newfocus;
-    watchers.dispatch();
   }
   
   void keyDown(KeyboardEvent event) {
@@ -86,7 +79,7 @@ class InputAutocompleteComponent extends WebComponent {
   }
   
   void selectCurrentFocus() {
-    selectChoice(_matches[_focusedItemIndex]);
+    selectChoice(filteredChoices[_focusedItemIndex]);
   }
   
   void selectChoice(AutocompleteChoice choice) {
@@ -96,12 +89,11 @@ class InputAutocompleteComponent extends WebComponent {
   }
   
   void mouseOverChoice(AutocompleteChoice choice, Event event) {
-    var idx = _matches.indexOf(choice);
+    var idx = filteredChoices.indexOf(choice);
     if (idx == _focusedItemIndex || idx < 0) {
       return;
     }
     _focusedItemIndex = idx;
-    watchers.dispatch();
   }
   
   void mouseDownChoice(AutocompleteChoice choice, Event event) {
@@ -120,26 +112,24 @@ class InputAutocompleteComponent extends WebComponent {
     // TODO would it be nicer to do this in HTML?
     this._input.classes.add("loading");
     this.datasource.query(this._input.value.toLowerCase()).then((matches) {
-      _matches = matches.toList();
+      filteredChoices = matches.toList();
       this._input.classes.remove("loading");
-      watchers.dispatch();
       _positionCompleteBox();
     });
   }
   
   void inputFocus(Event event) {
-    inputHasFocus = true;
-    watchers.dispatch();
     _positionCompleteBox();
+    inputHasFocus = true;
   }
   
   void inputBlur(Event event) {
     inputHasFocus = false;
-    watchers.dispatch();
   }
   
   void inserted() {
     //_positionCompleteBox();
+    _positionCompleteBox();
   }
   
   renderChoice(AutocompleteChoice choice) {
@@ -157,22 +147,25 @@ class InputAutocompleteComponent extends WebComponent {
   }
   
   void _positionCompleteBox() {
-    var content = this.query('ul.autocomplete-content');
+    var content = this.query('.autocomplete-content-wrapper-marker');
     if (content == null) {
+      print("unable to find autocomplete-content");
       return;
     }
+    print ("positioning autocomplete-content");
     var input = this.query('input');
     // TODO: I'm pretty sure this won't work in all (most?) cases..
     // but it's good enough for now..
     var rect = input.getBoundingClientRect();
     var contentrect = content.getBoundingClientRect();
     var padding = contentrect.width - content.clientWidth;
-    input.computedStyle.then((CssStyleDeclaration style) {
+    CssStyleDeclaration style = input.getComputedStyle();
+//    input.computedStyle.then((CssStyleDeclaration style) {
       content.style.top = '${rect.top + window.pageYOffset + rect.height}px';
       num marginLeft = _parseStyleInt(style.marginLeft);
       num marginRight = _parseStyleInt(style.marginRight);
       content.style.left = '${rect.left + window.pageXOffset - padding + marginLeft}px';
       content.style.width = '${rect.width - padding}px';
-    });
+//    });
   }
 }

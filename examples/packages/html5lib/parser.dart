@@ -7,7 +7,7 @@
  *     main() {
  *       var document = parse(
  *           '<body>Hello world! <a href="www.html5rocks.com">HTML5 rocks!');
- *       print(document.outerHTML);
+ *       print(document.outerHtml);
  *     }
  *
  * The resulting document you get back has a DOM-like API for easy tree
@@ -15,7 +15,10 @@
  */
 library parser;
 
+import 'dart:collection';
 import 'dart:math';
+import 'package:source_maps/span.dart' show Span, FileSpan;
+
 import 'src/treebuilder.dart';
 import 'src/constants.dart';
 import 'src/encoding_parser.dart';
@@ -33,11 +36,15 @@ import 'dom_parsing.dart';
  * [encoding], which must be a string. If specified, that encoding will be used,
  * regardless of any BOM or later declaration (such as in a meta element).
  *
- * Set [generateSpans] if you want to generate [SourceSpan]s, otherwise the
- * [Node.span] property will be `null`.
+ * Set [generateSpans] if you want to generate [Span]s, otherwise the
+ * [Node.sourceSpan] property will be `null`. When using [generateSpans] you can
+ * additionally pass [sourceUrl] to indicate where the [input] was extracted
+ * from.
  */
-Document parse(doc, {String encoding, bool generateSpans: false}) {
-  var p = new HtmlParser(doc, encoding: encoding, generateSpans: generateSpans);
+Document parse(input, {String encoding, bool generateSpans: false,
+    String sourceUrl}) {
+  var p = new HtmlParser(input, encoding: encoding,
+      generateSpans: generateSpans, sourceUrl: sourceUrl);
   return p.parse();
 }
 
@@ -51,12 +58,15 @@ Document parse(doc, {String encoding, bool generateSpans: false}) {
  * [encoding], which must be a string. If specified, that encoding will be used,
  * regardless of any BOM or later declaration (such as in a meta element).
  *
- * Set [generateSpans] if you want to generate [SourceSpan]s, otherwise the
- * [Node.span] property will be `null`.
+ * Set [generateSpans] if you want to generate [Span]s, otherwise the
+ * [Node.sourceSpan] property will be `null`. When using [generateSpans] you can
+ * additionally pass [sourceUrl] to indicate where the [input] was extracted
+ * from.
  */
-DocumentFragment parseFragment(doc, {String container: "div",
-    String encoding, bool generateSpans: false}) {
-  var p = new HtmlParser(doc, encoding: encoding, generateSpans: generateSpans);
+DocumentFragment parseFragment(input, {String container: "div",
+    String encoding, bool generateSpans: false, String sourceUrl}) {
+  var p = new HtmlParser(input, encoding: encoding,
+      generateSpans: generateSpans, sourceUrl: sourceUrl);
   return p.parseFragment(container);
 }
 
@@ -69,7 +79,7 @@ class HtmlParser {
   /** Raise an exception on the first error encountered. */
   final bool strict;
 
-  /** True to generate [SourceSpan]s for the [Node.span] property. */
+  /** True to generate [Span]s for the [Node.sourceSpan] property. */
   final bool generateSpans;
 
   final HtmlTokenizer tokenizer;
@@ -143,12 +153,15 @@ class HtmlParser {
    */
   HtmlParser(input, {String encoding, bool parseMeta: true,
       bool lowercaseElementName: true, bool lowercaseAttrName: true,
-      this.strict: false, bool generateSpans: false, TreeBuilder tree})
+      this.strict: false, bool generateSpans: false, String sourceUrl,
+      TreeBuilder tree})
       : generateSpans = generateSpans,
         tree = tree != null ? tree : new TreeBuilder(true),
         tokenizer = (input is HtmlTokenizer ? input :
-          new HtmlTokenizer(input, encoding, parseMeta, lowercaseElementName,
-            lowercaseAttrName, generateSpans)) {
+          new HtmlTokenizer(input, encoding: encoding, parseMeta: parseMeta,
+            lowercaseElementName: lowercaseElementName,
+            lowercaseAttrName: lowercaseAttrName,
+            generateSpans: generateSpans, sourceUrl: sourceUrl)) {
 
     tokenizer.parser = this;
     _initialPhase = new InitialPhase(this);
@@ -303,7 +316,7 @@ class HtmlParser {
 
   void mainLoop() {
     while (tokenizer.moveNext()) {
-      var token = normalizeToken(tokenizer.current);
+      var token = tokenizer.current;
       var newToken = token;
       int type;
       while (newToken != null) {
@@ -367,12 +380,12 @@ class HtmlParser {
    * The last span available. Used for EOF errors if we don't have something
    * better.
    */
-  SourceSpan get _lastSpan {
+  Span get _lastSpan {
     var pos = tokenizer.stream.position;
-    return new SourceSpan(tokenizer.stream.fileInfo, pos, pos);
+    return new FileSpan(tokenizer.stream.fileInfo, pos, pos);
   }
 
-  void parseError(SourceSpan span, String errorcode,
+  void parseError(Span span, String errorcode,
       [Map datavars = const {}]) {
 
     if (!generateSpans && span == null) {
@@ -384,14 +397,6 @@ class HtmlParser {
     if (strict) throw err;
   }
 
-  /** HTML5 specific normalizations to the token stream. */
-  Token normalizeToken(Token token) {
-    if (token is StartTagToken) {
-      token.data = makeDict(token.data);
-    }
-    return token;
-  }
-
   void adjustMathMLAttributes(StartTagToken token) {
     var orig = token.data.remove("definitionurl");
     if (orig != null) {
@@ -399,7 +404,7 @@ class HtmlParser {
     }
   }
 
-  void adjustSVGAttributes(Token token) {
+  void adjustSVGAttributes(StartTagToken token) {
     final replacements = const {
       "attributename":"attributeName",
       "attributetype":"attributeType",
@@ -472,7 +477,7 @@ class HtmlParser {
     }
   }
 
-  void adjustForeignAttributes(Token token) {
+  void adjustForeignAttributes(StartTagToken token) {
     // TODO(jmesserly): I don't like mixing non-string objects with strings in
     // the Node.attributes Map. Is there another solution?
     final replacements = const {
@@ -503,7 +508,7 @@ class HtmlParser {
   void resetInsertionMode() {
     // The name of this method is mostly historical. (It's also used in the
     // specification.)
-    for (Node node in reversed(tree.openElements)) {
+    for (Node node in tree.openElements.reversed) {
       var nodeName = node.tagName;
       bool last = node == tree.openElements[0];
       if (last) {
@@ -988,7 +993,7 @@ class InHeadPhase extends Phase {
   }
 
   void anythingElse() {
-    endTagHead(new EndTagToken("head", data: {}));
+    endTagHead(new EndTagToken("head"));
   }
 }
 
@@ -1052,7 +1057,7 @@ class AfterHeadPhase extends Phase {
       {"name": token.name});
     tree.openElements.add(tree.headPointer);
     parser._inHeadPhase.processStartTag(token);
-    for (Node node in reversed(tree.openElements)) {
+    for (Node node in tree.openElements.reversed) {
       if (node.tagName == "head") {
         tree.openElements.remove(node);
         break;
@@ -1220,7 +1225,7 @@ class InBodyPhase extends Phase {
     var element = tree.openElements.last;
 
     var matchingElements = [];
-    for (Node node in reversed(tree.activeFormattingElements)) {
+    for (Node node in tree.activeFormattingElements.reversed) {
       if (node == Marker) {
         break;
       } else if (isMatchingFormattingElement(node, element)) {
@@ -1237,7 +1242,7 @@ class InBodyPhase extends Phase {
 
   // the real deal
   bool processEOF() {
-    for (Node node in reversed(tree.openElements)) {
+    for (Node node in tree.openElements.reversed) {
       switch (node.tagName) {
         case "dd": case "dt": case "li": case "p": case "tbody": case "td":
         case "tfoot": case "th": case "thead": case "tr": case "body":
@@ -1251,7 +1256,7 @@ class InBodyPhase extends Phase {
     return false;
   }
 
-  void processSpaceCharactersDropNewline(Token token) {
+  void processSpaceCharactersDropNewline(StringToken token) {
     // Sometimes (start of <pre>, <listing>, and <textarea> blocks) we
     // want to drop leading newlines
     var data = token.data;
@@ -1328,14 +1333,14 @@ class InBodyPhase extends Phase {
 
   void startTagCloseP(StartTagToken token) {
     if (tree.elementInScope("p", variant: "button")) {
-      endTagP(new EndTagToken("p", data: {}));
+      endTagP(new EndTagToken("p"));
     }
     tree.insertElement(token);
   }
 
   void startTagPreListing(StartTagToken token) {
     if (tree.elementInScope("p", variant: "button")) {
-      endTagP(new EndTagToken("p", data: {}));
+      endTagP(new EndTagToken("p"));
     }
     tree.insertElement(token);
     parser.framesetOK = false;
@@ -1347,7 +1352,7 @@ class InBodyPhase extends Phase {
       parser.parseError(token.span, "unexpected-start-tag", {"name": "form"});
     } else {
       if (tree.elementInScope("p", variant: "button")) {
-        endTagP(new EndTagToken("p", data: {}));
+        endTagP(new EndTagToken("p"));
       }
       tree.insertElement(token);
       tree.formPointer = tree.openElements.last;
@@ -1361,9 +1366,9 @@ class InBodyPhase extends Phase {
                                 "dt": const ["dt", "dd"],
                                 "dd": const ["dt", "dd"]};
     var stopNames = stopNamesMap[token.name];
-    for (Node node in reversed(tree.openElements)) {
+    for (Node node in tree.openElements.reversed) {
       if (stopNames.contains(node.tagName)) {
-        parser.phase.processEndTag(new EndTagToken(node.tagName, data: {}));
+        parser.phase.processEndTag(new EndTagToken(node.tagName));
         break;
       }
       if (specialElements.contains(node.nameTuple) &&
@@ -1373,7 +1378,7 @@ class InBodyPhase extends Phase {
     }
 
     if (tree.elementInScope("p", variant: "button")) {
-      parser.phase.processEndTag(new EndTagToken("p", data: {}));
+      parser.phase.processEndTag(new EndTagToken("p"));
     }
 
     tree.insertElement(token);
@@ -1381,7 +1386,7 @@ class InBodyPhase extends Phase {
 
   void startTagPlaintext(StartTagToken token) {
     if (tree.elementInScope("p", variant: "button")) {
-      endTagP(new EndTagToken("p", data: {}));
+      endTagP(new EndTagToken("p"));
     }
     tree.insertElement(token);
     parser.tokenizer.state = parser.tokenizer.plaintextState;
@@ -1389,7 +1394,7 @@ class InBodyPhase extends Phase {
 
   void startTagHeading(StartTagToken token) {
     if (tree.elementInScope("p", variant: "button")) {
-      endTagP(new EndTagToken("p", data: {}));
+      endTagP(new EndTagToken("p"));
     }
     if (headingElements.contains(tree.openElements.last.tagName)) {
       parser.parseError(token.span, "unexpected-start-tag",
@@ -1404,7 +1409,7 @@ class InBodyPhase extends Phase {
     if (afeAElement != null) {
       parser.parseError(token.span, "unexpected-start-tag-implies-end-tag",
           {"startName": "a", "endName": "a"});
-      endTagFormatting(new EndTagToken("a", data: {}));
+      endTagFormatting(new EndTagToken("a"));
       tree.openElements.remove(afeAElement);
       tree.activeFormattingElements.remove(afeAElement);
     }
@@ -1422,7 +1427,7 @@ class InBodyPhase extends Phase {
     if (tree.elementInScope("nobr")) {
       parser.parseError(token.span, "unexpected-start-tag-implies-end-tag",
         {"startName": "nobr", "endName": "nobr"});
-      processEndTag(new EndTagToken("nobr", data: {}));
+      processEndTag(new EndTagToken("nobr"));
       // XXX Need tests that trigger the following
       tree.reconstructActiveFormattingElements();
     }
@@ -1433,7 +1438,7 @@ class InBodyPhase extends Phase {
     if (tree.elementInScope("button")) {
       parser.parseError(token.span, "unexpected-start-tag-implies-end-tag",
         {"startName": "button", "endName": "button"});
-      processEndTag(new EndTagToken("button", data: {}));
+      processEndTag(new EndTagToken("button"));
       return token;
     } else {
       tree.reconstructActiveFormattingElements();
@@ -1451,7 +1456,7 @@ class InBodyPhase extends Phase {
 
   void startTagXmp(StartTagToken token) {
     if (tree.elementInScope("p", variant: "button")) {
-      endTagP(new EndTagToken("p", data: {}));
+      endTagP(new EndTagToken("p"));
     }
     tree.reconstructActiveFormattingElements();
     parser.framesetOK = false;
@@ -1461,7 +1466,7 @@ class InBodyPhase extends Phase {
   void startTagTable(StartTagToken token) {
     if (parser.compatMode != "quirks") {
       if (tree.elementInScope("p", variant: "button")) {
-        processEndTag(new EndTagToken("p", data: {}));
+        processEndTag(new EndTagToken("p"));
       }
     }
     tree.insertElement(token);
@@ -1494,7 +1499,7 @@ class InBodyPhase extends Phase {
 
   void startTagHr(StartTagToken token) {
     if (tree.elementInScope("p", variant: "button")) {
-      endTagP(new EndTagToken("p", data: {}));
+      endTagP(new EndTagToken("p"));
     }
     tree.insertElement(token);
     tree.openElements.removeLast();
@@ -1535,9 +1540,9 @@ class InBodyPhase extends Phase {
     attributes["name"] = "isindex";
     processStartTag(new StartTagToken("input",
                     data: attributes, selfClosing: token.selfClosing));
-    processEndTag(new EndTagToken("label", data: {}));
+    processEndTag(new EndTagToken("label"));
     processStartTag(new StartTagToken("hr", data: {}));
-    processEndTag(new EndTagToken("form", data: {}));
+    processEndTag(new EndTagToken("form"));
   }
 
   void startTagTextarea(StartTagToken token) {
@@ -1559,7 +1564,7 @@ class InBodyPhase extends Phase {
 
   void startTagOpt(StartTagToken token) {
     if (tree.openElements.last.tagName == "option") {
-      parser.phase.processEndTag(new EndTagToken("option", data: {}));
+      parser.phase.processEndTag(new EndTagToken("option"));
     }
     tree.reconstructActiveFormattingElements();
     parser.tree.insertElement(token);
@@ -1642,7 +1647,7 @@ class InBodyPhase extends Phase {
     if (!tree.elementInScope("p", variant: "button")) {
       startTagCloseP(new StartTagToken("p", data: {}));
       parser.parseError(token.span, "unexpected-end-tag", {"name": "p"});
-      endTagP(new EndTagToken("p", data: {}));
+      endTagP(new EndTagToken("p"));
     } else {
       tree.generateImpliedEndTags("p");
       if (tree.openElements.last.tagName != "p") {
@@ -1676,7 +1681,7 @@ class InBodyPhase extends Phase {
   Token endTagHtml(EndTagToken token) {
     //We repeat the test for the body end tag token being ignored here
     if (tree.elementInScope("body")) {
-      endTagBody(new EndTagToken("body", data: {}));
+      endTagBody(new EndTagToken("body"));
       return token;
     }
   }
@@ -1886,13 +1891,13 @@ class InBodyPhase extends Phase {
 
       // Step 11
       tree.activeFormattingElements.remove(formattingElement);
-      tree.activeFormattingElements.insertRange(
-          min(bookmark, tree.activeFormattingElements.length), 1, clone);
+      tree.activeFormattingElements.insert(
+          min(bookmark, tree.activeFormattingElements.length), clone);
 
       // Step 12
       tree.openElements.remove(formattingElement);
-      tree.openElements.insertRange(
-          tree.openElements.indexOf(furthestBlock) + 1, 1, clone);
+      tree.openElements.insert(
+          tree.openElements.indexOf(furthestBlock) + 1, clone);
     }
   }
 
@@ -1918,7 +1923,7 @@ class InBodyPhase extends Phase {
   }
 
   void endTagOther(EndTagToken token) {
-    for (Node node in reversed(tree.openElements)) {
+    for (Node node in tree.openElements.reversed) {
       if (node.tagName == token.name) {
         tree.generateImpliedEndTags(token.name);
         if (tree.openElements.last.tagName != token.name) {
@@ -2085,7 +2090,7 @@ class InTablePhase extends Phase {
   Token startTagTable(StartTagToken token) {
     parser.parseError(token.span, "unexpected-start-tag-implies-end-tag",
         {"startName": "table", "endName": "table"});
-    parser.phase.processEndTag(new EndTagToken("table", data: {}));
+    parser.phase.processEndTag(new EndTagToken("table"));
     if (!parser.innerHTMLMode) {
       return token;
     }
@@ -2169,11 +2174,12 @@ class InTableTextPhase extends Phase {
   void flushCharacters() {
     if (characterTokens.length == 0) return;
 
-    var data = characterTokens.mappedBy((t) => t.data).join();
+    // TODO(sigmund,jmesserly): remove '' (dartbug.com/8480)
+    var data = characterTokens.map((t) => t.data).join('');
     var span = null;
 
     if (parser.generateSpans) {
-      span = new SourceSpan.union(
+      span = new FileSpan.union(
           characterTokens[0].span,
           characterTokens.last.span);
     }
@@ -2267,7 +2273,7 @@ class InCaptionPhase extends Phase {
     parser.parseError(token.span, "undefined-error");
     //XXX Have to duplicate logic here to find out if the tag is ignored
     var ignoreEndTag = ignoreEndTagCaption();
-    parser.phase.processEndTag(new EndTagToken("caption", data: {}));
+    parser.phase.processEndTag(new EndTagToken("caption"));
     if (!ignoreEndTag) {
       return token;
     }
@@ -2303,7 +2309,7 @@ class InCaptionPhase extends Phase {
   Token endTagTable(EndTagToken token) {
     parser.parseError(token.span, "undefined-error");
     var ignoreEndTag = ignoreEndTagCaption();
-    parser.phase.processEndTag(new EndTagToken("caption", data: {}));
+    parser.phase.processEndTag(new EndTagToken("caption"));
     if (!ignoreEndTag) {
       return token;
     }
@@ -2350,14 +2356,14 @@ class InColumnGroupPhase extends Phase {
       assert(parser.innerHTMLMode);
       return false;
     } else {
-      endTagColgroup(new EndTagToken("colgroup", data: {}));
+      endTagColgroup(new EndTagToken("colgroup"));
       return true;
     }
   }
 
   Token processCharacters(CharactersToken token) {
     var ignoreEndTag = ignoreEndTagColgroup();
-    endTagColgroup(new EndTagToken("colgroup", data: {}));
+    endTagColgroup(new EndTagToken("colgroup"));
     return ignoreEndTag ? null : token;
   }
 
@@ -2368,7 +2374,7 @@ class InColumnGroupPhase extends Phase {
 
   Token startTagOther(StartTagToken token) {
     var ignoreEndTag = ignoreEndTagColgroup();
-    endTagColgroup(new EndTagToken("colgroup", data: {}));
+    endTagColgroup(new EndTagToken("colgroup"));
     return ignoreEndTag ? null : token;
   }
 
@@ -2389,7 +2395,7 @@ class InColumnGroupPhase extends Phase {
 
   Token endTagOther(EndTagToken token) {
     var ignoreEndTag = ignoreEndTagColgroup();
-    endTagColgroup(new EndTagToken("colgroup", data: {}));
+    endTagColgroup(new EndTagToken("colgroup"));
     return ignoreEndTag ? null : token;
   }
 }
@@ -2486,8 +2492,7 @@ class InTableBodyPhase extends Phase {
         tree.elementInScope("thead", variant: "table") ||
         tree.elementInScope("tfoot", variant: "table")) {
       clearStackToTableBodyContext();
-      endTagTableRowGroup(
-          new EndTagToken(tree.openElements.last.tagName, data: {}));
+      endTagTableRowGroup(new EndTagToken(tree.openElements.last.tagName));
       return token;
     } else {
       // innerHTML case
@@ -2576,7 +2581,7 @@ class InRowPhase extends Phase {
 
   Token startTagTableOther(StartTagToken token) {
     bool ignoreEndTag = ignoreEndTagTr();
-    endTagTr(new EndTagToken("tr", data: {}));
+    endTagTr(new EndTagToken("tr"));
     // XXX how are we sure it's always ignored in the innerHTML case?
     return ignoreEndTag ? null : token;
   }
@@ -2599,7 +2604,7 @@ class InRowPhase extends Phase {
 
   Token endTagTable(EndTagToken token) {
     var ignoreEndTag = ignoreEndTagTr();
-    endTagTr(new EndTagToken("tr", data: {}));
+    endTagTr(new EndTagToken("tr"));
     // Reprocess the current tag if the tr end tag was not ignored
     // XXX how are we sure it's always ignored in the innerHTML case?
     return ignoreEndTag ? null : token;
@@ -2607,7 +2612,7 @@ class InRowPhase extends Phase {
 
   Token endTagTableRowGroup(EndTagToken token) {
     if (tree.elementInScope(token.name, variant: "table")) {
-      endTagTr(new EndTagToken("tr", data: {}));
+      endTagTr(new EndTagToken("tr"));
       return token;
     } else {
       parser.parseError(token.span, "undefined-error");
@@ -2654,9 +2659,9 @@ class InCellPhase extends Phase {
   // helper
   void closeCell() {
     if (tree.elementInScope("td", variant: "table")) {
-      endTagTableCell(new EndTagToken("td", data: {}));
+      endTagTableCell(new EndTagToken("td"));
     } else if (tree.elementInScope("th", variant: "table")) {
-      endTagTableCell(new EndTagToken("th", data: {}));
+      endTagTableCell(new EndTagToken("th"));
     }
   }
 
@@ -2785,13 +2790,13 @@ class InSelectPhase extends Phase {
 
   void startTagSelect(StartTagToken token) {
     parser.parseError(token.span, "unexpected-select-in-select");
-    endTagSelect(new EndTagToken("select", data: {}));
+    endTagSelect(new EndTagToken("select"));
   }
 
   Token startTagInput(StartTagToken token) {
     parser.parseError(token.span, "unexpected-input-in-select");
     if (tree.elementInScope("select", variant: "select")) {
-      endTagSelect(new EndTagToken("select", data: {}));
+      endTagSelect(new EndTagToken("select"));
       return token;
     } else {
       assert(parser.innerHTMLMode);
@@ -2884,7 +2889,7 @@ class InSelectInTablePhase extends Phase {
     parser.parseError(token.span,
         "unexpected-table-element-start-tag-in-select-in-table",
         {"name": token.name});
-    endTagOther(new EndTagToken("select", data: {}));
+    endTagOther(new EndTagToken("select"));
     return token;
   }
 
@@ -2897,7 +2902,7 @@ class InSelectInTablePhase extends Phase {
         "unexpected-table-element-end-tag-in-select-in-table",
         {"name": token.name});
     if (tree.elementInScope(token.name, variant: "table")) {
-      endTagOther(new EndTagToken("select", data: {}));
+      endTagOther(new EndTagToken("select"));
       return token;
     }
   }
@@ -3314,22 +3319,27 @@ class AfterAfterFramesetPhase extends Phase {
 /** Error in parsed document. */
 class ParseError implements Exception {
   final String errorCode;
-  final SourceSpan span;
+  final Span span;
   final Map data;
 
   ParseError(this.errorCode, this.span, this.data);
 
-  int get line => span.line;
+  int get line => span.start.line;
 
-  int get column => span.column;
+  int get column => span.start.column;
 
   /**
-   * Gets the human readable error message for this error. Does not include
-   * any source span information, but you can use [span.getLocationMessage]
-   * if you want to provide a filename prefix, or [toString] if you want
-   * "ParseError" to be the prefix.
+   * Gets the human readable error message for this error. Use
+   * [span.getLocationMessage] or [toString] to get a message including span
+   * information. If there is a file associated with the span, both
+   * [span.getLocationMessage] and [toString] are equivalent. Otherwise,
+   * [span.getLocationMessage] will not show any source url information, but
+   * [toString] will include 'ParserError:' as a prefix.
    */
   String get message => formatStr(errorMessages[errorCode], data);
 
-  String toString() => span.getLocationMessage('ParseError', message);
+  String toString() {
+    var res = span.getLocationMessage(message);
+    return span.sourceUrl == null ? 'ParserError$res' : res;
+  }
 }

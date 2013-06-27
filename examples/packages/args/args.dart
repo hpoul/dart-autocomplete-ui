@@ -6,6 +6,19 @@
  * This library lets you define parsers for parsing raw command-line arguments
  * into a set of options and values using [GNU][] and [POSIX][] style options.
  *
+ * ## Installing ##
+ *
+ * Use [pub][] to install this package. Add the following to your `pubspec.yaml`
+ * file.
+ *
+ *     dependencies:
+ *       args: any
+ *
+ * Then run `pub install`.
+ *
+ * For more information, see the
+ * [args package on pub.dartlang.org](http://pub.dartlang.org/packages/args).
+ *
  * ## Defining options ##
  *
  * To use this library, you create an [ArgParser] object which will contain
@@ -156,16 +169,45 @@
  * option passed to the command. You can add a command like so:
  *
  *     var parser = new ArgParser();
- *     var command = parser.addCommand("commit");
+ *     var command = parser.addCommand('commit');
+ *
+ * It returns another [ArgParser] which you can then use to define options
+ * specific to that command. If you already have an [ArgParser] for the
+ * command's options, you can pass it to [addCommand]:
+ *
+ *     var parser = new ArgParser();
+ *     var command = new ArgParser();
+ *     parser.addCommand('commit', command);
+ *
+ * The [ArgParser] for a command can then define whatever options or flags:
+ *
  *     command.addFlag('all', abbr: 'a');
  *
- * It returns another [ArgParser] which you can use to define options and
- * subcommands on that command. When an argument list is parsed, you can then
- * determine which command was entered and what options were provided for it.
+ * You can add multiple commands to the same parser so that a user can select
+ * one from a range of possible commands. When an argument list is parsed,
+ * you can then determine which command was entered and what options were
+ * provided for it.
  *
  *     var results = parser.parse(['commit', '-a']);
  *     print(results.command.name); // "commit"
  *     print(results.command['a']); // true
+ *
+ * Options for a command must appear after the command in the argument list.
+ * For example, given the above parser, "git -a commit" is *not* valid. The
+ * parser will try to find the right-most command that accepts an option. For
+ * example:
+ *
+ *     var parser = new ArgParser();
+ *     parser.addFlag('all', abbr: 'a');
+ *     var command = new ArgParser().addCommand('commit');
+ *     parser.addFlag('all', abbr: 'a');
+ *     var results = parser.parse(['commit', '-a']);
+ *     print(results.command['a']); // true
+ *
+ * Here, both the top-level parser and the "commit" command can accept a "-a"
+ * (which is probably a bad command line interface, admittedly). In that case,
+ * when "-a" appears after "commit", it will be applied to that command. If it
+ * appears to the left of "commit", it will be given to the top-level parser.
  *
  * ## Displaying usage ##
  *
@@ -209,6 +251,7 @@
  *
  * [posix]: http://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap12.html#tag_12_02
  * [gnu]: http://www.gnu.org/prep/standards/standards.html#Command_002dLine-Interfaces
+ * [pub]: http://pub.dartlang.org
  */
 library args;
 
@@ -234,19 +277,21 @@ class ArgParser {
   ArgParser();
 
   /**
-   * Defines a command. A command is a named argument which may in turn
-   * define its own options and subcommands. Returns an [ArgParser] that can
-   * be used to define the command's options.
+   * Defines a command.
+   *
+   * A command is a named argument which may in turn define its own options and
+   * subcommands using the given parser. If [parser] is omitted, implicitly
+   * creates a new one. Returns the parser for the command.
    */
-  ArgParser addCommand(String name) {
+  ArgParser addCommand(String name, [ArgParser parser]) {
     // Make sure the name isn't in use.
     if (commands.containsKey(name)) {
       throw new ArgumentError('Duplicate command "$name".');
     }
 
-    var command = new ArgParser();
-    commands[name] = command;
-    return command;
+    if (parser == null) parser = new ArgParser();
+    commands[name] = parser;
+    return parser;
   }
 
   /**
@@ -285,11 +330,6 @@ class ArgParser {
 
     // Make sure the abbreviation isn't too long or in use.
     if (abbr != null) {
-      if (abbr.length > 1) {
-        throw new ArgumentError(
-            'Abbreviation "$abbr" is longer than one character.');
-      }
-
       var existing = findByAbbreviation(abbr);
       if (existing != null) {
         throw new ArgumentError(
@@ -331,7 +371,7 @@ class ArgParser {
    * that abbreviation.
    */
   Option findByAbbreviation(String abbr) {
-    return options.values.firstMatching((option) => option.abbreviation == abbr,
+    return options.values.firstWhere((option) => option.abbreviation == abbr,
         orElse: () => null);
   }
 }
@@ -342,7 +382,7 @@ class ArgParser {
 class Option {
   final String name;
   final String abbreviation;
-  final List allowed;
+  final List<String> allowed;
   final defaultValue;
   final Function callback;
   final String help;
@@ -353,7 +393,33 @@ class Option {
 
   Option(this.name, this.abbreviation, this.help, this.allowed,
       this.allowedHelp, this.defaultValue, this.callback, {this.isFlag,
-      this.negatable, this.allowMultiple: false});
+      this.negatable, this.allowMultiple: false}) {
+
+    if (name.isEmpty) {
+      throw new ArgumentError('Name cannot be empty.');
+    } else if (name.startsWith('-')) {
+      throw new ArgumentError('Name $name cannot start with "-".');
+    }
+
+    // Ensure name does not contain any invalid characters.
+    if (_invalidChars.hasMatch(name)) {
+      throw new ArgumentError('Name "$name" contains invalid characters.');
+    }
+
+    if (abbreviation != null) {
+      if (abbreviation.length != 1) {
+        throw new ArgumentError('Abbreviation must be null or have length 1.');
+      } else if(abbreviation == '-') {
+        throw new ArgumentError('Abbreviation cannot be "-".');
+      }
+
+      if (_invalidChars.hasMatch(abbreviation)) {
+        throw new ArgumentError('Abbreviation is an invalid character.');
+      }
+    }
+  }
+
+  static final _invalidChars = new RegExp(r'''[ \t\r\n"'\\/]''');
 }
 
 /**
@@ -396,7 +462,7 @@ class ArgResults {
     return _options[name];
   }
 
-  /** Get the names of the options as a [Collection]. */
-  Collection<String> get options => _options.keys.toList();
+  /** Get the names of the options as an [Iterable]. */
+  Iterable<String> get options => _options.keys;
 }
 

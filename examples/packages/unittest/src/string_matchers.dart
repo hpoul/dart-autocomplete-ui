@@ -2,13 +2,12 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+part of matcher;
+
 /**
  * Returns a matcher which matches if the match argument is a string and
  * is equal to [value] when compared case-insensitively.
  */
-
-part of matcher;
-
 Matcher equalsIgnoringCase(String value) => new _IsEqualIgnoringCase(value);
 
 class _IsEqualIgnoringCase extends _StringMatcher {
@@ -19,7 +18,7 @@ class _IsEqualIgnoringCase extends _StringMatcher {
     _matchValue = _value.toLowerCase();
   }
 
-  bool matches(item, MatchState mismatchState) =>
+  bool matches(item, Map matchState) =>
       item is String && _matchValue == item.toLowerCase();
 
   Description describe(Description description) =>
@@ -45,17 +44,18 @@ class _IsEqualIgnoringWhitespace extends _StringMatcher {
     _matchValue = collapseWhitespace(_value);
   }
 
-  bool matches(item, MatchState matchState) =>
+  bool matches(item, Map matchState) =>
       item is String && _matchValue == collapseWhitespace(item);
 
   Description describe(Description description) =>
     description.addDescriptionOf(_matchValue).add(' ignoring whitespace');
 
   Description describeMismatch(item, Description mismatchDescription,
-                               MatchState matchState, bool verbose) {
+                               Map matchState, bool verbose) {
     if (item is String) {
-      return mismatchDescription.add('was ').
-          addDescriptionOf(collapseWhitespace(item));
+      return mismatchDescription.add('is ').
+          addDescriptionOf(collapseWhitespace(item)).
+          add(' with whitespace compressed');
     } else {
       return super.describeMismatch(item, mismatchDescription,
           matchState, verbose);
@@ -75,11 +75,11 @@ String collapseWhitespace(_string) {
     var character = _string[i];
     if (isWhitespace(character)) {
       if (!skipSpace) {
-        result.add(' ');
+        result.write(' ');
         skipSpace = true;
       }
     } else {
-      result.add(character);
+      result.write(character);
       skipSpace = false;
     }
   }
@@ -97,7 +97,7 @@ class _StringStartsWith extends _StringMatcher {
 
   const _StringStartsWith(this._prefix);
 
-  bool matches(item, MatchState matchState) =>
+  bool matches(item, Map matchState) =>
       item is String && item.startsWith(_prefix);
 
   Description describe(Description description) =>
@@ -116,7 +116,7 @@ class _StringEndsWith extends _StringMatcher {
 
   const _StringEndsWith(this._suffix);
 
-  bool matches(item, MatchState matchState) =>
+  bool matches(item, Map matchState) =>
       item is String && item.endsWith(_suffix);
 
   Description describe(Description description) =>
@@ -140,7 +140,7 @@ class _StringContainsInOrder extends _StringMatcher {
 
   const _StringContainsInOrder(this._substrings);
 
-  bool matches(item, MatchState matchState) {
+  bool matches(item, Map matchState) {
     if (!(item is String)) {
       return false;
     }
@@ -179,8 +179,8 @@ class _MatchesRegExp extends _StringMatcher {
     }
   }
 
-  bool matches(String item, MatchState matchState) =>
-        _regexp.hasMatch(item);
+  bool matches(item, Map matchState) =>
+    item is String ? _regexp.hasMatch(item) : false;
 
   Description describe(Description description) =>
       description.add("match '${_regexp.pattern}'");
@@ -191,7 +191,7 @@ class _MatchesRegExp extends _StringMatcher {
 abstract class _StringMatcher extends BaseMatcher {
   const _StringMatcher();
   Description describeMismatch(item, Description mismatchDescription,
-                               MatchState matchState, bool verbose) {
+                               Map matchState, bool verbose) {
     if (!(item is String)) {
       return mismatchDescription.
           addDescriptionOf(item).

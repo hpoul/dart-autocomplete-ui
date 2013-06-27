@@ -467,7 +467,7 @@ const int RETURN = 13;
 
 bool isWhitespace(String char) {
   if (char == null) return false;
-  return isWhitespaceCC(char.charCodeAt(0));
+  return isWhitespaceCC(char.codeUnitAt(0));
 }
 
 bool isWhitespaceCC(int charCode) {
@@ -504,19 +504,19 @@ bool isLetterOrDigit(String char) => isLetter(char) || isDigit(char);
 // Note: this is intentially ASCII only
 bool isLetter(String char) {
   if (char == null) return false;
-  int cc = char.charCodeAt(0);
+  int cc = char.codeUnitAt(0);
   return cc >= LOWER_A && cc <= LOWER_Z || cc >= UPPER_A && cc <= UPPER_Z;
 }
 
 bool isDigit(String char) {
   if (char == null) return false;
-  int cc = char.charCodeAt(0);
+  int cc = char.codeUnitAt(0);
   return cc >= ZERO && cc < ZERO + 10;
 }
 
 bool isHexDigit(String char) {
   if (char == null) return false;
-  switch (char.charCodeAt(0)) {
+  switch (char.codeUnitAt(0)) {
     case 48: case 49: case 50: case 51: case 52: // '0' - '4'
     case 53: case 54: case 55: case 56: case 57: // '5' - '9'
     case 65: case 66: case 67: case 68: case 69: case 70: // 'A' - 'F'
@@ -532,7 +532,7 @@ String asciiUpper2Lower(String text) {
   if (text == null) return null;
   var result = new List<int>(text.length);
   for (int i = 0; i < text.length; i++) {
-    var c = text.charCodeAt(i);
+    var c = text.codeUnitAt(i);
     if (c >= UPPER_A && c <= UPPER_Z) {
       c += LOWER_A - UPPER_A;
     }

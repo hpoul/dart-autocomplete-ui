@@ -1,14 +1,14 @@
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
+
+part of matcher;
+
 /**
  * The default implementation of IDescription. This should rarely need
  * substitution, although conceivably it is a place where other languages
  * could be supported.
  */
-
-part of matcher;
-
 class StringDescription implements Description {
   var _out;
 
@@ -17,11 +17,13 @@ class StringDescription implements Description {
     _out = init;
   }
 
+  int get length => _out.length;
+
   /** Get the description as a string. */
   String toString() => _out;
 
-  /** Append some plain [text] to the description.  */
-  Description add(String text) {
+  /** Append [text] to the description.  */
+  Description add(text) {
     _out = '${_out}${text}';
     return this;
   }
@@ -41,17 +43,8 @@ class StringDescription implements Description {
   Description addDescriptionOf(value) {
     if (value is Matcher) {
       value.describe(this);
-    } else if (value is String) {
-      _addEscapedString(value);
     } else {
-      String description = (value == null) ? "null" : value.toString();
-      if (description.startsWith('<') && description.endsWith('>')) {
-          add(description);
-      } else {
-        add('<');
-        add(description);
-        add('>');
-      }
+      add(prettyPrint(value, maxLineLength: 80, maxItems: 25));
     }
     return this;
   }
@@ -79,23 +72,7 @@ class StringDescription implements Description {
   /** Escape the control characters in [string] so that they are visible. */
   _addEscapedString(String string) {
     add("'");
-    for (var i = 0; i < string.length; i++) {
-      add(_escape(string[i]));
-    }
+    add(escapeString(string));
     add("'");
-  }
-
-  /** Return the escaped form of a character [ch]. */
-  _escape(ch) {
-    if (ch == "'")
-      return "\'";
-    else if (ch == '\n')
-      return '\\n';
-    else if (ch == '\r')
-      return '\\r';
-    else if (ch == '\t')
-      return '\\t';
-    else
-      return ch;
   }
 }

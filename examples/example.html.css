@@ -1,0 +1,48 @@
+/* Auto-generated from components style tags. */
+/* DO NOT EDIT. */
+
+/* ==================================================== 
+   Component tapo-input-autocomplete stylesheet 
+   ==================================================== */
+.autocomplete-wrapper input {
+  border: 1px solid #000;
+  padding: 3px;
+}
+.autocomplete-wrapper input.loading {
+  background-image: url("data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH+GkNyZWF0ZWQgd2l0aCBhamF4bG9hZC5pbmZvACH5BAAKAAAAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQACgABACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkEAAoAAgAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkEAAoAAwAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkEAAoABAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQACgAFACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQACgAGACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAAKAAcALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==");
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+.autocomplete-content-hidden {
+  display: none;
+}
+.autocomplete-content-hidden {
+  display: none;
+}
+.autocomplete-content-wrapper {
+  position: absolute;
+  border: 1px solid #000;
+  padding: 0px;
+  margin: 0px;
+  background-color: #fff;
+  overflow-x: scroll;
+}
+.autocomplete-content-wrapper ul {
+  padding: 0px;
+  margin: 0px;
+}
+.autocomplete-content li {
+  list-style-type: none;
+  padding: 2px;
+  margin: 0px;
+  margin-top: 2px;
+  background-color: #fafafa;
+}
+.autocomplete-content li.focused {
+  background-color: #ddd;
+}
+.autocomplete-content div {
+  padding: 0px;
+  margin: 0px;
+}
+

@@ -1,6 +1,7 @@
 /** Decodes bytes using the correct name. See [decodeBytes]. */
 library char_encodings;
 
+import 'dart:collection';
 import 'dart:utf';
 
 // TODO(jmesserly): this function is conspicuously absent from dart:utf.
@@ -31,7 +32,7 @@ Iterable<int> decodeBytes(String encoding, List<int> bytes,
   final replace = replacementCodepoint;
   switch (encoding) {
     case 'ascii':
-      bytes = bytes.getRange(offset, length);
+      bytes = bytes.sublist(offset, offset + length);
       // TODO(jmesserly): this was taken from runtime/bin/string_stream.dart
       for (int byte in bytes) {
         if (byte > 127) {
@@ -84,11 +85,11 @@ Iterable<int> decodeBytes(String encoding, List<int> bytes,
 List<int> toCodepoints(String input) {
   var newCodes = <int>[];
   for (int i = 0; i < input.length; i++) {
-    var c = input.charCodeAt(i);
+    var c = input.codeUnitAt(i);
     if (0xD800 <= c && c <= 0xDBFF) {
       int next = i + 1;
       if (next < input.length) {
-        var d = input.charCodeAt(next);
+        var d = input.codeUnitAt(next);
         if (0xDC00 <= d && d <= 0xDFFF) {
           c = 0x10000 + ((c - 0xD800) << 10) + (d - 0xDC00);
           i = next;
@@ -120,7 +121,7 @@ IterableWindows1252Decoder decodeWindows1252AsIterable(List<int> bytes,
  * provides an iterator on demand and the iterator will only translate bytes
  * as requested by the user of the iterator. (Note: results are not cached.)
  */
-class IterableWindows1252Decoder extends Iterable<int> {
+class IterableWindows1252Decoder extends IterableBase<int> {
   final List<int> bytes;
   final int offset;
   final int length;

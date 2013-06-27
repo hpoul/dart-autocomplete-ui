@@ -46,6 +46,24 @@
  */
 library watcher;
 
+import 'dart:async';
+import 'dart:collection' hide LinkedList, LinkedListEntry;
+import 'observe.dart';
+import 'src/linked_list.dart';
+
+/**
+ * True to use the [observe] library instead of watchers.
+ *
+ * Observers require the [observable] annotation on objects and for collection
+ * types to be observable, such as [ObservableList]. But in return they offer
+ * better performance and more precise change tracking. [dispatch] is not
+ * required with observers, and changes to observable objects are always
+ * detected.
+ *
+ * Currently this flag is experimental, but it may be the default in the future.
+ */
+bool useObservers = false;
+
 /**
  * Watch for changes in [target].  The [callback] function will be called when
  * [dispatch] is called and the value represented by [target] had changed.  The
@@ -74,17 +92,29 @@ library watcher;
  *   This is syntactic sugar for using the getter portion of a [Handle].
  *         watch(handle, ...)  // equivalent to `watch(handle._getter, ...)`
  */
-WatcherDisposer watch(var target, ValueWatcher callback, [String debugName]) {
+ChangeUnobserver watch(target, ChangeObserver callback, [String debugName]) {
+  if (useObservers) return observe(target, callback);
+
   if (callback == null) return () {}; // no use in passing null as a callback.
-  if (_watchers == null) _watchers = [];
+  if (_watchers == null) _watchers = new LinkedList<_Watcher>();
   Function exp;
-  bool isList = false;
+  _WatcherType watcherType = _WatcherType.OTHER;
   if (target is Handle) {
     exp = (target as Handle)._getter;
   } else if (target is Function) {
     exp = target;
     try {
-      isList = (target() is List);
+      var val = target();
+      if (val is List) {
+        watcherType = _WatcherType.LIST;
+      } else if (val is Iterable) {
+        watcherType = _WatcherType.LIST;
+        exp = () => target().toList();
+      } else if ((val is LinkedHashMap) || (val is SplayTreeMap)) {
+        watcherType = _WatcherType.ORDERED_MAP;
+      } else if (val is Map) {
+        watcherType = _WatcherType.HASH_MAP;
+      }
     } catch (e, trace) { // in case target() throws some error
       // TODO(sigmund): use logging instead of print when logger is in the SDK
       // and available via pub (see dartbug.com/4363)
@@ -93,13 +123,39 @@ WatcherDisposer watch(var target, ValueWatcher callback, [String debugName]) {
     }
   } else if (target is List) {
     exp = () => target;
-    isList = true;
+    watcherType = _WatcherType.LIST;
+  } else if (target is Iterable) {
+    exp = () => target.toList();
+    watcherType = _WatcherType.LIST;
+  } else if ((target is LinkedHashMap) || (target is SplayTreeMap)) {
+    exp = () => target;
+    watcherType = _WatcherType.ORDERED_MAP;
+  } else if (target is Map) {
+    exp = () => target;
+    watcherType = _WatcherType.HASH_MAP;
   }
-  var watcher = isList
-      ? new _ListWatcher(exp, callback, debugName)
-      : new _Watcher(exp, callback, debugName);
-  _watchers.add(watcher);
-  return () => _unregister(watcher);
+
+  var watcher = _createWatcher(watcherType, exp, callback, debugName);
+  var node = _watchers.add(watcher);
+  return node.remove;
+}
+
+/**
+ * Creates a watcher for [exp] of [type] with [callback] function and
+ * [debugName].
+ */
+_Watcher _createWatcher(_WatcherType type, Function exp,
+                        ChangeObserver callback, String debugName) {
+  switch(type) {
+    case _WatcherType.LIST:
+      return new _ListWatcher(exp, callback, debugName);
+    case _WatcherType.ORDERED_MAP:
+      return new _OrderDependantMapWatcher(exp, callback, debugName);
+    case _WatcherType.HASH_MAP:
+      return new _HashMapWatcher(exp, callback, debugName);
+    default:
+      return new _Watcher(exp, callback, debugName);
+  }
 }
 
 /**
@@ -107,37 +163,25 @@ WatcherDisposer watch(var target, ValueWatcher callback, [String debugName]) {
  * passed to [callback] will have `null` as the old value, and the current
  * evaluation of [exp] as the new value.
  */
-WatcherDisposer watchAndInvoke(exp, callback, [debugName]) {
+ChangeUnobserver watchAndInvoke(exp, callback, [debugName]) {
   var res = watch(exp, callback, debugName);
   // TODO(jmesserly): this should be "is Getter" once dart2js bug is fixed.
-  if (exp is Function) {
-    callback(new WatchEvent(null, exp()));
-  } else {
-    callback(new WatchEvent(null, exp));
+
+  var value = exp;
+  if (value is Function) {
+    value = value();
   }
+  if (value is Iterable && value is! List) {
+    // TODO(jmesserly): we do this for compat with watch and observe, see the
+    // respective methods.
+    value = value.toList();
+  }
+  callback(new ChangeNotification(null, value));
   return res;
 }
 
-/** Callback fired when an expression changes. */
-typedef void ValueWatcher(WatchEvent e);
-
-/** A function that unregisters a watcher. */
-typedef void WatcherDisposer();
-
-/** Event passed to [ValueMatcher] showing what changed. */
-class WatchEvent {
-
-  /** Previous value seen on the watched expression. */
-  final oldValue;
-
-  /** New value seen on the watched expression. */
-  final newValue;
-
-  WatchEvent(this.oldValue, this.newValue);
-}
-
 /** Internal set of active watchers. */
-List<_Watcher> _watchers;
+LinkedList<_Watcher> _watchers;
 
 /**
  * An internal representation of a watcher. Contains the expression it watches,
@@ -152,7 +196,7 @@ class _Watcher {
   final Getter _getter;
 
   /** Callback to invoke when the value changes. */
-  final ValueWatcher _callback;
+  final ChangeObserver _callback;
 
   /** Last value observed on the matched expression. */
   var _lastValue;
@@ -165,12 +209,11 @@ class _Watcher {
 
   /** Detect if any changes occurred and if so invoke [_callback]. */
   bool compareAndNotify() {
-    var oldValue = _lastValue;
     var currentValue = _safeRead();
     if (_compare(currentValue)) {
       var oldValue = _lastValue;
       _update(currentValue);
-      _callback(new WatchEvent(oldValue, currentValue));
+      _callback(new ChangeNotification(oldValue, currentValue));
       return true;
     }
     return false;
@@ -193,13 +236,6 @@ class _Watcher {
   }
 }
 
-
-/** Removes a watcher. */
-void _unregister(_Watcher watcher) {
-  var index = _watchers.indexOf(watcher);
-  if (index != -1) _watchers.removeRange(index, 1);
-}
-
 /** Bound for the [dispatch] algorithm. */
 final int _maxIter = 10;
 
@@ -211,14 +247,17 @@ final int _maxIter = 10;
  */
 void dispatch() {
   if (_watchers == null) return;
-  bool dirty = false;
+  bool dirty;
   int total = 0;
   do {
     dirty = false;
     for (var watcher in _watchers) {
-      if (watcher.compareAndNotify()) dirty = true;
+      // Get the next node just in case this node gets remove by the watcher
+      if (watcher.compareAndNotify()) {
+        dirty = true;
+      }
     }
-  } while (dirty && total++ < _maxIter);
+  } while (dirty && ++total < _maxIter);
   if (total == _maxIter) {
     print('Possible loop in watchers propagation, stopped dispatch.');
   }
@@ -276,27 +315,100 @@ class Handle<T> {
   }
 }
 
-/** 
+/**
  * A watcher for list objects. It stores as the last value a shallow copy of the
  * list as it was when we last detected any changes.
  */
 class _ListWatcher<T> extends _Watcher {
 
-  _ListWatcher(getter, ValueWatcher callback, String debugName)
+  _ListWatcher(getter, ChangeObserver callback, String debugName)
       : super(getter, callback, debugName) {
     _update(_safeRead());
   }
 
   bool _compare(List<T> currentValue) {
-    if (_lastValue.length != currentValue.length) return true;
-
-    for (int i = 0 ; i < _lastValue.length; i++) {
-      if (_lastValue[i] != currentValue[i]) return true;
-    }
-    return false;
+    return _iterablesNotEqual(_lastValue, currentValue);
   }
 
   void _update(currentValue) {
     _lastValue = new List<T>.from(currentValue);
   }
+}
+
+/**
+ * A watcher for hash map objects. It stores as the last value a shallow copy
+ * of the map as it was when we last detected any changes. Order for the map
+ * does not matter for equality.
+ */
+class _HashMapWatcher<K, V> extends _Watcher {
+
+  _HashMapWatcher(getter, ChangeObserver callback, String debugName)
+      : super(getter, callback, debugName) {
+    _update(_safeRead());
+  }
+
+  bool _compare(Map<K, V> currentValue) {
+    Iterable<K> keys = _lastValue.keys;
+    if (keys.length != currentValue.keys.length) return true;
+
+    Iterator<K> keyIterator = keys.iterator;
+    while (keyIterator.moveNext()) {
+      K key = keyIterator.current;
+      if (!currentValue.containsKey(key)) return true;
+      if (_lastValue[key] != currentValue[key]) return true;
+    }
+    return false;
+  }
+
+  void _update(currentValue) {
+    _lastValue = new Map<K, V>.from(currentValue);
+  }
+}
+
+/**
+ * A watcher for maps where key order matters. It stores as the last value a
+ * shallow copy of the map as it was when we last detected any changes.
+ */
+class _OrderDependantMapWatcher<K, V> extends _Watcher {
+
+  _OrderDependantMapWatcher(getter, ChangeObserver callback, String debugName)
+      : super(getter, callback, debugName) {
+    _update(_safeRead());
+  }
+
+  bool _compare(Map<K, V> currentValue) {
+    return _iterablesNotEqual(currentValue.keys, _lastValue.keys) ||
+        _iterablesNotEqual(currentValue.values, _lastValue.values);
+  }
+
+  void _update(currentValue) {
+    _lastValue = new LinkedHashMap.from(currentValue);
+  }
+}
+
+/**
+ * Helper function to determine whether two iterables are unequal.
+ */
+bool _iterablesNotEqual(Iterable first, Iterable second) {
+  Iterator x = first.iterator;
+  Iterator y = second.iterator;
+  while (x.moveNext()) {
+    if (!y.moveNext()) return true; // x has more elements than y
+    if (x.current != y.current) return true;
+  }
+  return y.moveNext(); // y has more elements than x
+}
+
+/**
+ * Enum used to differentiate watcher type.
+ */
+class _WatcherType {
+  final _value;
+  const _WatcherType._internal(this._value);
+  toString() => 'Enum.$_value';
+
+  static const LIST = const _WatcherType._internal('LIST');
+  static const HASH_MAP = const _WatcherType._internal('HASH_MAP');
+  static const ORDERED_MAP = const _WatcherType._internal('ORDERED_MAP');
+  static const OTHER = const _WatcherType._internal('OTHER');
 }

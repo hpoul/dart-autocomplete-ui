@@ -5,6 +5,25 @@
 /**
  * A simple mocking/spy library.
  *
+ * ## Installing ##
+ *
+ * Use [pub][] to install this package. Add the following to your `pubspec.yaml`
+ * file.
+ *
+ *     dependencies:
+ *       unittest: any
+ *
+ * Then run `pub install`.
+ *
+ * Import this into your Dart code with:
+ *
+ *     import 'package:unittest/mock.dart';
+ *
+ * For more information, see the [unittest package on pub.dartlang.org]
+ * (http://pub.dartlang.org/packages/unittest).
+ *
+ * ## Using ##
+ *
  * To create a mock objects for some class T, create a new class using:
  *
  *     class MockT extends Mock implements T {};
@@ -23,6 +42,9 @@
  *
  * [thenCall] and [alwaysCall] allow you to proxy mocked methods, chaining
  * to some other implementation. This provides a way to implement 'spies'.
+ *
+ * For getters and setters, use "get foo" and "set foo"-style arguments
+ * to [callsTo].
  *
  * You can disable logging for a particular [Behavior] easily:
  *
@@ -84,9 +106,27 @@
  *       }
  *     }
  *
+ * However, there is an even easier way, by calling [Mock.spy], e.g.:
+ *
+ *      var foo = new Foo();
+ *      var spy = new Mock.spy(foo);
+ *      print(spy.bar(1, 2, 3));
+ *
+ * Spys created with Mock.spy do not have user-defined behavior;
+ * they are simply proxies,  and thus will throw an exception if
+ * you call [when]. They capture all calls in the log, so you can
+ * do assertions on their history, such as:
+ *
+ *       spy.getLogs(callsTo('bar')).verify(happenedOnce);
+ *
+ * [pub]: http://pub.dartlang.org
  */
 
 library mock;
+
+import 'dart:mirrors';
+import 'dart:collection' show LinkedHashMap;
+
 import 'matcher.dart';
 
 /**
@@ -96,7 +136,7 @@ import 'matcher.dart';
  * that was used to select the logs that were verified.
  */
 String _mockingErrorFormatter(actual, Matcher matcher, String signature,
-                              MatchState matchState, bool verbose) {
+                              Map matchState, bool verbose) {
   var description = new StringDescription();
   description.add('Expected ${signature} ').addDescriptionOf(matcher).
       add('\n     but: ');
@@ -117,7 +157,7 @@ class _MockFailureHandler implements FailureHandler {
     proxy.fail(reason);
   }
   void failMatch(actual, Matcher matcher, String reason,
-                 MatchState matchState, bool verbose) {
+                 Map matchState, bool verbose) {
     proxy.fail(_mockingErrorFormatter(actual, matcher, reason,
         matchState, verbose));
   }
@@ -248,7 +288,7 @@ class CallMatcher {
    * if it matches this [CallMatcher.
    */
   bool matches(String method, List arguments) {
-    var matchState = new MatchState();
+    var matchState = {};
     if (!nameFilter.matches(method, matchState)) {
       return false;
     }
@@ -269,6 +309,10 @@ class CallMatcher {
  * Returns a [CallMatcher] for the specified signature. [method] can be
  * null to match anything, or a literal [String], a predicate [Function],
  * or a [Matcher]. The various arguments can be scalar values or [Matcher]s.
+ * To match getters and setters, use "get " and "set " prefixes on the names.
+ * For example, for a property "foo", you could use "get foo" and "set foo"
+ * as literal string arguments to callsTo to match the getter and setter
+ * of "foo".
  */
 CallMatcher callsTo([method,
                      arg0 = _noArg,
@@ -365,7 +409,7 @@ class Behavior {
  */
 class LogEntry {
   /** The time of the event. */
-  Date time;
+  DateTime time;
 
   /** The mock object name, if any. */
   final String mockName;
@@ -384,12 +428,12 @@ class LogEntry {
 
   LogEntry(this.mockName, this.methodName,
       this.args, this.action, [this.value]) {
-    time = new Date.now();
+    time = new DateTime.now();
   }
 
   String _pad2(int val) => (val >= 10 ? '$val' : '0$val');
 
-  String toString([Date baseTime]) {
+  String toString([DateTime baseTime]) {
     Description d = new StringDescription();
     if (baseTime == null) {
       // Show absolute time.
@@ -497,7 +541,7 @@ class LogEntryList {
     Function entryFilter = _makePredicate(logFilter);
     String filterName = _qualifiedName(mockNameFilter, logFilter.toString());
     LogEntryList rtn = new LogEntryList(filterName);
-    MatchState matchState = new MatchState();
+    var matchState = {};
     for (var i = 0; i < logs.length; i++) {
       LogEntry entry = logs[i];
       if (mockNameFilter.matches(entry.mockName, matchState) &&
@@ -506,7 +550,8 @@ class LogEntryList {
             actionMatcher.matches(entry, matchState)) {
           rtn.add(entry);
           if (destructive) {
-            logs.removeRange(i--, 1);
+            int startIndex = i--;
+            logs.removeRange(startIndex, startIndex + 1);
           }
         }
       }
@@ -565,7 +610,7 @@ class LogEntryList {
    * then each entry is prefixed with the offset from that time in
    * milliseconds; otherwise the time of day is used.
    */
-  String toString([Date baseTime]) {
+  String toString([DateTime baseTime]) {
     String s = '';
     for (var e in logs) {
       s = '$s${e.toString(baseTime)}\n';
@@ -614,7 +659,7 @@ class LogEntryList {
     int pos = findLogEntry(logFilter, 0, defaultPosition);
     if (inPlace) {
       if (pos < logs.length) {
-        logs.removeRange(pos, logs.length - pos);
+        logs.removeRange(pos, logs.length);
       }
       filter = description;
       return this;
@@ -663,8 +708,8 @@ class LogEntryList {
    * the entries that happened up to [when]; otherwise a new
    * list is created.
    */
-  LogEntryList after(Date when, [bool inPlace = false]) =>
-      _tail((e) => e.time > when, inPlace, 'after $when', logs.length);
+  LogEntryList after(DateTime when, [bool inPlace = false]) =>
+      _tail((e) => e.time.isAfter(when), inPlace, 'after $when', logs.length);
 
   /**
    * Returns log events that happened from [when] onwards. If
@@ -672,8 +717,8 @@ class LogEntryList {
    * removing the entries that happened before [when]; otherwise
    * a new list is created.
    */
-  LogEntryList from(Date when, [bool inPlace = false]) =>
-      _tail((e) => e.time >= when, inPlace, 'from $when', logs.length);
+  LogEntryList from(DateTime when, [bool inPlace = false]) =>
+      _tail((e) => !e.time.isBefore(when), inPlace, 'from $when', logs.length);
 
   /**
    * Returns log events that happened until [when]. If [inPlace]
@@ -681,8 +726,8 @@ class LogEntryList {
    * the entries that happened after [when]; otherwise a new
    * list is created.
    */
-  LogEntryList until(Date when, [bool inPlace = false]) =>
-      _head((e) => e.time > when, inPlace, 'until $when', logs.length);
+  LogEntryList until(DateTime when, [bool inPlace = false]) =>
+      _head((e) => e.time.isAfter(when), inPlace, 'until $when', logs.length);
 
   /**
    * Returns log events that happened before [when]. If [inPlace]
@@ -690,8 +735,11 @@ class LogEntryList {
    * the entries that happened from [when] onwards; otherwise a new
    * list is created.
    */
-  LogEntryList before(Date when, [bool inPlace = false]) =>
-      _head((e) => e.time >= when, inPlace, 'before $when', logs.length);
+  LogEntryList before(DateTime when, [bool inPlace = false]) =>
+      _head((e) => !e.time.isBefore(when),
+            inPlace,
+            'before $when',
+            logs.length);
 
   /**
    * Returns log events that happened after [logEntry]'s time.
@@ -700,7 +748,7 @@ class LogEntryList {
    * list is created. If [logEntry] is null the current time is used.
    */
   LogEntryList afterEntry(LogEntry logEntry, [bool inPlace = false]) =>
-      after(logEntry == null ? new Date.now() : logEntry.time);
+      after(logEntry == null ? new DateTime.now() : logEntry.time);
 
   /**
    * Returns log events that happened from [logEntry]'s time onwards.
@@ -709,7 +757,7 @@ class LogEntryList {
    * a new list is created. If [logEntry] is null the current time is used.
    */
   LogEntryList fromEntry(LogEntry logEntry, [bool inPlace = false]) =>
-      from(logEntry == null ? new Date.now() : logEntry.time);
+      from(logEntry == null ? new DateTime.now() : logEntry.time);
 
   /**
    * Returns log events that happened until [logEntry]'s time. If
@@ -719,7 +767,7 @@ class LogEntryList {
    */
   LogEntryList untilEntry(LogEntry logEntry, [bool inPlace = false]) =>
       until(logEntry == null ?
-          new Date.fromMillisecondsSinceEpoch(0) : logEntry.time);
+          new DateTime.fromMillisecondsSinceEpoch(0) : logEntry.time);
 
   /**
    * Returns log events that happened before [logEntry]'s time. If
@@ -729,7 +777,7 @@ class LogEntryList {
    */
   LogEntryList beforeEntry(LogEntry logEntry, [bool inPlace = false]) =>
       before(logEntry == null ?
-          new Date.fromMillisecondsSinceEpoch(0) : logEntry.time);
+          new DateTime.fromMillisecondsSinceEpoch(0) : logEntry.time);
 
   /**
    * Returns log events that happened after the first event in [segment].
@@ -847,7 +895,7 @@ class LogEntryList {
     var keyIterator = keys.logs.iterator;
     keyIterator.moveNext();
     LogEntry keyEntry = keyIterator.current;
-    MatchState matchState = new MatchState();
+    Map matchState = {};
 
     for (LogEntry logEntry in logs) {
       // If we have a log entry match, copy the saved matches from the
@@ -952,7 +1000,7 @@ class _TimesMatcher extends BaseMatcher {
 
   const _TimesMatcher(this.min, [this.max = -1]);
 
-  bool matches(logList, MatchState matchState) => logList.length >= min &&
+  bool matches(logList, Map matchState) => logList.length >= min &&
       (max < 0 || logList.length <= max);
 
   Description describe(Description description) {
@@ -970,7 +1018,7 @@ class _TimesMatcher extends BaseMatcher {
   }
 
   Description describeMismatch(logList, Description mismatchDescription,
-                               MatchState matchState, bool verbose) =>
+                               Map matchState, bool verbose) =>
       mismatchDescription.add('was called ${logList.length} times');
 }
 
@@ -1011,7 +1059,7 @@ class _ResultMatcher extends BaseMatcher {
 
   const _ResultMatcher(this.action, this.value);
 
-  bool matches(item, MatchState matchState) {
+  bool matches(item, Map matchState) {
     if (item is! LogEntry) {
      return false;
     }
@@ -1033,7 +1081,7 @@ class _ResultMatcher extends BaseMatcher {
   }
 
   Description describeMismatch(item, Description mismatchDescription,
-                               MatchState matchState, bool verbose) {
+                               Map matchState, bool verbose) {
     if (item.action == Action.RETURN || item.action == Action.PROXY) {
       mismatchDescription.add('returned ');
     } else {
@@ -1091,7 +1139,7 @@ class _ResultSetMatcher extends BaseMatcher {
 
   const _ResultSetMatcher(this.action, this.value, this.frequency);
 
-  bool matches(logList, MatchState matchState) {
+  bool matches(logList, Map matchState) {
     for (LogEntry entry in logList) {
       // normalize the action; PROXY is like RETURN.
       Action eaction = entry.action;
@@ -1100,10 +1148,7 @@ class _ResultSetMatcher extends BaseMatcher {
       }
       if (eaction == action && value.matches(entry.value, matchState)) {
         if (frequency == _Frequency.NONE) {
-          matchState.state = {
-              'state' : matchState.state,
-              'entry' : entry
-          };
+          addStateInfo(matchState, {'entry': entry});
           return false;
         } else if (frequency == _Frequency.SOME) {
           return true;
@@ -1111,10 +1156,7 @@ class _ResultSetMatcher extends BaseMatcher {
       } else {
         // Mismatch.
         if (frequency == _Frequency.ALL) { // We need just one mismatch to fail.
-          matchState.state = {
-              'state' : matchState.state,
-              'entry' : entry
-          };
+          addStateInfo(matchState, {'entry': entry});
           return false;
         }
       }
@@ -1137,9 +1179,9 @@ class _ResultSetMatcher extends BaseMatcher {
   }
 
   Description describeMismatch(logList, Description mismatchDescription,
-                               MatchState matchState, bool verbose) {
+                               Map matchState, bool verbose) {
     if (frequency != _Frequency.SOME) {
-      LogEntry entry = matchState.state['entry'];
+      LogEntry entry = matchState['entry'];
       if (entry.action == Action.RETURN || entry.action == Action.PROXY) {
         mismatchDescription.add('returned');
       } else {
@@ -1147,7 +1189,7 @@ class _ResultSetMatcher extends BaseMatcher {
       }
       mismatchDescription.add(' value that ');
       value.describeMismatch(entry.value, mismatchDescription,
-        matchState.state['state'], verbose);
+        matchState['state'], verbose);
       mismatchDescription.add(' at least once');
     } else {
       mismatchDescription.add('never did');
@@ -1207,13 +1249,16 @@ class Mock {
   final String name;
 
   /** The set of [Behavior]s supported. */
-  Map<String,Behavior> _behaviors;
+  LinkedHashMap<String,Behavior> _behaviors;
 
   /** The [log] of calls made. Only used if [name] is null. */
   LogEntryList log;
 
   /** How to handle unknown method calls - swallow or throw. */
   final bool _throwIfNoBehavior;
+
+  /** For spys, the real object that we are spying on. */
+  Object _realObject;
 
   /** Whether to create an audit log or not. */
   bool _logging;
@@ -1232,7 +1277,7 @@ class Mock {
    */
   Mock() : _throwIfNoBehavior = false, log = null, name = null {
     logging = true;
-    _behaviors = new Map<String,Behavior>();
+    _behaviors = new LinkedHashMap<String,Behavior>();
   }
 
   /**
@@ -1251,7 +1296,20 @@ class Mock {
       throw new Exception("Mocks with shared logs must have a name.");
     }
     logging = enableLogging;
-    _behaviors = new Map<String,Behavior>();
+    _behaviors = new LinkedHashMap<String,Behavior>();
+  }
+
+  /**
+   * This constructor creates a spy with no user-defined behavior.
+   * This is simply a proxy for a real object that passes calls
+   * through to that real object but captures an audit trail of
+   * calls made to the object that can be queried and validated
+   * later.
+   */
+  Mock.spy(this._realObject, {this.name, this.log})
+    : _behaviors = null,
+     _throwIfNoBehavior = true {
+    logging = true;
   }
 
   /**
@@ -1281,17 +1339,31 @@ class Mock {
    * return value. If we find no [Behavior] to apply an exception is
    * thrown.
    */
-  noSuchMethod(InvocationMirror invocation) {
-    var method = invocation.memberName;
+  noSuchMethod(Invocation invocation) {
+    var method = MirrorSystem.getName(invocation.memberName);
     var args = invocation.positionalArguments;
     if (invocation.isGetter) {
       method = 'get $method';
-    } else if (method.startsWith('get:')) {
-      // TODO(gram): Remove this when VM handles the isGetter version above.
-      method = 'get ${method.substring(4)}';
+    } else if (invocation.isSetter) {
+      method = 'set $method';
+      // Remove the trailing '='.
+      if (method[method.length-1] == '=') {
+        method = method.substring(0, method.length - 1);
+      }
+    }
+    if (_behaviors == null) { // Spy.
+      var mirror = reflect(_realObject);
+      try {
+        var result = mirror.delegate(invocation);
+        log.add(new LogEntry(name, method, args, Action.PROXY, result));
+        return result;
+      } catch (e) {
+        log.add(new LogEntry(name, method, args, Action.THROW, e));
+        throw e;
+      }
     }
     bool matchedMethodName = false;
-    MatchState matchState = new MatchState();
+    Map matchState = {};
     for (String k in _behaviors.keys) {
       Behavior b = _behaviors[k];
       if (b.matcher.nameFilter.matches(method, matchState)) {
@@ -1326,7 +1398,8 @@ class Mock {
           throw value;
         } else if (action == Action.PROXY) {
           // TODO(gram): Replace all this with:
-          //     var rtn = invocation.invokeOn(value);
+          //     var rtn = reflect(value).apply(invocation.positionalArguments,
+          //         invocation.namedArguments);
           // once that is supported.
           var rtn;
           switch (args.length) {

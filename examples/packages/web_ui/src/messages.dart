@@ -6,16 +6,14 @@ library messages;
 
 import 'dart:json' as json;
 
-import 'package:html5lib/dom_parsing.dart' show SourceSpan;
+import 'package:source_maps/span.dart' show Span;
 import 'package:logging/logging.dart' show Level;
 
-import 'file_system/path.dart';
 import 'options.dart';
 import 'utils.dart';
 
 /** Map between error levels and their display color. */
 final Map<Level, String> _ERROR_COLORS = (() {
-  // TODO(jmesserly): the SourceSpan printer does not use our colors.
   var colorsMap = new Map<Level, String>();
   colorsMap[Level.SEVERE] = RED_COLOR;
   colorsMap[Level.WARNING] = MAGENTA_COLOR;
@@ -27,49 +25,44 @@ final Map<Level, String> _ERROR_COLORS = (() {
 class Message {
   final Level level;
   final String message;
-  final Path file;
-  final SourceSpan span;
+  final Span span;
   final bool useColors;
 
-  Message(this.level, this.message, {this.file, this.span,
-      this.useColors: false});
+  Message(this.level, this.message, {this.span, this.useColors: false});
+
+  String get kind => level == Level.SEVERE ? 'error' :
+      (level == Level.WARNING ? 'warning' : 'info');
 
   String toString() {
     var output = new StringBuffer();
     bool colors = useColors && _ERROR_COLORS.containsKey(level);
-    if (colors) output.add(_ERROR_COLORS[level]);
-    output..add(level.name)..add(' ');
-    if (colors) output.add(NO_COLOR);
+    var levelColor =  _ERROR_COLORS[level];
+    if (colors) output.write(levelColor);
+    output..write(kind)..write(' ');
+    if (colors) output.write(NO_COLOR);
 
     if (span == null) {
-      if (file != null) output.add('$file: ');
-      output.add(message);
+      output.write(message);
     } else {
-      output.add(span.toMessageString(
-          file.toString(), message, useColors: colors));
+      output.write(span.getLocationMessage(message, useColors: colors,
+          color: levelColor));
     }
 
     return output.toString();
   }
 
   String toJson() {
-    if (file == null) return toString();
-
-    var kind = (level == Level.SEVERE ? 'error' :
-        (level == Level.WARNING ? 'warning' : 'info'));
-    var json = {
+    if (span == null) return toString();
+    return json.stringify([{
       'method': kind,
       'params': {
-        'file': file.toString(),
+        'file': span.sourceUrl,
         'message': message,
-        'line': span == null ? 1 : span.line + 1,
+        'line': span.start.line + 1,
+        'charStart': span.start.offset,
+        'charEnd': span.end.offset,
       }
-    };
-    if (span != null) {
-      json['params']['charStart'] = span.start;
-      json['params']['charEnd'] = span.end;
-    }
-    return json.stringify([json]);
+    }]);
   }
 }
 
@@ -92,16 +85,24 @@ class Messages {
    */
   Messages.silent(): this(shouldPrint: false);
 
+  /**
+   * True if we have an error that prevents correct codegen.
+   * For example, if we failed to read an input file.
+   */
+  bool get hasErrors => messages.any((m) => m.level == Level.SEVERE);
+
   // Convenience methods for testing
   int get length => messages.length;
+
   Message operator[](int index) => messages[index];
+
   void clear() {
     messages.clear();
   }
 
   /** [message] is considered a static compile-time error by the Dart lang. */
-  void error(String message, SourceSpan span, {Path file}) {
-    var msg = new Message(Level.SEVERE, message, file: file, span: span,
+  void error(String message, Span span) {
+    var msg = new Message(Level.SEVERE, message, span: span,
         useColors: options.useColors);
 
     messages.add(msg);
@@ -109,11 +110,11 @@ class Messages {
   }
 
   /** [message] is considered a type warning by the Dart lang. */
-  void warning(String message, SourceSpan span, {Path file}) {
+  void warning(String message, Span span) {
     if (options.warningsAsErrors) {
-      error(message, span, file: file);
+      error(message, span);
     } else {
-      var msg = new Message(Level.WARNING, message, file: file,
+      var msg = new Message(Level.WARNING, message,
           span: span, useColors: options.useColors);
 
       messages.add(msg);
@@ -130,11 +131,11 @@ class Messages {
         messages.where((m) => m.level == Level.WARNING).toList();
 
   /**
-   * [message] at [file] will tell the user about what the compiler
+   * [message] at [span] will tell the user about what the compiler
    * is doing.
    */
-  void info(String message, SourceSpan span, {Path file}) {
-    var msg = new Message(Level.INFO, message, file: file, span: span,
+  void info(String message, Span span) {
+    var msg = new Message(Level.INFO, message, span: span,
         useColors: options.useColors);
 
     messages.add(msg);

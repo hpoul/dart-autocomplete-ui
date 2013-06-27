@@ -6,8 +6,26 @@
  * Provides APIs for debugging and error logging. This library introduces
  * abstractions similar to those used in other languages, such as the Closure JS
  * Logger and java.util.logging.Logger.
+ *
+ * ## Installing ##
+ *
+ * Use [pub][] to install this package. Add the following to your `pubspec.yaml`
+ * file.
+ *
+ *     dependencies:
+ *       logging: any
+ *
+ * Then run `pub install`.
+ *
+ * For more information, see the
+ * [logging package on pub.dartlang.org][pkg].
+ *
+ * [pub]: http://pub.dartlang.org
+ * [pkg]: http://pub.dartlang.org/packages/logging
  */
 library logging;
+
+import 'dart:async';
 
 /**
  * Whether to allow fine-grain logging and configuration of loggers in a
@@ -43,8 +61,11 @@ class Logger {
   /** Children in the hierarchy of loggers, indexed by their simple names. */
   Map<String, Logger> children;
 
-  /** Handlers used to process log entries in this logger. */
-  List<LoggerHandler> _handlers;
+  /** Controller used to notify when log entries are added to this logger. */
+  StreamController<LogRecord> _controller;
+
+  /** The broadcast stream associated with the controller. */
+  Stream _stream;
 
   /**
    * Singleton constructor. Calling `new Logger(name)` will return the same
@@ -91,7 +112,7 @@ class Logger {
   }
 
   /** Override the level for this particular [Logger] and its children. */
-  set level(value) {
+  set level(Level value) {
     if (hierarchicalLoggingEnabled && parent != null) {
       _level = value;
     } else {
@@ -105,42 +126,20 @@ class Logger {
   }
 
   /**
-   * Returns an event manager for this [Logger]. You can listen for log messages
-   * by adding a [LoggerHandler] to an event from the event manager, for
-   * instance:
-   *    logger.on.record.add((record) { ... });
+   * Returns an stream of messages added to this [Logger]. You can listen for
+   * messages using the standard stream APIs, for instance:
+   *    logger.onRecord.listen((record) { ... });
    */
-  LoggerEvents get on => new LoggerEvents(this);
+  Stream<LogRecord> get onRecord => _getStream();
 
-  /** Adds a handler to listen whenever a log record is added to this logger. */
-  void _addHandler(LoggerHandler handler) {
+  void clearListeners() {
     if (hierarchicalLoggingEnabled || parent == null) {
-      if (_handlers == null) {
-        _handlers = new List<LoggerHandler>();
+      if (_controller != null) {
+        _controller.close();
+        _controller = null;
       }
-      _handlers.add(handler);
     } else {
-      root._addHandler(handler);
-    }
-  }
-
-  /** Remove a previously added handler. */
-  void _removeHandler(LoggerHandler handler) {
-    if (hierarchicalLoggingEnabled || parent == null) {
-      if (_handlers == null) return;
-      int index = _handlers.indexOf(handler);
-      if (index != -1) _handlers.removeRange(index, 1);
-    } else {
-      root._removeHandler(handler);
-    }
-  }
-
-  /** Removes all handlers previously added to this logger. */
-  void _clearHandlers() {
-    if (hierarchicalLoggingEnabled || parent == null) {
-      _handlers = null;
-    } else {
-      root._clearHandlers();
+      root.clearListeners();
     }
   }
 
@@ -194,14 +193,26 @@ class Logger {
   /** Log message at level [Level.SHOUT]. */
   void shout(String message) => log(Level.SHOUT, message);
 
+  Stream<LogRecord> _getStream() {
+    if (hierarchicalLoggingEnabled || parent == null) {
+      if (_controller == null) {
+        _controller = new StreamController<LogRecord>(sync: true);
+        _stream = _controller.stream.asBroadcastStream();
+      }
+      return _stream;
+    } else {
+      return root._getStream();
+    }
+  }
+
   void _publish(LogRecord record) {
-    if (_handlers != null) {
-      _handlers.forEach((h) => h(record));
+    if (_controller != null) {
+      _controller.add(record);
     }
   }
 
   /** Top-level root [Logger]. */
-  static get root => new Logger('');
+  static Logger get root => new Logger('');
 
   /** All [Logger]s in the system. */
   static Map<String, Logger> _loggers;
@@ -210,30 +221,6 @@ class Logger {
 
 /** Handler callback to process log entries as they are added to a [Logger]. */
 typedef void LoggerHandler(LogRecord);
-
-
-/** Event manager for a [Logger] (holds events that a [Logger] can fire). */
-class LoggerEvents {
-  final Logger _logger;
-
-  LoggerEvents(this._logger);
-
-  /** Event fired when a log record is added to a [Logger]. */
-  LoggerHandlerList get record => new LoggerHandlerList(_logger);
-}
-
-
-/** List of handlers that will be called on a logger event. */
-class LoggerHandlerList {
-  Logger _logger;
-
-  LoggerHandlerList(this._logger);
-
-  void add(LoggerHandler handler) => _logger._addHandler(handler);
-  void remove(LoggerHandler handler) => _logger._removeHandler(handler);
-  void clear() => _logger._clearHandlers();
-}
-
 
 /**
  * [Level]s to control logging output. Logging can be enabled to include all
@@ -247,7 +234,7 @@ class LoggerHandlerList {
  * own level, make sure you use a value between those used in [Level.ALL] and
  * [Level.OFF].
  */
-class Level implements Comparable {
+class Level implements Comparable<Level> {
 
   // TODO(sigmund): mark name/value as 'const' when the language supports it.
   final String name;
@@ -313,7 +300,7 @@ class LogRecord {
   final String loggerName;
 
   /** Time when this record was created. */
-  final Date time;
+  final DateTime time;
 
   /** Unique sequence number greater than all log records created before it. */
   final int sequenceNumber;
@@ -329,6 +316,6 @@ class LogRecord {
   LogRecord(
       this.level, this.message, this.loggerName,
       [time, this.exception, this.exceptionText]) :
-    this.time = (time == null) ? new Date.now() : time,
+    this.time = (time == null) ? new DateTime.now() : time,
     this.sequenceNumber = LogRecord._nextNumber++;
 }

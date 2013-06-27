@@ -20,7 +20,7 @@ const String _NONE = '\u001b[0m';
 const int MAX_LINE = 80;
 
 class CompactVMConfiguration extends VMConfiguration {
-  Date _start;
+  DateTime _start;
   int _pass = 0;
   int _fail = 0;
 
@@ -30,7 +30,7 @@ class CompactVMConfiguration extends VMConfiguration {
 
   void onStart() {
     super.onStart();
-    _start = new Date.now();
+    _start = new DateTime.now();
   }
 
   void onTestStart(TestCase test) {
@@ -58,7 +58,7 @@ class CompactVMConfiguration extends VMConfiguration {
   }
 
   String _indent(String str) {
-    return str.split("\n").mappedBy((line) => "  $line").join("\n");
+    return str.split("\n").map((line) => "  $line").join("\n");
   }
 
   void onSummary(int passed, int failed, int errors, List<TestCase> results,
@@ -84,29 +84,32 @@ class CompactVMConfiguration extends VMConfiguration {
 
   final int _nonVisiblePrefix = 1 + _GREEN.length + _NONE.length;
 
-  void _progressLine(Date startTime, int passed, int failed, String message,
+  void _progressLine(DateTime startTime, int passed, int failed, String message,
       [String color = _NONE]) {
-    var duration = (new Date.now()).difference(startTime);
+    var duration = (new DateTime.now()).difference(startTime);
     var buffer = new StringBuffer();
-    // \r moves back to the beginnig of the current line.
-    buffer.add('\r${_timeString(duration)} ');
-    buffer.add(_GREEN);
-    buffer.add('+');
-    buffer.add(passed);
-    buffer.add(_NONE);
-    if (failed != 0) buffer.add(_RED);
-    buffer.add(' -');
-    buffer.add(failed);
-    if (failed != 0) buffer.add(_NONE);
-    buffer.add(': ');
-    buffer.add(color);
+    // \r moves back to the beginning of the current line.
+    buffer.write('\r${_timeString(duration)} ');
+    buffer.write(_GREEN);
+    buffer.write('+');
+    buffer.write(passed);
+    buffer.write(_NONE);
+    if (failed != 0) buffer.write(_RED);
+    buffer.write(' -');
+    buffer.write(failed);
+    if (failed != 0) buffer.write(_NONE);
+    buffer.write(': ');
+    buffer.write(color);
 
+    // Ensure the line fits under MAX_LINE. [buffer] includes the color escape
+    // sequences too. Because these sequences are not visible characters, we
+    // make sure they are not counted towards the limit.
     int nonVisible = _nonVisiblePrefix + color.length  +
         (failed != 0 ? (_RED.length + _NONE.length) : 0);
     int len = buffer.length - nonVisible;
     var mx = MAX_LINE - len;
-    buffer.add(_snippet(message, MAX_LINE - len));
-    buffer.add(_NONE);
+    buffer.write(_snippet(message, MAX_LINE - len));
+    buffer.write(_NONE);
 
     // Pad the rest of the line so that it looks erased.
     len = buffer.length - nonVisible - _NONE.length;
@@ -114,11 +117,11 @@ class CompactVMConfiguration extends VMConfiguration {
       _lastLength = len;
     } else {
       while (len < _lastLength) {
-        buffer.add(' ');
+        buffer.write(' ');
         _lastLength--;
       }
     }
-    stdout.writeString(buffer.toString());
+    stdout.write(buffer.toString());
   }
 
   String _padTime(int time) =>
@@ -146,11 +149,11 @@ class CompactVMConfiguration extends VMConfiguration {
       if (i < words.length - 4) {
         // Require at least 3 words at the end.
         var buffer = new StringBuffer();
-        buffer.add(words.first);
-        buffer.add(' ...');
+        buffer.write(words.first);
+        buffer.write(' ...');
         for (; i < words.length; i++) {
-          buffer.add(' ');
-          buffer.add(words[i]);
+          buffer.write(' ');
+          buffer.write(words[i]);
         }
         return buffer.toString();
       }
@@ -168,6 +171,7 @@ class CompactVMConfiguration extends VMConfiguration {
 }
 
 void useCompactVMConfiguration() {
-  if (config != null) return;
-  configure(new CompactVMConfiguration());
+  unittestConfiguration = _singleton;
 }
+
+final _singleton = new CompactVMConfiguration();
