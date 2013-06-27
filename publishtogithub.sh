@@ -23,7 +23,6 @@ if ! test -f $basedir/example.html ; then
 	exit 1
 fi
 
-#git clone --single-branch -b gh-pages git@github.com:dc2f/DC2F.git $tmpdir/gh-pages
 git clone -b gh-pages git@github.com:hpoul/dart-autocomplete-ui.git $tmpdir/gh-pages
 
 export GIT_WORK_TREE=$tmpdir/gh-pages/

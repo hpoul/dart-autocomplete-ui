@@ -16,11 +16,11 @@ Usage
 
 Take a look at the example - the basic idea is that you simply include the web component:
 
-    <link rel="components" href="lib/input_autocomplete.html">
+    <link rel="import" href="lib/input_autocomplete.html">
 
 and then include the input autocompletion whereever you want:
 
-    <x-input-autocomplete choices="{{exampleData.autocompleteChoices}}"></x-input-autocomplete>
+    <tapo-input-autocomplete choices="{{exampleData.autocompleteChoices}}"></tapo-input-autocomplete>
 
 example dart code:
 
