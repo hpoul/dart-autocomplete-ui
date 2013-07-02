@@ -5,3 +5,4 @@ web/out
 *.dart.js.deps
 tmp
 .buildlog
+docs

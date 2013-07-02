@@ -22,6 +22,13 @@
     <tapo-input-autocomplete datasource="{{ exampleDatasource }}">
     </tapo-input-autocomplete>
     
+    <p>Testing absolute positioning</p>
+    
+    <div style="position: absolute;">
+      <p>Absolute position.</p>
+      <tapo-input-autocomplete choices="{{ exampleData.autocompleteChoices }}">
+      </tapo-input-autocomplete>
+    </div>
 
     <script type="application/dart" src="example.dart"></script>
     <script type="text/javascript" src="packages/browser/dart.js"></script>

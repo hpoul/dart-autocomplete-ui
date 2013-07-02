@@ -1,5 +1,5 @@
 name: autocomplete_ui
-version: 0.0.4+1
+version: 0.0.4+2
 author: Herbert Poul <herbert.poul@gmail.com>
 description: A simple Web Component which provides an input text field with  autocompletion drop down.
 homepage: https://github.com/hpoul/dart-autocomplete-ui

@@ -19,6 +19,9 @@
           <input type="text" on-focus="inputFocus($event)" on-blur="inputBlur($event)" on-key-down="keyDown($event)" on-key-up="keyUp($event)" />
         </div>
         <style>
+          .autocomplete-wrapper {
+            position: relative;
+          }
           .autocomplete-wrapper input {
             border: 1px solid black;
             padding: 3px;
@@ -41,6 +44,7 @@
             margin: 0px;
             background-color: #fff;
             overflow-x: scroll;
+            z-index: 1;
           }
           .autocomplete-content-wrapper ul {
             padding: 0px;

@@ -4,6 +4,17 @@ part of input_autocomplete;
 
 /**
  * autocomplete component for input fields.
+ * 
+ * Users can set the following attributes:
+ * 
+ * ## Simple Usage
+ * 
+ * * [choices]: List of choices (Strings) to be selected from
+ *
+ * ## or customized:
+ * 
+ * * [datasource] (subclass of [AutocompleteDatasource])
+ * * [renderer] (subclass of [AutocompleteChoiceRenderer])
  */
 class InputAutocompleteComponent extends WebComponent {
   @observable
@@ -17,7 +28,6 @@ class InputAutocompleteComponent extends WebComponent {
   
   void set renderer (AutocompleteChoiceRenderer renderer) {
     _renderer = renderer;
-    print("a renderer was set: ${_renderer}");
   }
   
   AutocompleteChoiceRenderer get renderer {
@@ -37,13 +47,11 @@ class InputAutocompleteComponent extends WebComponent {
     if (_focusedItemIndex < 0 || _focusedItemIndex >= filteredChoices.length) {
       return false;
     }
-    //print("isFocused? ${_matches[_focusedItemIndex] == choice}");
     return filteredChoices[_focusedItemIndex] == choice;
   }
   
   void set choices(List choices) {
     this.datasource = new SimpleStringDatasource(choices);
-    print('Choices have been set.');
   }
   
   List get choices {
@@ -83,7 +91,6 @@ class InputAutocompleteComponent extends WebComponent {
   }
   
   void selectChoice(AutocompleteChoice choice) {
-    print("We have selected a choice: ${choice.key}");
     _input.blur();
     _input.value = choice.key;
   }
@@ -152,7 +159,6 @@ class InputAutocompleteComponent extends WebComponent {
       print("unable to find autocomplete-content");
       return;
     }
-    print ("positioning autocomplete-content");
     var input = this.query('input');
     // TODO: I'm pretty sure this won't work in all (most?) cases..
     // but it's good enough for now..
@@ -161,10 +167,10 @@ class InputAutocompleteComponent extends WebComponent {
     var padding = contentrect.width - content.clientWidth;
     CssStyleDeclaration style = input.getComputedStyle();
 //    input.computedStyle.then((CssStyleDeclaration style) {
-      content.style.top = '${rect.top + window.pageYOffset + rect.height}px';
+      content.style.top = '${rect.height}px';
       num marginLeft = _parseStyleInt(style.marginLeft);
       num marginRight = _parseStyleInt(style.marginRight);
-      content.style.left = '${rect.left + window.pageXOffset - padding + marginLeft}px';
+      content.style.left = '${marginLeft}px';
       content.style.width = '${rect.width - padding}px';
 //    });
   }

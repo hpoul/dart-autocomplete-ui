@@ -41,6 +41,7 @@ Changelog
 -------
 
 * HEAD:
+* 0.0.4+2 (2013-07-02): changed layout to wrap everything in a position: relative div, instead of trying to position autocompletion box absolute to the whole page.
 * 0.0.4 (2013-06-27): Fixed support for Latest Dart Libraries & Web UI (0.4.12+3)
 * 0.0.3: Support for Dart Libraries v2 (M3 preparation)
 * 0.0.2: support for custom datasources, formatting
