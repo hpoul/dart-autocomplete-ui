@@ -4,6 +4,9 @@
 /* ==================================================== 
    Component tapo-input-autocomplete stylesheet 
    ==================================================== */
+.autocomplete-wrapper {
+  position: relative;
+}
 .autocomplete-wrapper input {
   border: 1px solid #000;
   padding: 3px;
@@ -26,6 +29,7 @@
   margin: 0px;
   background-color: #fff;
   overflow-x: scroll;
+  z-index: 1;
 }
 .autocomplete-content-wrapper ul {
   padding: 0px;
