@@ -24,6 +24,8 @@ class InputAutocompleteComponent extends WebComponent {
   int _focusedItemIndex = -1;
   @observable
   List<AutocompleteChoice> filteredChoices;
+  @observable
+  AutocompleteChoice selectedchoice;
   
   
   void set renderer (AutocompleteChoiceRenderer renderer) {
@@ -91,6 +93,7 @@ class InputAutocompleteComponent extends WebComponent {
   }
   
   void selectChoice(AutocompleteChoice choice) {
+    selectedchoice = choice;
     _input.blur();
     _input.value = choice.key;
   }

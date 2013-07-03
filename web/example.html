@@ -13,8 +13,12 @@
     <p>Example for a very simple auto complete input dialog for dart web components. Enter the cursor in the following input field and start typing:</p>
     <p>(You can also use cursor up/down to select options.)</p>
     
-    <tapo-input-autocomplete choices="{{ exampleData.autocompleteChoices }}">
+    <tapo-input-autocomplete choices="{{ exampleData.autocompleteChoices }}" bind-selectedchoice="exampleData.selectedchoice">
     </tapo-input-autocomplete>
+    
+    <template instantiate="if exampleData.selectedchoice != null">
+      You have selected: <strong>{{ exampleData.selectedchoice.key }}</strong>.
+    </template>
     
     
     <p>Custom datasource example (1 seconds delayed)</p>

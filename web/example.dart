@@ -1,6 +1,7 @@
 import 'dart:html';
 import 'dart:async';
 
+import 'package:web_ui/observe.dart';
 import 'package:autocomplete_ui/input_autocomplete.dart';
 
 
@@ -13,6 +14,8 @@ void main() {
 
 
 class ExampleData {
+  @observable
+  AutocompleteChoice selectedchoice;
   
   List<String> get autocompleteChoices {
     return ['Test 1', 'Test 2', 'Misc', 'Abcdef', 'Haha', 'Lorem Ipsum', 'Testing 3']..sort();

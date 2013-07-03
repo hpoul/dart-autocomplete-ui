@@ -13,6 +13,9 @@
                     <!--content select=".choiceTemplate"></content-->
                   </li>
                 </template>
+                <template instantiate="if filteredChoices.length == 0">
+                  <li>No matches.</li>
+                </template>
               </ul>
             </template>
           </div>
