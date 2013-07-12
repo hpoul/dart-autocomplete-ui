@@ -51,6 +51,7 @@ Changelog
 -------
 
 * HEAD:
+* 0.0.6 (2013-07-12): compatibility to dart sdk 0.6.3 / web_ui 0.4.14
 * 0.0.5 (2013-07-03): added a way to bind for the latest selected value. (bind-selectedchoice="..")
 * 0.0.4+2 (2013-07-02): changed layout to wrap everything in a position: relative div, instead of trying to position autocompletion box absolute to the whole page.
 * 0.0.4 (2013-06-27): Fixed support for Latest Dart Libraries & Web UI (0.4.12+3)
