@@ -37,6 +37,7 @@ file:///Volumes/mydata/downloads/dart/dart-sdk/lib/_internal/lib/isolate_helper.
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/_internal/lib/isolate_patch.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/_internal/lib/js_array.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/_internal/lib/js_helper.dart
+file:///Volumes/mydata/downloads/dart/dart-sdk/lib/_internal/lib/js_names.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/_internal/lib/js_number.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/_internal/lib/js_rti.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/_internal/lib/js_string.dart
@@ -47,6 +48,7 @@ file:///Volumes/mydata/downloads/dart/dart-sdk/lib/_internal/lib/regexp_helper.d
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/_internal/lib/string_helper.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/async/async.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/async/async_error.dart
+file:///Volumes/mydata/downloads/dart/dart-sdk/lib/async/broadcast_stream_controller.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/async/deferred_load.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/async/event_loop.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/async/future.dart
@@ -107,6 +109,7 @@ file:///Volumes/mydata/downloads/dart/dart-sdk/lib/html/html_common/css_class_se
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/html/html_common/device.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/html/html_common/filtered_element_list.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/html/html_common/html_common_dart2js.dart
+file:///Volumes/mydata/downloads/dart/dart-sdk/lib/html/html_common/jenkins_smi_hash.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/html/html_common/lists.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/html/html_common/metadata.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/indexed_db/dart2js/indexed_db_dart2js.dart
@@ -115,7 +118,6 @@ file:///Volumes/mydata/downloads/dart/dart-sdk/lib/isolate/isolate_stream.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/json/json.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/math/math.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/math/random.dart
-file:///Volumes/mydata/downloads/dart/dart-sdk/lib/mdv_observe_impl/mdv_observe_impl.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/svg/dart2js/svg_dart2js.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/typed_data/dart2js/typed_data_dart2js.dart
 file:///Volumes/mydata/downloads/dart/dart-sdk/lib/utf/utf.dart

@@ -15,9 +15,9 @@ import 'package:unittest/unittest.dart';
 import 'package:web_ui/dwc.dart' as dwc;
 
 void renderTests(String baseDir, String inputDir, String expectedDir,
-    String outDir, [List<String> args, String script, String pattern]) {
-
-  if (args == null) args = new Options().arguments;
+    String outDir, {List<String> arguments, String script, String pattern,
+    bool deleteDir: true}) {
+  if (arguments == null) arguments = new Options().arguments;
   if (script == null) script = new Options().script;
 
   var filePattern = new RegExp(pattern != null ? pattern : '.');
@@ -35,17 +35,17 @@ void renderTests(String baseDir, String inputDir, String expectedDir,
   // First clear the output folder. Otherwise we can miss bugs when we fail to
   // generate a file.
   var dir = new Directory(outDir);
-  if (dir.existsSync()) {
+  if (dir.existsSync() && deleteDir) {
     print('Cleaning old output for ${path.normalize(outDir)}');
     dir.deleteSync(recursive: true);
   }
   dir.createSync();
 
-  args.addAll(['-o', outDir, '--basedir', baseDir]);
+  arguments.addAll(['-o', outDir, '--basedir', baseDir]);
   for (var filePath in paths) {
     var filename = path.basename(filePath);
     test('compile $filename', () {
-      var testArgs = args.toList();
+      var testArgs = arguments.toList();
       testArgs.add(filePath);
       expect(dwc.run(testArgs, printTime: false).then((res) {
         expect(res.messages.length, 0, reason: res.messages.join('\n'));

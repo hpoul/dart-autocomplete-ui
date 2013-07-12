@@ -423,8 +423,8 @@ class CssEmitter extends CssPrinter {
    * If element selector is a component's tag name, then change selector to
    * find element who's is attribute's the component's name.
    */
-  bool _emitComponentElement(var node) {
-    if (node is ElementSelector && _componentsTag.contains(node.name)) {
+  bool _emitComponentElement(ElementSelector node) {
+    if (_componentsTag.contains(node.name)) {
       emit('[is="${node.name}"]');
       return true;
     }
@@ -447,6 +447,8 @@ class CssEmitter extends CssPrinter {
 class ComponentCssEmitter extends CssPrinter {
   final String _componentTagName;
   final CssPolyfillKind _polyfillKind;
+  bool _inHostDirective = false;
+  bool _selectorStartInHostDirective = false;
 
   ComponentCssEmitter(this._componentTagName, this._polyfillKind);
 
@@ -463,9 +465,9 @@ class ComponentCssEmitter extends CssPrinter {
    * If element selector is the component's tag name, then change selector to
    * find element who's is attribute is the component's name.
    */
-  bool _emitComponentElement(var node) {
+  bool _emitComponentElement(ElementSelector node) {
     if (_polyfillKind == CssPolyfillKind.SCOPED_POLYFILL &&
-        node is ElementSelector && _componentTagName == node.name) {
+        _componentTagName == node.name) {
       emit('[is="$_componentTagName"]');
       return true;
     }
@@ -476,9 +478,36 @@ class ComponentCssEmitter extends CssPrinter {
     // If the selector starts with an x-tag name don't emit it twice.
     if (!_isSelectorElementXTag(node) &&
         _polyfillKind == CssPolyfillKind.SCOPED_POLYFILL) {
-      emit('[is="$_componentTagName"] ');
+      if (_inHostDirective) {
+        // Style the element that's hosting the component, therefore don't emit
+        // the descendent combinator (first space after the [is="x-..."]).
+        emit('[is="$_componentTagName"]');
+        // Signal that first simpleSelector must be checked.
+        _selectorStartInHostDirective = true;
+      } else {
+        // Emit its scoped as a descendent (space at end).
+        emit('[is="$_componentTagName"] ');
+      }
     }
     super.visitSelector(node);
+  }
+
+  /**
+   * If first simple selector of a ruleset in a @host directive is a wildcard
+   * then don't emit the wildcard.
+   */
+  void visitSimpleSelectorSequence(SimpleSelectorSequence node) {
+    if (_selectorStartInHostDirective) {
+      _selectorStartInHostDirective = false;
+      if (_polyfillKind == CssPolyfillKind.SCOPED_POLYFILL &&
+          node.simpleSelector.isWildcard) {
+        // Skip the wildcard if first item in the sequence.
+        return;
+      }
+      assert(node.isCombinatorNone);
+    }
+
+    super.visitSimpleSelectorSequence(node);
   }
 
   void visitClassSelector(ClassSelector node) {
@@ -498,11 +527,27 @@ class ComponentCssEmitter extends CssPrinter {
   }
 
   void visitElementSelector(ElementSelector node) {
-    if (_componentTagName.isNotEmpty && _emitComponentElement(node)) return;
-    if (_polyfillKind == CssPolyfillKind.MANGLED_POLYFILL) {
-      emit('[is="$_componentTagName"] ${node.name}');
+    if (_emitComponentElement(node)) return;
+    super.visitElementSelector(node);
+  }
+
+  /**
+   * If we're polyfilling scoped styles the @host directive is stripped.  Any
+   * ruleset(s) processed in an @host will fixup the first selector.  See
+   * visitSelector and visitSimpleSelectorSequence in this class, they adjust
+   * the selectors so it styles the element hosting the compopnent.
+   */
+  void visitHostDirective(HostDirective node) {
+    if (_polyfillKind == CssPolyfillKind.SCOPED_POLYFILL) {
+      _inHostDirective = true;
+      emit('/* @host */');
+      for (var ruleset in node.rulesets) {
+        ruleset.visit(this);
+      }
+      _inHostDirective = false;
+      emit('/* end of @host */\n');
     } else {
-      super.visitElementSelector(node);
+      super.visitHostDirective(node);
     }
   }
 }
