@@ -51,6 +51,7 @@ Changelog
 -------
 
 * HEAD:
+* 0.0.6+2 (2013-08-12): compatibility to dart sdk 0.6.15 / web_ui 0.4.17
 * 0.0.6+1 (2013-07-25): compatibility to dart sdk 0.6.9 / web_ui 0.4.15
 * 0.0.6 (2013-07-12): compatibility to dart sdk 0.6.3 / web_ui 0.4.14
 * 0.0.5 (2013-07-03): added a way to bind for the latest selected value. (bind-selectedchoice="..")

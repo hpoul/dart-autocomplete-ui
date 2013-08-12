@@ -7,7 +7,7 @@ dependencies:
   browser: any
   html5lib: any
   logging: any
-  web_ui: '>=0.4.15 <0.4.16'
+  web_ui: '>=0.4.17 <0.4.18'
 
 #  js: any
 #  unittest: any

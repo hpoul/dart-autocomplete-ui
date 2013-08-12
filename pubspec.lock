@@ -17,6 +17,10 @@ packages:
     description: csslib
     source: hosted
     version: "0.4.7+10"
+  custom_element:
+    description: custom_element
+    source: hosted
+    version: "0.6.15+3"
   html5lib:
     description: html5lib
     source: hosted
@@ -25,10 +29,22 @@ packages:
     description: logging
     source: hosted
     version: "0.6.9+2"
+  mdv:
+    description: mdv
+    source: hosted
+    version: "0.6.15+3"
   meta:
     description: meta
     source: hosted
     version: "0.6.9+2"
+  mutation_observer:
+    description: mutation_observer
+    source: hosted
+    version: "0.6.15+3"
+  observe:
+    description: observe
+    source: hosted
+    version: "0.6.15+3"
   path:
     description: path
     source: hosted
@@ -37,6 +53,10 @@ packages:
     description: pathos
     source: hosted
     version: "0.6.3+1"
+  serialization:
+    description: serialization
+    source: hosted
+    version: "0.6.15+3"
   source_maps:
     description: source_maps
     source: hosted
@@ -52,4 +72,4 @@ packages:
   web_ui:
     description: web_ui
     source: hosted
-    version: "0.4.15"
+    version: "0.4.17+2"
