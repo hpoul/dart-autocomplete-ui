@@ -4,51 +4,55 @@ packages:
   analyzer_experimental:
     description: analyzer_experimental
     source: hosted
-    version: "0.6.9+2"
+    version: "0.6.19"
   args:
     description: args
     source: hosted
-    version: "0.6.9+2"
+    version: "0.6.19"
+  barback:
+    description: barback
+    source: hosted
+    version: "0.6.19"
   browser:
     description: browser
     source: hosted
-    version: "0.6.9+2"
+    version: "0.6.19"
   csslib:
     description: csslib
     source: hosted
-    version: "0.4.7+10"
+    version: "0.4.7+11"
   custom_element:
     description: custom_element
     source: hosted
-    version: "0.6.15+3"
+    version: "0.6.19"
   html5lib:
     description: html5lib
     source: hosted
-    version: "0.4.3"
+    version: "0.4.4"
   logging:
     description: logging
     source: hosted
-    version: "0.6.9+2"
+    version: "0.6.19"
   mdv:
     description: mdv
     source: hosted
-    version: "0.6.15+3"
+    version: "0.6.19"
   meta:
     description: meta
     source: hosted
-    version: "0.6.9+2"
+    version: "0.6.19"
   mutation_observer:
     description: mutation_observer
     source: hosted
-    version: "0.6.15+3"
+    version: "0.6.19"
   observe:
     description: observe
     source: hosted
-    version: "0.6.15+3"
+    version: "0.6.19"
   path:
     description: path
     source: hosted
-    version: "0.6.9+2"
+    version: "0.6.19"
   pathos:
     description: pathos
     source: hosted
@@ -56,20 +60,24 @@ packages:
   serialization:
     description: serialization
     source: hosted
-    version: "0.6.15+3"
+    version: "0.6.19"
   source_maps:
     description: source_maps
     source: hosted
-    version: "0.6.9+2"
+    version: "0.6.19"
   stack_trace:
     description: stack_trace
     source: hosted
-    version: "0.6.9+2"
+    version: "0.6.19"
   unittest:
     description: unittest
     source: hosted
-    version: "0.6.9+2"
+    version: "0.6.19"
+  unmodifiable_collection:
+    description: unmodifiable_collection
+    source: hosted
+    version: "0.6.19"
   web_ui:
     description: web_ui
     source: hosted
-    version: "0.4.17+2"
+    version: "0.4.18+1"
