@@ -51,6 +51,7 @@ Changelog
 -------
 
 * HEAD:
+* 0.0.6+4 (2013-09-05): simply removed upper version constraint for web_ui (there won't be too many new versions anyway) - should make it compatible with dart sdk 0.7.1
 * 0.0.6+3 (2013-08-20): compatibility to dart sdk 0.6.19 / web_ui 0.4.18
 * 0.0.6+2 (2013-08-12): compatibility to dart sdk 0.6.15 / web_ui 0.4.17
 * 0.0.6+1 (2013-07-25): compatibility to dart sdk 0.6.9 / web_ui 0.4.15
