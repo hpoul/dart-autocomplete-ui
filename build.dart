@@ -1,10 +1,8 @@
-library build;
-
+import 'package:polymer/component_build.dart';
 import 'dart:io';
-import 'package:web_ui/component_build.dart';
 
-void main() {
-  List<String> args = new Options().arguments;//..add("--basedir")..add(".");
-  //print("args: ${args}");
+main() {
+  var args = new Options().arguments;
+  args.addAll(['--', '--deploy']); // Note: the --deploy is what makes this work
   build(args, ['web/example.html']);
 }

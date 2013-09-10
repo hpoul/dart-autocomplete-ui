@@ -4,37 +4,18 @@
   <head>
     <meta charset="utf-8">
     <title>Autocomplete_ui</title>
-    <link rel="import" href="lib/input_autocomplete.html">
+    
+    
+    <link rel="import" href="packages/autocomplete_ui/example/simple_autocomplete_example.html">
+    
     <link rel="stylesheet" href="example.css">
+    <script src="packages/polymer/boot.js"></script>
   </head>
   <body>
     <h1>Dart AutoComplete UI</h1>
     
-    <p>Example for a very simple auto complete input dialog for dart web components. Enter the cursor in the following input field and start typing:</p>
-    <p>(You can also use cursor up/down to select options.)</p>
+    <p>xx</p>
     
-    <tapo-input-autocomplete choices="{{ exampleData.autocompleteChoices }}" bind-selectedchoice="exampleData.selectedchoice">
-    </tapo-input-autocomplete>
-    
-    <template instantiate="if exampleData.selectedchoice != null">
-      You have selected: <strong>{{ exampleData.selectedchoice.key }}</strong>.
-    </template>
-    
-    
-    <p>Custom datasource example (1 seconds delayed)</p>
-    
-    <tapo-input-autocomplete datasource="{{ exampleDatasource }}">
-    </tapo-input-autocomplete>
-    
-    <p>Testing absolute positioning</p>
-    
-    <div style="position: absolute;">
-      <p>Absolute position.</p>
-      <tapo-input-autocomplete choices="{{ exampleData.autocompleteChoices }}">
-      </tapo-input-autocomplete>
-    </div>
-
-    <script type="application/dart" src="example.dart"></script>
-    <script type="text/javascript" src="packages/browser/dart.js"></script>
+    <simple-autocomplete-example></simple-autocomplete-example>
   </body>
 </html>

@@ -16,9 +16,11 @@ part of input_autocomplete;
  * * [datasource] (subclass of [AutocompleteDatasource])
  * * [renderer] (subclass of [AutocompleteChoiceRenderer])
  */
-class InputAutocompleteComponent extends WebComponent {
+class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   @observable
   bool inputHasFocus = false;
+  @observable
+  String xyz = "asdf";
   AutocompleteChoiceRenderer _renderer;
   AutocompleteDatasource _datasource;
   int _focusedItemIndex = -1;
@@ -72,7 +74,7 @@ class InputAutocompleteComponent extends WebComponent {
     _focusedItemIndex = newfocus;
   }
   
-  void keyDown(KeyboardEvent event) {
+  void keyDown(KeyboardEvent event, var detail, Node target) {
     switch(event.keyCode) {
       case KeyCode.DOWN:
         _focusNext(1);
@@ -111,7 +113,7 @@ class InputAutocompleteComponent extends WebComponent {
     event.preventDefault();
   }
   
-  void keyUp(Event event) {
+  void keyUp(Event e, var detail, Node target) {
     _doSearch();
   }
   
@@ -128,24 +130,28 @@ class InputAutocompleteComponent extends WebComponent {
     });
   }
   
-  void inputFocus(Event event) {
+  void inputFocus(Event e, var detail, Node target) {
+    xyz = 'haha ${new DateTime.now()}';print("inputFocus ${xyz}");
     _positionCompleteBox();
     inputHasFocus = true;
   }
   
-  void inputBlur(Event event) {
+  void inputBlur(Event e, var detail, Node target) {
     inputHasFocus = false;
   }
   
   void inserted() {
     //_positionCompleteBox();
     _positionCompleteBox();
+    InputElement el = this.getShadowRoot('tapo-input-autocomplete').query('input');
+    el.onFocus.listen((e) => inputFocus(null, null, null));
+    el.onBlur.listen((e) => inputBlur(null, null, null));
   }
   
   renderChoice(AutocompleteChoice choice) {
     InputElement input = this.query('input');
     Element tmp = this.renderer.renderChoice(choice, input.value);
-    return new SafeHtml.unsafe(tmp.outerHtml);
+    return tmp.outerHtml;//new SafeHtml.unsafe(tmp.outerHtml);
   }
   
   num _parseStyleInt(String styleValue) {

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="import" href="../../../packages/autocomplete_ui/input_autocomplete.html">
+  </head>
+  <body>   
+    <polymer-element name="simple-autocomplete-example">
+      <template>
+        <p>Example for a very simple auto complete input dialog for dart web components. Enter the cursor in the following input field and start typing:</p>
+        <p>(You can also use cursor up/down to select options.)</p>
+        
+        <tapo-input-autocomplete choices="{{ autocompleteChoices }}" bind-selectedchoice="selectedchoice">
+        </tapo-input-autocomplete>
+      </template>
+      <script type="application/dart" src="simple_autocomplete_example.dart"></script>
+    </polymer-element>
+  </body>
+</html>

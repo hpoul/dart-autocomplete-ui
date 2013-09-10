@@ -1,7 +1,7 @@
 import 'dart:html';
 import 'dart:async';
 
-import 'package:web_ui/observe.dart';
+import 'package:polymer/polymer.dart';
 import 'package:autocomplete_ui/input_autocomplete.dart';
 
 

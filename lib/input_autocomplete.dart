@@ -1,6 +1,6 @@
 library input_autocomplete;
 
-import 'package:web_ui/web_ui.dart';
+import 'package:polymer/polymer.dart';
 import 'dart:html';
 import 'dart:math';
 import 'dart:async';
@@ -11,6 +11,3 @@ part 'src/autocomplete_choice_renderer.dart';
 part 'src/autocomplete_datasource.dart';
 
 
-class InputAutocompleteComponentTest extends WebComponent {
-  
-}
