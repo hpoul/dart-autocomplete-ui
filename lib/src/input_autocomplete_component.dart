@@ -1,6 +1,21 @@
 part of input_autocomplete;
 
-
+class ValueHolder extends Object with ObservableMixin {
+  @observable
+  bool inputHasFocus = false;
+  @observable
+  List<AutocompleteChoice> filteredChoices;
+  @observable
+  AutocompleteChoice selectedchoice;
+  @observable
+  String xyz;
+  @observable
+  bool hasSearched = false;
+  @observable
+  Object mynull = null;
+  @observable
+  String searchquery = "";
+}
 
 /**
  * autocomplete component for input fields.
@@ -17,17 +32,11 @@ part of input_autocomplete;
  * * [renderer] (subclass of [AutocompleteChoiceRenderer])
  */
 class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
-  @observable
-  bool inputHasFocus = false;
-  @observable
-  String xyz = "asdf";
   AutocompleteChoiceRenderer _renderer;
   AutocompleteDatasource _datasource;
   int _focusedItemIndex = -1;
   @observable
-  List<AutocompleteChoice> filteredChoices;
-  @observable
-  AutocompleteChoice selectedchoice;
+  ValueHolder model = new ValueHolder();
   
   
   void set renderer (AutocompleteChoiceRenderer renderer) {
@@ -48,10 +57,10 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   AutocompleteDatasource get datasource => _datasource;
   
   bool isFocused(AutocompleteChoice choice) {
-    if (_focusedItemIndex < 0 || _focusedItemIndex >= filteredChoices.length) {
+    if (_focusedItemIndex < 0 || _focusedItemIndex >= model.filteredChoices.length) {
       return false;
     }
-    return filteredChoices[_focusedItemIndex] == choice;
+    return model.filteredChoices[_focusedItemIndex] == choice;
   }
   
   void set choices(List choices) {
@@ -68,8 +77,8 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
     if (newfocus < 0) {
       newfocus = 0;
     }
-    if (newfocus >= filteredChoices.length) {
-      newfocus = filteredChoices.length - 1;
+    if (newfocus >= model.filteredChoices.length) {
+      newfocus = model.filteredChoices.length - 1;
     }
     _focusedItemIndex = newfocus;
   }
@@ -91,17 +100,17 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   }
   
   void selectCurrentFocus() {
-    selectChoice(filteredChoices[_focusedItemIndex]);
+    selectChoice(model.filteredChoices[_focusedItemIndex]);
   }
   
   void selectChoice(AutocompleteChoice choice) {
-    selectedchoice = choice;
+    model.selectedchoice = choice;
     _input.blur();
     _input.value = choice.key;
   }
   
   void mouseOverChoice(AutocompleteChoice choice, Event event) {
-    var idx = filteredChoices.indexOf(choice);
+    var idx = model.filteredChoices.indexOf(choice);
     if (idx == _focusedItemIndex || idx < 0) {
       return;
     }
@@ -118,30 +127,33 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   }
   
   /// returns the current inputfield (TODO: add caching?)
-  InputElement get _input => this.query('input');
+  InputElement get _input => this.getShadowRoot("tapo-input-autocomplete").query('input');
   
   void _doSearch() {
     // TODO would it be nicer to do this in HTML?
     this._input.classes.add("loading");
     this.datasource.query(this._input.value.toLowerCase()).then((matches) {
-      filteredChoices = matches.toList();
+      model.filteredChoices = matches.toList();
       this._input.classes.remove("loading");
       _positionCompleteBox();
     });
   }
   
   void inputFocus(Event e, var detail, Node target) {
-    xyz = 'haha ${new DateTime.now()}';print("inputFocus ${xyz}");
+    model.xyz = 'haha ${new DateTime.now()}';print("inputFocus ${model.xyz}");
     _positionCompleteBox();
-    inputHasFocus = true;
+    model.inputHasFocus = true;
   }
   
   void inputBlur(Event e, var detail, Node target) {
-    inputHasFocus = false;
+    //model.inputHasFocus = false;
   }
   
   void inserted() {
     //_positionCompleteBox();
+    model.changes.listen((records){
+      model.hasSearched = model.filteredChoices != null;
+    });
     _positionCompleteBox();
     InputElement el = this.getShadowRoot('tapo-input-autocomplete').query('input');
     el.onFocus.listen((e) => inputFocus(null, null, null));
@@ -149,9 +161,12 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   }
   
   renderChoice(AutocompleteChoice choice) {
-    InputElement input = this.query('input');
+    InputElement input = this._input;
     Element tmp = this.renderer.renderChoice(choice, input.value);
-    return tmp.outerHtml;//new SafeHtml.unsafe(tmp.outerHtml);
+    print("we need to set ${tmp.outerHtml}");
+//    return tmp;//new SafeHtml.unsafe(tmp.outerHtml);
+    
+    return new Element.html('<span>test<strong>asdf</strong></span>');
   }
   
   num _parseStyleInt(String styleValue) {
@@ -163,12 +178,12 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   }
   
   void _positionCompleteBox() {
-    var content = this.query('.autocomplete-content-wrapper-marker');
+    var content = this.getShadowRoot('tapo-input-autocomplete').query('.autocomplete-content-wrapper-marker');
     if (content == null) {
       print("unable to find autocomplete-content");
       return;
     }
-    var input = this.query('input');
+    var input = this._input;
     // TODO: I'm pretty sure this won't work in all (most?) cases..
     // but it's good enough for now..
     var rect = input.getBoundingClientRect();

@@ -2,7 +2,6 @@ library input_autocomplete;
 
 import 'package:polymer/polymer.dart';
 import 'dart:html';
-import 'dart:math';
 import 'dart:async';
 
 part 'src/input_autocomplete_component.dart';
