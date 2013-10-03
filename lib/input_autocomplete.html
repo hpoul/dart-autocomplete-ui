@@ -12,7 +12,8 @@
               <ul class="autocomplete-content">
                 <template repeat="{{ choice in model.filteredChoices }}">
                   <!--li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-down="mouseDownChoice(choice, $event)" on-mouse-up="selectChoice(choice)"-->
-                  <li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouse-down="mouseDownChoice(choice, $event)" on-mouse-up="selectChoice(choice)">
+                  <li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice" on-mouse-down="mouseDown" on-mouse-up="mouseUpChoice">
+                    test
                     <div><tapo-autocomplete-result choice="{{ choice }}" searchquery="{{ model.searchquery }}" renderer="{{ renderer }}" /></div>
                     <!--content select=".choiceTemplate"></content-->
                   </li>

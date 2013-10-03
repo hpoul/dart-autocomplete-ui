@@ -15,6 +15,8 @@ class ValueHolder extends Object with ObservableMixin {
   Object mynull = null;
   @observable
   String searchquery = "";
+  @observable
+  int _focusedItemIndex = -1;
 }
 
 /**
@@ -34,7 +36,6 @@ class ValueHolder extends Object with ObservableMixin {
 class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   AutocompleteChoiceRenderer _renderer;
   AutocompleteDatasource _datasource;
-  int _focusedItemIndex = -1;
   @observable
   ValueHolder model = new ValueHolder();
   
@@ -57,10 +58,10 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   AutocompleteDatasource get datasource => _datasource;
   
   bool isFocused(AutocompleteChoice choice) {
-    if (_focusedItemIndex < 0 || _focusedItemIndex >= model.filteredChoices.length) {
+    if (model._focusedItemIndex < 0 || model._focusedItemIndex >= model.filteredChoices.length) {
       return false;
     }
-    return model.filteredChoices[_focusedItemIndex] == choice;
+    return model.filteredChoices[model._focusedItemIndex] == choice;
   }
   
   void set choices(List choices) {
@@ -73,14 +74,14 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   
   
   void _focusNext(int next) {
-    var newfocus = _focusedItemIndex + next;
+    var newfocus = model._focusedItemIndex + next;
     if (newfocus < 0) {
       newfocus = 0;
     }
     if (newfocus >= model.filteredChoices.length) {
       newfocus = model.filteredChoices.length - 1;
     }
-    _focusedItemIndex = newfocus;
+    model._focusedItemIndex = newfocus;
   }
   
   void keyDown(KeyboardEvent event, var detail, Node target) {
@@ -100,24 +101,40 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   }
   
   void selectCurrentFocus() {
-    selectChoice(model.filteredChoices[_focusedItemIndex]);
+    selectChoice(model.filteredChoices[model._focusedItemIndex]);
   }
   
   void selectChoice(AutocompleteChoice choice) {
+    print("selectChoice");
     model.selectedchoice = choice;
     _input.blur();
     _input.value = choice.key;
   }
-  
-  void mouseOverChoice(AutocompleteChoice choice, Event event) {
-    var idx = model.filteredChoices.indexOf(choice);
-    if (idx == _focusedItemIndex || idx < 0) {
-      return;
+  void mouseUpChoice(Event event, var detail, Node target) {
+    if (target is Element) {
+      var choiceKey = (target as Element).attributes['choice-key'];
+      var choice = _datasource.objectByKey(choiceKey);
+      selectChoice(choice);
     }
-    _focusedItemIndex = idx;
   }
   
-  void mouseDownChoice(AutocompleteChoice choice, Event event) {
+//  void mouseOverChoice(AutocompleteChoice choice, Event event) {
+  void mouseOverChoice(Event event, var detail, Node target) {
+    print('mouseOver');
+    if (target is Element) {
+      var choiceKey = (target as Element).attributes['choice-key'];
+      var choice = _datasource.objectByKey(choiceKey);
+      var idx = model.filteredChoices.indexOf(choice);
+      if (idx == model._focusedItemIndex || idx < 0) {
+        return;
+      }
+      model._focusedItemIndex = idx;
+      print("focusedItemIndex: ${idx}");
+    }
+  }
+  
+  void mouseDown(Event event, var detail, Node target) {
+    print('mouse down');
     // prevent default action, which would blur our input field.
     event.preventDefault();
   }
