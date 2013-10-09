@@ -4,9 +4,11 @@ import 'package:autocomplete_ui/input_autocomplete.dart';
 
 @CustomTag('tapo-autocomplete-result')
 class AutocompleteResult extends PolymerElement with ObservableMixin {
-  @observable AutocompleteChoice choice;
-  @observable String searchquery;
-  AutocompleteChoiceRenderer renderer;
+  @observable @published AutocompleteChoice choice;
+  @observable @published String searchquery;
+  @published AutocompleteChoiceRenderer renderer;
+  
+  bool get applyAuthorStyles => true;
   
   dynamic inserted() {
     super.inserted();

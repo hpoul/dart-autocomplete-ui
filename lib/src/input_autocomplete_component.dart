@@ -6,8 +6,6 @@ class ValueHolder extends Object with ObservableMixin {
   @observable
   List<AutocompleteChoice> filteredChoices;
   @observable
-  AutocompleteChoice selectedchoice;
-  @observable
   String xyz;
   @observable
   bool hasSearched = false;
@@ -33,12 +31,16 @@ class ValueHolder extends Object with ObservableMixin {
  * * [datasource] (subclass of [AutocompleteDatasource])
  * * [renderer] (subclass of [AutocompleteChoiceRenderer])
  */
+@CustomTag('tapo-input-autocomplete')
 class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   AutocompleteChoiceRenderer _renderer;
-  AutocompleteDatasource _datasource;
+  @observable @published AutocompleteDatasource datasource;
   @observable
   ValueHolder model = new ValueHolder();
-  
+  @observable @published
+  AutocompleteChoice selectedchoice;
+
+  bool get applyAuthorStyles => true;
   
   void set renderer (AutocompleteChoiceRenderer renderer) {
     _renderer = renderer;
@@ -51,12 +53,6 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
     return _renderer;
   }
   
-  void set datasource (AutocompleteDatasource ds) {
-    _datasource = ds;
-  }
-  
-  AutocompleteDatasource get datasource => _datasource;
-  
   bool isFocused(AutocompleteChoice choice) {
     if (model._focusedItemIndex < 0 || model._focusedItemIndex >= model.filteredChoices.length) {
       return false;
@@ -64,11 +60,11 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
     return model.filteredChoices[model._focusedItemIndex] == choice;
   }
   
-  void set choices(List choices) {
+  @published void set choices(List choices) {
     this.datasource = new SimpleStringDatasource(choices);
   }
   
-  List get choices {
+  @published List get choices {
     return datasource == null ? null : (datasource as SimpleStringDatasource).givenChoices;
   }
   
@@ -106,14 +102,14 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   
   void selectChoice(AutocompleteChoice choice) {
     print("selectChoice");
-    model.selectedchoice = choice;
+    selectedchoice = choice;
     _input.blur();
     _input.value = choice.key;
   }
   void mouseUpChoice(Event event, var detail, Node target) {
     if (target is Element) {
       var choiceKey = (target as Element).attributes['choice-key'];
-      var choice = _datasource.objectByKey(choiceKey);
+      var choice = datasource.objectByKey(choiceKey);
       selectChoice(choice);
     }
   }
@@ -123,7 +119,7 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
     print('mouseOver');
     if (target is Element) {
       var choiceKey = (target as Element).attributes['choice-key'];
-      var choice = _datasource.objectByKey(choiceKey);
+      var choice = datasource.objectByKey(choiceKey);
       var idx = model.filteredChoices.indexOf(choice);
       if (idx == model._focusedItemIndex || idx < 0) {
         return;
@@ -163,7 +159,7 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   }
   
   void inputBlur(Event e, var detail, Node target) {
-    //model.inputHasFocus = false;
+    model.inputHasFocus = false;
   }
   
   void inserted() {

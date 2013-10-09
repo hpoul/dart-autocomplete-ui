@@ -4,7 +4,7 @@
     <link rel="import" href="autocomplete_result.html" />
   </head>
   <body>
-    <polymer-element name="tapo-input-autocomplete" apply-author-styles attributes="choices">
+    <polymer-element name="tapo-input-autocomplete">
       <template>
         <div class="autocomplete-wrapper">
           <div class="{{ { 'autocomplete-content-wrapper-marker': true, 'autocomplete-content-wrapper': true, 'asdf': true, 'xyz': false, 'autocomplete-content-visible': model.inputHasFocus, 'autocomplete-content-hidden': !(model.inputHasFocus) } }}">
@@ -12,8 +12,7 @@
               <ul class="autocomplete-content">
                 <template repeat="{{ choice in model.filteredChoices }}">
                   <!--li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-down="mouseDownChoice(choice, $event)" on-mouse-up="selectChoice(choice)"-->
-                  <li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice" on-mouse-down="mouseDown" on-mouse-up="mouseUpChoice">
-                    test
+                  <li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouseover="mouseOverChoice" on-mousedown="mouseDown" on-mouseup="mouseUpChoice">
                     <div><tapo-autocomplete-result choice="{{ choice }}" searchquery="{{ model.searchquery }}" renderer="{{ renderer }}" /></div>
                     <!--content select=".choiceTemplate"></content-->
                   </li>
@@ -24,8 +23,7 @@
               </ul>
             </template>
           </div>
-          <input type="text" on-focus="inputFocus" on-blur="inputBlur" on-key-down="keyDown" on-key-up="keyUp" value="{{ model.searchquery }}" />
-          <button on-click="testClick">Hallo</button> {{ blah }}
+          <input type="text" on-focus="inputFocus" on-blur="inputBlur" on-keydown="keyDown" on-keyup="keyUp" value="{{ model.searchquery }}" />
         </div>
         <style>
           .autocomplete-wrapper {
@@ -75,7 +73,7 @@
           }
         </style>
       </template>
-      <script type="application/dart" src="input_autocomplete_component_proxy.dart"></script>
+      <script type="application/dart" src="input_autocomplete.dart"></script>
     </polymer-element>
   </body>
 </html>
