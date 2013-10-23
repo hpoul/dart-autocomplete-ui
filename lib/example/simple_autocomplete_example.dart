@@ -7,6 +7,8 @@ class SimpleAutocompleteExample extends PolymerElement {
   @observable
   AutocompleteChoice selectedchoice;
   
+  SimpleAutocompleteExample.created() : super.created();
+  
   List<String> get autocompleteChoices {
     return ['Test 1', 'Test 2', 'Misc', 'Abcdef', 'Haha', 'Lorem Ipsum', 'Testing 3']..sort();
   }

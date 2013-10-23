@@ -6,7 +6,7 @@ abstract class AutocompleteChoice {
   String get key;
 }
 
-class AutocompleteChoiceImpl implements AutocompleteChoice {
+class AutocompleteChoiceImpl extends AutocompleteChoice {
   String key;
   String label;
   var obj;

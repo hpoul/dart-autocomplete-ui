@@ -1,6 +1,6 @@
 part of input_autocomplete;
 
-class ValueHolder extends Object with ObservableMixin {
+class ValueHolder extends Object with Observable {
   @observable
   bool inputHasFocus = false;
   @observable
@@ -32,20 +32,24 @@ class ValueHolder extends Object with ObservableMixin {
  * * [renderer] (subclass of [AutocompleteChoiceRenderer])
  */
 @CustomTag('tapo-input-autocomplete')
-class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
+class InputAutocompleteComponent extends PolymerElement with Observable {
   AutocompleteChoiceRenderer _renderer;
   @observable @published AutocompleteDatasource datasource;
   @observable
   ValueHolder model = new ValueHolder();
   @observable @published
   AutocompleteChoice selectedchoice;
+  
+  InputAutocompleteComponent.created() : super.created();
 
   bool get applyAuthorStyles => true;
   
+  @published
   void set renderer (AutocompleteChoiceRenderer renderer) {
     _renderer = renderer;
   }
   
+  @published
   AutocompleteChoiceRenderer get renderer {
     if (_renderer == null) {
       _renderer = new AutocompleteChoiceRendererImpl();
@@ -61,6 +65,7 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
   }
   
   @published void set choices(List choices) {
+    print("Setting choices.");
     this.datasource = new SimpleStringDatasource(choices);
   }
   
@@ -162,7 +167,8 @@ class InputAutocompleteComponent extends PolymerElement with ObservableMixin {
     model.inputHasFocus = false;
   }
   
-  void inserted() {
+  void enteredView() {
+    super.enteredView();
     //_positionCompleteBox();
     model.changes.listen((records){
       model.hasSearched = model.filteredChoices != null;
