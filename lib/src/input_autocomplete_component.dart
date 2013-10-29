@@ -32,7 +32,7 @@ class ValueHolder extends Object with Observable {
  * * [renderer] (subclass of [AutocompleteChoiceRenderer])
  */
 @CustomTag('tapo-input-autocomplete')
-class InputAutocompleteComponent extends PolymerElement with Observable {
+class InputAutocompleteComponent extends PolymerElement {
   AutocompleteChoiceRenderer _renderer;
   @observable @published AutocompleteDatasource datasource;
   @observable
@@ -40,7 +40,11 @@ class InputAutocompleteComponent extends PolymerElement with Observable {
   @observable @published
   AutocompleteChoice selectedchoice;
   
-  InputAutocompleteComponent.created() : super.created();
+  InputAutocompleteComponent.created() : super.created() {
+    onPropertyChange(this, #datasource, () {
+      print('datasource changed.');
+    });
+  }
 
   bool get applyAuthorStyles => true;
   
@@ -65,7 +69,7 @@ class InputAutocompleteComponent extends PolymerElement with Observable {
   }
   
   @published void set choices(List choices) {
-    print("Setting choices.");
+    print("Setting choices. to ${choices}");
     this.datasource = new SimpleStringDatasource(choices);
   }
   
@@ -109,12 +113,19 @@ class InputAutocompleteComponent extends PolymerElement with Observable {
     print("selectChoice");
     selectedchoice = choice;
     _input.blur();
-    _input.value = choice.key;
+    if (choice != null) {
+      _input.value = choice.key;
+    } else {
+      _input.value = '';
+    }
   }
   void mouseUpChoice(Event event, var detail, Node target) {
     if (target is Element) {
       var choiceKey = (target as Element).attributes['choice-key'];
       var choice = datasource.objectByKey(choiceKey);
+      if (choice == null) {
+        print('could not find choice with key ${choiceKey}');
+      }
       selectChoice(choice);
     }
   }
