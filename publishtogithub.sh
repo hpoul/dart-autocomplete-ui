@@ -1,8 +1,8 @@
 #!/bin/bash
 
-basedir=web
 tmpdir=tmp
 rootdir=`pwd`
+basedir=`dirname $0`
 
 rm -rf $tmpdir
 mkdir -p $tmpdir
@@ -12,13 +12,9 @@ if ! test -d $tmpdir ; then
 	exit 1
 fi
 
-$DART_SDK/bin/dart --package-root=packages/ packages/web_ui/dwc.dart --out $basedir/out/ $basedir/example.html
+$DART_SDK/bin/dart deploy.dart
 
-cd web/out/
-$DART_SDK/bin/dart2js example.html_bootstrap.dart -oexample.html_bootstrap.dart.js
-cd ../..
-
-if ! test -f $basedir/example.html ; then
+if ! test -f $basedir/out/web/example.html ; then
 	echo "Unable to find example.html - in $basedir ?!"
 	exit 1
 fi
@@ -30,10 +26,8 @@ export GIT_DIR=$tmpdir/gh-pages/.git
 rm -rf $tmpdir/gh-pages/examples
 mkdir -p $tmpdir/gh-pages/examples
 
-cp -r $basedir/out/packages $tmpdir/gh-pages/examples/
-cp -a $basedir/out/* $tmpdir/gh-pages/examples/
-
-sed -e "s#../packages/browser/dart.js#packages/browser/dart.js#" -i '' $tmpdir/gh-pages/examples/example.html
+#cp -r $basedir/out/web/packages $tmpdir/gh-pages/examples/
+cp -a -L $basedir/out/web/* $tmpdir/gh-pages/examples/
 
 git add -A
 

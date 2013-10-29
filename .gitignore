@@ -1,5 +1,6 @@
 packages
 web/out
+/out
 *.dart.js
 *.dart.js.map
 *.dart.js.deps

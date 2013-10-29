@@ -162,7 +162,7 @@ class InputAutocompleteComponent extends PolymerElement {
     // TODO would it be nicer to do this in HTML?
     this._input.classes.add("loading");
     this.datasource.query(this._input.value.toLowerCase()).then((matches) {
-      model.filteredChoices = matches.toList();
+      model.filteredChoices = toObservable(matches.toList());
       this._input.classes.remove("loading");
       _positionCompleteBox();
     });
