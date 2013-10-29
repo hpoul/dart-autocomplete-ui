@@ -238,7 +238,7 @@ $$.Closure$3 = [P, {"": "Closure;call$3$onError$radix,$name",
   $is_args1: true
 }];
 
-init.mangledNames = {get$$$: "$", get$_autocomplete_result$__$choice: "__$choice", get$_autocomplete_result$__$renderer: "__$renderer", get$_autocomplete_result$__$searchquery: "__$searchquery", get$_cachedConstructors: "_cachedConstructors", get$_cachedDeclarations: "_cachedDeclarations", get$_cachedFields: "_cachedFields", get$_cachedGetters: "_cachedGetters", get$_cachedMembers: "_cachedMembers", get$_cachedMetadata: "_cachedMetadata", get$_cachedMethods: "_cachedMethods", get$_cachedMethodsMap: "_cachedMethodsMap", get$_cachedSetters: "_cachedSetters", get$_cachedSuperinterfaces: "_cachedSuperinterfaces", get$_cachedTypeVariables: "_cachedTypeVariables", get$_cachedVariables: "_cachedVariables", get$_fieldsDescriptor: "_fieldsDescriptor", get$_fieldsMetadata: "_fieldsMetadata", get$_focusedItemIndex: "_focusedItemIndex", get$_input_autocomplete$__$datasource: "__$datasource", get$_input_autocomplete$__$model: "__$model", get$_input_autocomplete$__$selectedchoice: "__$selectedchoice", get$_jsConstructorCache: "_jsConstructorCache", get$_jsConstructorOrInterceptor: "_jsConstructorOrInterceptor", get$_mangledName: "_mangledName", get$_metadata: "_metadata", get$_owner: "_owner", get$_renderer: "_renderer", get$_simple_autocomplete_example$__$exampleDatasource: "__$exampleDatasource", get$_simple_autocomplete_example$__$selectedchoice: "__$selectedchoice", get$_superclass: "_superclass", get$choice: "choice", get$choices: "choices", get$datasource: "datasource", get$exampleDatasource: "exampleDatasource", get$filteredChoices: "filteredChoices", get$hasSearched: "hasSearched", get$hash: "hash", get$index: "index", get$inputHasFocus: "inputHasFocus", get$length: "length", get$method_0: "method_0", get$model: "model", get$mynull: "mynull", get$renderer: "renderer", get$searchquery: "searchquery", get$selectedchoice: "selectedchoice", get$this_0: "this_0", get$this_1: "this_1", get$this_2: "this_2", get$value: "value", get$xyz: "xyz"};
+init.mangledNames = {get$$$: "$", get$_autocomplete_result$__$choice: "__$choice", get$_autocomplete_result$__$renderer: "__$renderer", get$_autocomplete_result$__$searchquery: "__$searchquery", get$_cachedConstructors: "_cachedConstructors", get$_cachedDeclarations: "_cachedDeclarations", get$_cachedFields: "_cachedFields", get$_cachedGetters: "_cachedGetters", get$_cachedMembers: "_cachedMembers", get$_cachedMetadata: "_cachedMetadata", get$_cachedMethods: "_cachedMethods", get$_cachedMethodsMap: "_cachedMethodsMap", get$_cachedSetters: "_cachedSetters", get$_cachedSuperinterfaces: "_cachedSuperinterfaces", get$_cachedTypeVariables: "_cachedTypeVariables", get$_cachedVariables: "_cachedVariables", get$_fieldsDescriptor: "_fieldsDescriptor", get$_fieldsMetadata: "_fieldsMetadata", get$_focusedItemIndex: "_focusedItemIndex", get$_input_autocomplete$__$datasource: "__$datasource", get$_input_autocomplete$__$model: "__$model", get$_input_autocomplete$__$selectedchoice: "__$selectedchoice", get$_jsConstructorCache: "_jsConstructorCache", get$_jsConstructorOrInterceptor: "_jsConstructorOrInterceptor", get$_mangledName: "_mangledName", get$_metadata: "_metadata", get$_owner: "_owner", get$_renderer: "_renderer", get$_simple_autocomplete_example$__$exampleDatasource: "__$exampleDatasource", get$_simple_autocomplete_example$__$selectedchoice: "__$selectedchoice", get$_superclass: "_superclass", get$choice: "choice", get$choices: "choices", get$datasource: "datasource", get$exampleDatasource: "exampleDatasource", get$filteredChoices: "filteredChoices", get$hasSearched: "hasSearched", get$hash: "hash", get$index: "index", get$inputHasFocus: "inputHasFocus", get$key: "key", get$length: "length", get$method_0: "method_0", get$model: "model", get$mynull: "mynull", get$renderer: "renderer", get$searchquery: "searchquery", get$selectedchoice: "selectedchoice", get$this_0: "this_0", get$this_1: "this_1", get$this_2: "this_2", get$value: "value", get$xyz: "xyz"};
 (function (reflectionData) {
   function map(x){x={x:x};delete x.x;return x}
   if (!init.libraries) init.libraries = [];
@@ -4033,7 +4033,7 @@ AutocompleteResult$created: function(receiver) {
 
 "+AutocompleteResult": [],
 
-PolymerElement_ChangeNotifier: {"": "PolymerElement+ChangeNotifier;", $isObservable: true}}],
+PolymerElement_ChangeNotifier: {"": "PolymerElement+ChangeNotifier;_changes%,_records%", $isObservable: true}}],
 ["custom_element.polyfill", "package:custom_element/polyfill.dart", , B, {
 _isReady: function() {
   var t1, customElements;
@@ -20332,7 +20332,11 @@ highlightTextAndHtmlEscape: function(text, query) {
 
 AutocompleteChoice: {"": "Object;"},
 
-AutocompleteChoiceImpl: {"": "AutocompleteChoice;key>,label,obj", $isAutocompleteChoiceImpl: true},
+AutocompleteChoiceImpl: {"": ["AutocompleteChoice_Observable;key*-,label,obj,_changes,_mirror,_values,_records", function() {
+    return [C.C_Reflectable];
+  }, null, null, null, null, null, null], $isAutocompleteChoiceImpl: true},
+
+AutocompleteChoice_Observable: {"": "AutocompleteChoice+Observable;_changes*,_mirror@,_values@,_records*", $isObservable: true},
 
 BaseAutocompleteChoiceRenderer: {"": "Object;"},
 
@@ -20393,7 +20397,7 @@ SimpleStringDatasource: {"": "Object;_givenChoices,_choices",
     for (t1 = J.get$iterator$ax(this._givenChoices); t1.moveNext$0();) {
       choice = t1.get$current();
       t2 = J.getInterceptor(choice);
-      this._choices.push(new R.AutocompleteChoiceImpl(t2.toString$0(choice), t2.toString$0(choice), choice));
+      this._choices.push(new R.AutocompleteChoiceImpl(t2.toString$0(choice), t2.toString$0(choice), choice, null, null, null, null));
     }
   },
   $isSimpleStringDatasource: true,
@@ -20491,7 +20495,7 @@ ValueHolder: {"": ["Object_ChangeNotifier;_input_autocomplete$__$inputHasFocus,_
   "+searchquery=": 1
 },
 
-Object_ChangeNotifier: {"": "Object+ChangeNotifier;", $isObservable: true},
+Object_ChangeNotifier: {"": "Object+ChangeNotifier;_changes*,_records*", $isObservable: true},
 
 InputAutocompleteComponent: {"": ["PolymerElement_ChangeNotifier0;_renderer%-,_input_autocomplete$__$datasource%-,_input_autocomplete$__$model%-,_input_autocomplete$__$selectedchoice%-,_changes,_records,_changes,_records,_declaration,_observers,_unbound,_unbindAllJob,_propertyObserver,syntax,_shadowRoots,$$-", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, function() {
     return [C.C_Reflectable];
@@ -20773,7 +20777,7 @@ InputAutocompleteComponent$created: function(receiver) {
 
 "+InputAutocompleteComponent": [],
 
-PolymerElement_ChangeNotifier0: {"": "PolymerElement+ChangeNotifier;", $isObservable: true},
+PolymerElement_ChangeNotifier0: {"": "PolymerElement+ChangeNotifier;_changes%,_records%", $isObservable: true},
 
 InputAutocompleteComponent$created_closure: {"": "Closure;",
   call$0: function() {
@@ -21238,7 +21242,7 @@ onPropertyChange_closure: {"": "Closure;sourceName_0,callback_1",
   $is_args1: true
 },
 
-ChangeNotifier: {"": "Object;",
+ChangeNotifier: {"": "Object;_changes%,_records%",
   get$changes: function(receiver) {
     var t1, t2;
     if (receiver._changes == null) {
@@ -21361,7 +21365,7 @@ ListChangeRecord: {"": "ChangeRecord;index>,removedCount<,addedCount<",
   $isListChangeRecord: true
 },
 
-CompoundBinding: {"": "ChangeNotifier;_combinator,_observe$_observers,_values,_observe$_value,scheduled,_changes,_records",
+CompoundBinding: {"": "ChangeNotifier;_combinator,_observe$_observers,_values@,_observe$_value,scheduled,_changes,_records",
   _combinator$1: function(arg0) {
     return this._combinator.call$1(arg0);
   },
@@ -21457,11 +21461,107 @@ ObservableProperty: {"": "Object;", $isObservableProperty: true},
 
 Reflectable: {"": "Object;"},
 
+Observable: {"": "Object;_changes*,_mirror@,_values@,_records*",
+  get$changes: function(_) {
+    var t1, t2;
+    t1 = J.getInterceptor$x(this);
+    if (t1.get$_changes(this) == null) {
+      t2 = t1.get$_observed(this);
+      t1.set$_changes(this, P.StreamController_StreamController$broadcast(t1.get$_unobserved(this), t2, true, null));
+    }
+    t1 = t1.get$_changes(this);
+    t1.toString;
+    t2 = new P._BroadcastStream(t1);
+    H.setRuntimeTypeInfo(t2, [H.getRuntimeTypeArgument(t1, "_BroadcastStreamController", 0)]);
+    return t2;
+  },
+  get$hasObservers: function(_) {
+    var t1, t2;
+    t1 = J.get$_changes$x(this);
+    if (t1 != null) {
+      t2 = t1._async$_next;
+      t1 = t2 == null ? t1 != null : t2 !== t1;
+    } else
+      t1 = false;
+    return t1;
+  },
+  _observed$0: function(_) {
+    var mirror, values, type, t1, field, t2, t3, t4, $name;
+    O.registerObservable(this);
+    mirror = H.reflect(this);
+    values = P.LinkedHashMap_LinkedHashMap(null, null, null, P.Symbol, P.Object);
+    for (type = H.reflectClassByMangledName(J.get$runtimeType$(mirror.reflectee)._typeName); !J.$eq(type, $.get$Observable__objectType()); type = type.get$superclass())
+      for (t1 = J.get$iterator$ax(J.get$values$x(type.get$variables())); t1.moveNext$0();) {
+        field = t1.get$current();
+        if (J.get$isFinal$x(field) === true || field.get$isStatic() || field.get$isPrivate())
+          continue;
+        for (t2 = J.get$iterator$ax(field.get$metadata()); t2.moveNext$0();) {
+          t3 = t2.get$current().get$reflectee();
+          t4 = J.getInterceptor(t3);
+          if (typeof t3 === "object" && t3 !== null && !!t4.$isObservableProperty) {
+            $name = field.get$simpleName();
+            values.$indexSet(values, $name, mirror._invoke$4($name, 1, J.get$_name$x($name), []).reflectee);
+            break;
+          }
+        }
+      }
+    this.set$_mirror(mirror);
+    this.set$_values(values);
+  },
+  get$_observed: function(_receiver) {
+    return new H.BoundClosure$i0(this, B.Observable.prototype._observed$0, _receiver, "_observed$0");
+  },
+  _unobserved$0: function(_) {
+    if (this.get$_values() != null) {
+      this.set$_mirror(null);
+      this.set$_values(null);
+    }
+  },
+  get$_unobserved: function(_receiver) {
+    return new H.BoundClosure$i0(this, B.Observable.prototype._unobserved$0, _receiver, "_unobserved$0");
+  },
+  deliverChanges$0: function(_) {
+    var t1, t2;
+    t1 = {};
+    if (this.get$_values() == null || !J.get$hasObservers$x(this))
+      return false;
+    t2 = J.getInterceptor$x(this);
+    t1.records_0 = t2.get$_records(this);
+    t2.set$_records(this, null);
+    J.forEach$1$ax(this.get$_values(), new B.Observable_deliverChanges_closure(t1, this));
+    t1 = t1.records_0;
+    if (t1 == null)
+      return false;
+    t2 = t2.get$_changes(this);
+    t1 = new P.UnmodifiableListView(t1);
+    H.setRuntimeTypeInfo(t1, [B.ChangeRecord]);
+    if (t2._state >= 4)
+      H.throwExpression(t2._addEventError$0());
+    t2._sendData$1(t1);
+    return true;
+  },
+  get$deliverChanges: function(_receiver) {
+    return new H.BoundClosure$i0(this, B.Observable.prototype.deliverChanges$0, _receiver, "deliverChanges$0");
+  },
+  notifyPropertyChange$3: function(_, field, oldValue, newValue) {
+    return B._notifyPropertyChange(this, field, oldValue, newValue);
+  },
+  notifyChange$1: function(_, record) {
+    var t1 = J.getInterceptor$x(this);
+    if (!t1.get$hasObservers(this))
+      return;
+    if (t1.get$_records(this) == null)
+      t1.set$_records(this, []);
+    t1.get$_records(this).push(record);
+  },
+  $isObservable: true
+},
+
 Observable_deliverChanges_closure: {"": "Closure;box_0,this_1",
   call$2: function($name, oldValue) {
     var t1, newValue, t2, t3;
     t1 = this.this_1;
-    newValue = t1._mirror.getField$1($name).reflectee;
+    newValue = t1.get$_mirror().getField$1($name).reflectee;
     if (!J.$eq(oldValue, newValue)) {
       t2 = this.box_0;
       if (t2.records_0 == null)
@@ -21470,8 +21570,7 @@ Observable_deliverChanges_closure: {"": "Closure;box_0,this_1",
       t3 = new B.PropertyChangeRecord(t1, $name, oldValue, newValue);
       H.setRuntimeTypeInfo(t3, [null]);
       t2.push(t3);
-      t1 = t1._values;
-      t1.$indexSet(t1, $name, newValue);
+      J.$indexSet$ax(t1.get$_values(), $name, newValue);
     }
   },
   "+call:2:0": 0,
@@ -21735,7 +21834,7 @@ ObservableList$: function($length, $E) {
 
 },
 
-ListBase_ChangeNotifier: {"": "ListBase+ChangeNotifier;", $asListBase: null, $asList: null, $asIterable: null, $isObservable: true},
+ListBase_ChangeNotifier: {"": "ListBase+ChangeNotifier;_changes*,_records*", $asListBase: null, $asList: null, $asIterable: null, $isObservable: true},
 
 MapChangeRecord: {"": "ChangeRecord;key>,oldValue>,newValue>,isInsert,isRemove",
   changes$1: function(_, otherKey) {
@@ -21918,7 +22017,7 @@ ObservableMap_addAll_closure: {"": "Closure;this_0",
   $is_args2: true
 },
 
-PathObserver: {"": "ChangeNotifier;path>,_isValid,_segments,_values,_subs,_changes,_records",
+PathObserver: {"": "ChangeNotifier;path>,_isValid,_segments,_values@,_subs,_changes,_records",
   get$value: function(_) {
     var t1, t2;
     if (!this._isValid)
@@ -21931,7 +22030,7 @@ PathObserver: {"": "ChangeNotifier;path>,_isValid,_segments,_values,_subs,_chang
       t1 = false;
     if (!t1)
       this._updateValues$0();
-    return C.JSArray_methods.get$last(this._values);
+    return J.get$last$ax(this._values);
     "12,21";
   },
   "+value": 1,
@@ -21949,19 +22048,12 @@ PathObserver: {"": "ChangeNotifier;path>,_isValid,_segments,_values,_subs,_chang
       t2 = false;
     if (!t2)
       this._updateValues$0();
-    t2 = this._values;
-    t3 = len - 1;
-    if (t3 < 0 || t3 >= t2.length)
-      throw H.ioore(t2, t3);
-    t2 = t2[t3];
-    if (t3 >= t1.length)
-      throw H.ioore(t1, t3);
-    if (B._setObjectProperty(t2, t1[t3], value)) {
-      t1 = this._values;
-      if (len >= t1.length)
-        throw H.ioore(t1, len);
-      t1[len] = value;
-    }
+    t2 = len - 1;
+    t3 = J.$index$asx(this._values, t2);
+    if (t2 < 0 || t2 >= t1.length)
+      throw H.ioore(t1, t2);
+    if (B._setObjectProperty(t3, t1[t2], value))
+      J.$indexSet$ax(this._values, len, value);
     "12,17,0,21";
   },
   "+value=": 1,
@@ -21999,35 +22091,27 @@ PathObserver: {"": "ChangeNotifier;path>,_isValid,_segments,_values,_subs,_chang
     for (t1 = this._segments, i = 0; i < t1.length; i = i0) {
       t2 = this._values;
       i0 = i + 1;
-      t3 = t2.length;
-      if (i >= t3)
-        throw H.ioore(t2, i);
-      t4 = B._getObjectProperty(t2[i], t1[i]);
-      if (i0 >= t3)
-        throw H.ioore(t2, i0);
-      t2[i0] = t4;
+      t3 = J.getInterceptor$asx(t2);
+      t4 = t3.$index(t2, i);
+      if (i >= t1.length)
+        throw H.ioore(t1, i);
+      t3.$indexSet(t2, i0, B._getObjectProperty(t4, t1[i]));
     }
   },
   _updateObservedValues$1: function(start) {
-    var t1, i, oldValue, newValue, t2, i0, t3;
+    var t1, i, oldValue, newValue, i0, t2;
     for (t1 = this._segments, i = start, oldValue = null, newValue = null; i < t1.length; i = i0) {
-      t2 = this._values;
       i0 = i + 1;
-      t3 = t2.length;
-      if (i0 < 0 || i0 >= t3)
-        throw H.ioore(t2, i0);
-      oldValue = t2[i0];
-      if (i < 0 || i >= t3)
-        throw H.ioore(t2, i);
-      newValue = B._getObjectProperty(t2[i], t1[i]);
+      oldValue = J.$index$asx(this._values, i0);
+      t2 = J.$index$asx(this._values, i);
+      if (i < 0 || i >= t1.length)
+        throw H.ioore(t1, i);
+      newValue = B._getObjectProperty(t2, t1[i]);
       if (oldValue == null ? newValue == null : oldValue === newValue) {
         this._observe$_observePath$2(start, i);
         return;
       }
-      t2 = this._values;
-      if (i0 >= t2.length)
-        throw H.ioore(t2, i0);
-      t2[i0] = newValue;
+      J.$indexSet$ax(this._values, i0, newValue);
     }
     this._observe$_observePath$1(start);
     if (this.get$hasObservers(this) && !J.$eq(oldValue, newValue)) {
@@ -22060,11 +22144,8 @@ PathObserver: {"": "ChangeNotifier;path>,_isValid,_segments,_values,_subs,_chang
     return this._observe$_observePath$2(start, null);
   },
   _observeIndex$1: function(i) {
-    var t1, object, t2, subscription, handleError, handleDone;
-    t1 = this._values;
-    if (i < 0 || i >= t1.length)
-      throw H.ioore(t1, i);
-    object = t1[i];
+    var object, t1, t2, subscription, handleError, handleDone;
+    object = J.$index$asx(this._values, i);
     t1 = J.getInterceptor$x(object);
     if (typeof object === "object" && object !== null && !!t1.$isObservable) {
       t2 = this._subs;
@@ -22074,7 +22155,7 @@ PathObserver: {"": "ChangeNotifier;path>,_isValid,_segments,_values,_subs,_chang
       subscription._onError = P._registerErrorHandler(handleError, $.Zone__current);
       handleDone = P._nullDoneHandler$closure;
       subscription._onDone = $.Zone__current.registerCallback$1(handleDone);
-      if (i >= t2.length)
+      if (i < 0 || i >= t2.length)
         throw H.ioore(t2, i);
       t2[i] = subscription;
     }
@@ -22093,10 +22174,7 @@ PathObserver: {"": "ChangeNotifier;path>,_isValid,_segments,_values,_subs,_chang
     t2 = P.List_List(t1.length + 1, P.Object);
     H.setRuntimeTypeInfo(t2, [P.Object]);
     this._values = t2;
-    t2 = this._values;
-    if (0 >= t2.length)
-      throw H.ioore(t2, 0);
-    t2[0] = object;
+    J.$indexSet$ax(this._values, 0, object);
     t1 = P.List_List(t1.length, P.StreamSubscription);
     H.setRuntimeTypeInfo(t1, [P.StreamSubscription]);
     this._subs = t1;
@@ -22136,18 +22214,15 @@ PathObserver__observeIndex_closure: {"": "Closure;this_0,i_1,object_2",
   call$1: function(records) {
     var t1, t2, t3, t4, record;
     t1 = this.this_0;
-    t2 = t1._values;
-    t3 = this.i_1;
-    if (t3 < 0 || t3 >= t2.length)
-      throw H.ioore(t2, t3);
-    if (t2[t3] !== this.object_2)
+    t2 = this.i_1;
+    if (J.$index$asx(t1._values, t2) !== this.object_2)
       return;
-    for (t2 = J.get$iterator$ax(records), t4 = t1._segments; t2.moveNext$0();) {
-      record = t2.get$current();
-      if (t3 >= t4.length)
-        throw H.ioore(t4, t3);
-      if (B._changeRecordMatches(record, t4[t3])) {
-        t1._updateObservedValues$1(t3);
+    for (t3 = J.get$iterator$ax(records), t4 = t1._segments; t3.moveNext$0();) {
+      record = t3.get$current();
+      if (t2 < 0 || t2 >= t4.length)
+        throw H.ioore(t4, t2);
+      if (B._changeRecordMatches(record, t4[t2])) {
+        t1._updateObservedValues$1(t2);
         return;
       }
     }
@@ -22233,10 +22308,9 @@ dirtyCheckObservables: function() {
     $._allObservables = [];
     for (t1 = debugLoop != null, anyChanged = false, i = 0; i < toCheck.length; ++i) {
       observer = toCheck[i];
-      t2 = observer._changes;
-      t2 = t2._async$_next !== t2;
-      if (t2) {
-        if (observer.deliverChanges$0(observer)) {
+      t2 = J.getInterceptor$x(observer);
+      if (t2.get$hasObservers(observer)) {
+        if (t2.deliverChanges$0(observer)) {
           if (t1)
             debugLoop.push([i, observer]);
           anyChanged = true;
@@ -24097,7 +24171,7 @@ HtmlElement_Polymer: {"": ["HtmlElement+Polymer;$$=-", function() {
     return [C.C_Reflectable];
   }], $isPolymer: true, $isNodeBindExtension: true, $isObservable: true, $isElement: true, $isInterceptor: true, $isNode: true, $isEventTarget: true},
 
-HtmlElement_Polymer_ChangeNotifier: {"": "HtmlElement_Polymer+ChangeNotifier;", $isObservable: true},
+HtmlElement_Polymer_ChangeNotifier: {"": "HtmlElement_Polymer+ChangeNotifier;_changes%,_records%", $isObservable: true},
 
 _PropertyValue: {"": "Object;oldValue>,newValue*", $is_PropertyValue: true},
 
@@ -26443,7 +26517,7 @@ SimpleAutocompleteExample$created: function(receiver) {
 
 "+SimpleAutocompleteExample": [],
 
-PolymerElement_ChangeNotifier1: {"": "PolymerElement+ChangeNotifier;", $isObservable: true},
+PolymerElement_ChangeNotifier1: {"": "PolymerElement+ChangeNotifier;_changes%,_records%", $isObservable: true},
 
 ExampleDatasource: {"": "SimpleStringDatasource;_givenChoices,_choices",
   query$1: function(_, query) {
@@ -28829,6 +28903,9 @@ J.enteredView$0$x = function(receiver) {
 J.forEach$1$ax = function(receiver, a0) {
   return J.getInterceptor$ax(receiver).forEach$1(receiver, a0);
 };
+J.get$_changes$x = function(receiver) {
+  return J.getInterceptor$x(receiver).get$_changes(receiver);
+};
 J.get$_children$x = function(receiver) {
   return J.getInterceptor$x(receiver).get$_children(receiver);
 };
@@ -28882,6 +28959,9 @@ J.get$error$x = function(receiver) {
 };
 J.get$first$ax = function(receiver) {
   return J.getInterceptor$ax(receiver).get$first(receiver);
+};
+J.get$hasObservers$x = function(receiver) {
+  return J.getInterceptor$x(receiver).get$hasObservers(receiver);
 };
 J.get$hashCode$ = function(receiver) {
   return J.getInterceptor(receiver).get$hashCode(receiver);
@@ -29165,7 +29245,7 @@ J.unbindAll$0$x = function(receiver) {
 J.where$1$ax = function(receiver, a0) {
   return J.getInterceptor$ax(receiver).where$1(receiver, a0);
 };
-$.interceptedNames = ["$add", "$and", "$div", "$eq", "$ge", "$gt", "$index", "$indexSet", "$le", "$lt", "$mul", "$negate", "$shl", "$shr", "$sub", "$tdiv", "Element$created$0", "InputAutocompleteComponent$created$0", "PolymerDeclaration$created$0", "PolymerElement$created$0", "SimpleAutocompleteExample$created$0", "_checkIndex$2", "_checkSublistArguments$3", "_doSearch$0", "_ensureRequestAnimationFrame$0", "_focusNext$1", "_initMouseEvent$15", "_invalidIndex$2", "_lowerCaseMap$1", "_observe$1", "_observed$0", "_parseStyleInt$1", "_positionCompleteBox$0", "_publish$1", "_rangeCheck$2", "_replaceChild$2", "_requestAnimationFrame$1", "_slowTdiv$1", "_unobserved$0", "abs$0", "accept$1", "accumulateInstanceAttributes$0", "add$1", "addAll$1", "addAttributeDelegates$1", "addEventListener$3", "addHostListeners$0", "addNodeListeners$3", "allMatches$1", "any$1", "append$1", "asyncUnbindAll$0", "attributeChanged$3", "attributeToProperty$2", "bind$3", "blur$0", "buildType$2", "cacheSheets$0", "cacheStyles$0", "cancelUnbindAll$0", "cancelUnbindAll$1$preventCascade", "changes$1", "clear$0", "clone$1", "close$0", "close$1", "codeUnitAt$1", "compareTo$1", "complete$0", "complete$1", "contains$1", "contains$2", "copyInstanceAttributes$0", "createDocumentFragment$0", "createFragment$2$treeSanitizer", "createFragment$3$treeSanitizer$validator", "createShadowRoot$0", "cssTextForScope$1", "cssTextToScopeStyle$2", "deliverChanges$0", "desugar$2", "dispatchMethod$3", "elementAt$1", "endsWith$1", "enteredView$0", "error$1", "findNodes$1", "findNodes$2", "firstWhere$1", "firstWhere$2$defaultValue", "firstWhere$2$orElse", "fold$2", "forEach$1", "get$$$", "get$_autocomplete_result$__$choice", "get$_autocomplete_result$__$renderer", "get$_autocomplete_result$__$searchquery", "get$_children", "get$_customTagName", "get$_eventDelegates", "get$_input", "get$_input_autocomplete$__$datasource", "get$_input_autocomplete$__$model", "get$_input_autocomplete$__$selectedchoice", "get$_instanceAttributes", "get$_name", "get$_polymer$_observe", "get$_polymer$_publish", "get$_publishLC", "get$_renderer", "get$_simple_autocomplete_example$__$exampleDatasource", "get$_simple_autocomplete_example$__$selectedchoice", "get$applyAuthorStyles", "get$attributes", "get$autocompleteChoices", "get$bindings", "get$bubbles", "get$changes", "get$checked", "get$children", "get$choice", "get$choices", "get$className", "get$classes", "get$clientWidth", "get$complete", "get$content", "get$datasource", "get$detail", "get$entries", "get$error", "get$exampleDatasource", "get$first", "get$firstChild", "get$form", "get$hasObservers", "get$hash", "get$hashCode", "get$height", "get$host", "get$hostname", "get$href", "get$id", "get$index", "get$innerHtml", "get$isEmpty", "get$isFinal", "get$isNaN", "get$isNegative", "get$isNotEmpty", "get$iterator", "get$key", "get$keyCode", "get$kind", "get$last", "get$lastChild", "get$left", "get$length", "get$localName", "get$location", "get$marginLeft", "get$marginRight", "get$message", "get$method", "get$model", "get$name", "get$newValue", "get$nextNode", "get$nodeType", "get$nodes", "get$oldValue", "get$on", "get$onBlur", "get$onChange", "get$onClick", "get$onFocus", "get$onInput", "get$operator", "get$outerHtml", "get$ownerDocument", "get$parent", "get$parentNode", "get$path", "get$port", "get$previousNode", "get$print", "get$protocol", "get$renderer", "get$right", "get$runtimeType", "get$searchquery", "get$selectedIndex", "get$selectedchoice", "get$shadowRoot", "get$single", "get$src", "get$style", "get$superDeclaration", "get$tagName", "get$target", "get$templateContent", "get$top", "get$type", "get$value", "get$values", "get$width", "getBoundingClientRect$0", "getComputedStyle$0", "getComputedStyle$1", "getElementById$1", "getPropertyValue$1", "getRange$2", "getShadowRoot$1", "hostEventListener$1", "indexOf$1", "indexOf$2", "inferObservers$1", "inputBlur$3", "inputFocus$3", "insert$2", "insertBefore$2", "installGlobalStyles$0", "installLocalSheets$0", "isFocused$1", "join$1", "join$8", "keyDown$3", "keyUp$3", "lastIndexOf$1", "lastIndexOf$2", "leftView$0", "lightFromTemplate$1", "map$1", "marshalNodeReferences$1", "matchAsPrefix$1", "matchAsPrefix$2", "matches$1", "matchesWithAncestors$1", "mouseDown$3", "mouseOverChoice$3", "mouseUpChoice$3", "noSuchMethod$1", "notifyChange$1", "notifyPropertyChange$3", "notifyPropertyChanges$1", "observeArrayValue$3", "observeProperties$0", "onError$1", "parseDeclaration$1", "parseDeclarations$1", "pause$0", "pause$1", "polymerCreated$0", "prepareElement$0", "preventDefault$0", "print$0", "print$1", "print$2", "propertyForAttribute$1", "publishAttributes$2", "query$1", "queryAll$1", "querySelectorAll$1", "reflectPropertyToAttribute$1", "register$2", "registerType$1", "registerWhenReady$0", "remainder$1", "remove$0", "remove$1", "removeAt$1", "removeEventListener$3", "removeLast$0", "removeRange$2", "renderChoice$1", "renderChoice$2", "replaceAll$2", "replaceWith$1", "reset$0", "reset$1", "round$0", "roundToDouble$0", "selectChoice$1", "selectCurrentFocus$0", "send$1", "send$2", "serializeValue$1", "set$_autocomplete_result$__$choice", "set$_autocomplete_result$__$renderer", "set$_autocomplete_result$__$searchquery", "set$_input_autocomplete$__$datasource", "set$_input_autocomplete$__$model", "set$_input_autocomplete$__$selectedchoice", "set$_renderer", "set$_selector", "set$_simple_autocomplete_example$__$exampleDatasource", "set$_simple_autocomplete_example$__$selectedchoice", "set$checked", "set$choice", "set$choices", "set$className", "set$datasource", "set$exampleDatasource", "set$hash", "set$href", "set$innerHtml", "set$left", "set$length", "set$model", "set$newValue", "set$renderer", "set$right", "set$searchquery", "set$selectedIndex", "set$selectedchoice", "set$text", "set$top", "set$type", "set$value", "set$width", "setInnerHtml$1", "setInnerHtml$3$treeSanitizer$validator", "setProperty$3", "setRange$4", "shadowFromTemplate$1", "split$1", "startsWith$1", "startsWith$2", "stop$0", "sublist$1", "sublist$2", "substring$1", "substring$2", "takeAttributes$0", "toInt$0", "toList$0", "toList$1$growable", "toLowerCase$0", "toRadixString$1", "toString$0", "trim$0", "unbind$1", "unbind$2$suppressResolve", "unbindAll$0", "unbindAllProperties$0", "unregisterObserver$1", "unregisterObservers$0", "waitingForExtendee$1", "waitingForType$1", "where$1"];
+$.interceptedNames = ["$add", "$and", "$div", "$eq", "$ge", "$gt", "$index", "$indexSet", "$le", "$lt", "$mul", "$negate", "$shl", "$shr", "$sub", "$tdiv", "Element$created$0", "InputAutocompleteComponent$created$0", "PolymerDeclaration$created$0", "PolymerElement$created$0", "SimpleAutocompleteExample$created$0", "_checkIndex$2", "_checkSublistArguments$3", "_doSearch$0", "_ensureRequestAnimationFrame$0", "_focusNext$1", "_initMouseEvent$15", "_invalidIndex$2", "_lowerCaseMap$1", "_observe$1", "_observed$0", "_parseStyleInt$1", "_positionCompleteBox$0", "_publish$1", "_rangeCheck$2", "_replaceChild$2", "_requestAnimationFrame$1", "_slowTdiv$1", "_unobserved$0", "abs$0", "accept$1", "accumulateInstanceAttributes$0", "add$1", "addAll$1", "addAttributeDelegates$1", "addEventListener$3", "addHostListeners$0", "addNodeListeners$3", "allMatches$1", "any$1", "append$1", "asyncUnbindAll$0", "attributeChanged$3", "attributeToProperty$2", "bind$3", "blur$0", "buildType$2", "cacheSheets$0", "cacheStyles$0", "cancelUnbindAll$0", "cancelUnbindAll$1$preventCascade", "changes$1", "clear$0", "clone$1", "close$0", "close$1", "codeUnitAt$1", "compareTo$1", "complete$0", "complete$1", "contains$1", "contains$2", "copyInstanceAttributes$0", "createDocumentFragment$0", "createFragment$2$treeSanitizer", "createFragment$3$treeSanitizer$validator", "createShadowRoot$0", "cssTextForScope$1", "cssTextToScopeStyle$2", "deliverChanges$0", "desugar$2", "dispatchMethod$3", "elementAt$1", "endsWith$1", "enteredView$0", "error$1", "findNodes$1", "findNodes$2", "firstWhere$1", "firstWhere$2$defaultValue", "firstWhere$2$orElse", "fold$2", "forEach$1", "get$$$", "get$_autocomplete_result$__$choice", "get$_autocomplete_result$__$renderer", "get$_autocomplete_result$__$searchquery", "get$_changes", "get$_children", "get$_customTagName", "get$_eventDelegates", "get$_input", "get$_input_autocomplete$__$datasource", "get$_input_autocomplete$__$model", "get$_input_autocomplete$__$selectedchoice", "get$_instanceAttributes", "get$_name", "get$_polymer$_observe", "get$_polymer$_publish", "get$_publishLC", "get$_records", "get$_renderer", "get$_simple_autocomplete_example$__$exampleDatasource", "get$_simple_autocomplete_example$__$selectedchoice", "get$applyAuthorStyles", "get$attributes", "get$autocompleteChoices", "get$bindings", "get$bubbles", "get$changes", "get$checked", "get$children", "get$choice", "get$choices", "get$className", "get$classes", "get$clientWidth", "get$complete", "get$content", "get$datasource", "get$detail", "get$entries", "get$error", "get$exampleDatasource", "get$first", "get$firstChild", "get$form", "get$hasObservers", "get$hash", "get$hashCode", "get$height", "get$host", "get$hostname", "get$href", "get$id", "get$index", "get$innerHtml", "get$isEmpty", "get$isFinal", "get$isNaN", "get$isNegative", "get$isNotEmpty", "get$iterator", "get$key", "get$keyCode", "get$kind", "get$last", "get$lastChild", "get$left", "get$length", "get$localName", "get$location", "get$marginLeft", "get$marginRight", "get$message", "get$method", "get$model", "get$name", "get$newValue", "get$nextNode", "get$nodeType", "get$nodes", "get$oldValue", "get$on", "get$onBlur", "get$onChange", "get$onClick", "get$onFocus", "get$onInput", "get$operator", "get$outerHtml", "get$ownerDocument", "get$parent", "get$parentNode", "get$path", "get$port", "get$previousNode", "get$print", "get$protocol", "get$renderer", "get$right", "get$runtimeType", "get$searchquery", "get$selectedIndex", "get$selectedchoice", "get$shadowRoot", "get$single", "get$src", "get$style", "get$superDeclaration", "get$tagName", "get$target", "get$templateContent", "get$top", "get$type", "get$value", "get$values", "get$width", "getBoundingClientRect$0", "getComputedStyle$0", "getComputedStyle$1", "getElementById$1", "getPropertyValue$1", "getRange$2", "getShadowRoot$1", "hostEventListener$1", "indexOf$1", "indexOf$2", "inferObservers$1", "inputBlur$3", "inputFocus$3", "insert$2", "insertBefore$2", "installGlobalStyles$0", "installLocalSheets$0", "isFocused$1", "join$1", "join$8", "keyDown$3", "keyUp$3", "lastIndexOf$1", "lastIndexOf$2", "leftView$0", "lightFromTemplate$1", "map$1", "marshalNodeReferences$1", "matchAsPrefix$1", "matchAsPrefix$2", "matches$1", "matchesWithAncestors$1", "mouseDown$3", "mouseOverChoice$3", "mouseUpChoice$3", "noSuchMethod$1", "notifyChange$1", "notifyPropertyChange$3", "notifyPropertyChanges$1", "observeArrayValue$3", "observeProperties$0", "onError$1", "parseDeclaration$1", "parseDeclarations$1", "pause$0", "pause$1", "polymerCreated$0", "prepareElement$0", "preventDefault$0", "print$0", "print$1", "print$2", "propertyForAttribute$1", "publishAttributes$2", "query$1", "queryAll$1", "querySelectorAll$1", "reflectPropertyToAttribute$1", "register$2", "registerType$1", "registerWhenReady$0", "remainder$1", "remove$0", "remove$1", "removeAt$1", "removeEventListener$3", "removeLast$0", "removeRange$2", "renderChoice$1", "renderChoice$2", "replaceAll$2", "replaceWith$1", "reset$0", "reset$1", "round$0", "roundToDouble$0", "selectChoice$1", "selectCurrentFocus$0", "send$1", "send$2", "serializeValue$1", "set$_autocomplete_result$__$choice", "set$_autocomplete_result$__$renderer", "set$_autocomplete_result$__$searchquery", "set$_changes", "set$_input_autocomplete$__$datasource", "set$_input_autocomplete$__$model", "set$_input_autocomplete$__$selectedchoice", "set$_records", "set$_renderer", "set$_selector", "set$_simple_autocomplete_example$__$exampleDatasource", "set$_simple_autocomplete_example$__$selectedchoice", "set$checked", "set$choice", "set$choices", "set$className", "set$datasource", "set$exampleDatasource", "set$hash", "set$href", "set$innerHtml", "set$key", "set$left", "set$length", "set$model", "set$newValue", "set$renderer", "set$right", "set$searchquery", "set$selectedIndex", "set$selectedchoice", "set$text", "set$top", "set$type", "set$value", "set$width", "setInnerHtml$1", "setInnerHtml$3$treeSanitizer$validator", "setProperty$3", "setRange$4", "shadowFromTemplate$1", "split$1", "startsWith$1", "startsWith$2", "stop$0", "sublist$1", "sublist$2", "substring$1", "substring$2", "takeAttributes$0", "toInt$0", "toList$0", "toList$1$growable", "toLowerCase$0", "toRadixString$1", "toString$0", "trim$0", "unbind$1", "unbind$2$suppressResolve", "unbindAll$0", "unbindAllProperties$0", "unregisterObserver$1", "unregisterObservers$0", "waitingForExtendee$1", "waitingForType$1", "where$1"];
 $.mapTypeToInterceptor = [C.Type_I2I, A.PolymerElement, {created: A.PolymerElement$created}, C.Type_YnA, A.PolymerDeclaration, {created: A.PolymerDeclaration$created}, C.Type_dcN, R.InputAutocompleteComponent, {created: R.InputAutocompleteComponent$created}, C.Type_geu, U.AutocompleteResult, {created: U.AutocompleteResult$created}, C.Type_iTx, Q.SimpleAutocompleteExample, {created: Q.SimpleAutocompleteExample$created}, C.Type_oqh, P.Uint64List, {}, C.Type_qxd, P.Int64List, {}];
 Isolate.$lazy($, "globalThis", "globalThis", "get$globalThis", function() {
   return function() { return this; }();
@@ -30865,7 +30945,9 @@ function dart_precompiled($collectedClasses) {
     return receiver._autocomplete_result$__$renderer = v;
   };
   AutocompleteResult.prototype.set$_autocomplete_result$__$renderer.$reflectable = 1;
-  function PolymerElement_ChangeNotifier() {
+  function PolymerElement_ChangeNotifier(_changes, _records) {
+    this._changes = _changes;
+    this._records = _records;
   }
   PolymerElement_ChangeNotifier.builtin$cls = "PolymerElement_ChangeNotifier";
   if (!"name" in PolymerElement_ChangeNotifier)
@@ -30874,6 +30956,18 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   PolymerElement_ChangeNotifier.prototype = $desc;
+  ChangeNotifier.prototype.get$_changes = function(receiver) {
+    return receiver._changes;
+  };
+  ChangeNotifier.prototype.set$_changes = function(receiver, v) {
+    return receiver._changes = v;
+  };
+  ChangeNotifier.prototype.get$_records = function(receiver) {
+    return receiver._records;
+  };
+  ChangeNotifier.prototype.set$_records = function(receiver, v) {
+    return receiver._records = v;
+  };
   function closure() {
   }
   closure.builtin$cls = "closure";
@@ -36037,10 +36131,14 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   AutocompleteChoice.prototype = $desc;
-  function AutocompleteChoiceImpl(key, label, obj) {
+  function AutocompleteChoiceImpl(key, label, obj, _changes, _mirror, _values, _records) {
     this.key = key;
     this.label = label;
     this.obj = obj;
+    this._changes = _changes;
+    this._mirror = _mirror;
+    this._values = _values;
+    this._records = _records;
   }
   AutocompleteChoiceImpl.builtin$cls = "AutocompleteChoiceImpl";
   if (!"name" in AutocompleteChoiceImpl)
@@ -36051,6 +36149,48 @@ function dart_precompiled($collectedClasses) {
   AutocompleteChoiceImpl.prototype = $desc;
   AutocompleteChoiceImpl.prototype.get$key = function(receiver) {
     return this.key;
+  };
+  AutocompleteChoiceImpl.prototype.get$key.$reflectable = 1;
+  AutocompleteChoiceImpl.prototype.set$key = function(receiver, v) {
+    return this.key = v;
+  };
+  AutocompleteChoiceImpl.prototype.set$key.$reflectable = 1;
+  function AutocompleteChoice_Observable(_changes, _mirror, _values, _records) {
+    this._changes = _changes;
+    this._mirror = _mirror;
+    this._values = _values;
+    this._records = _records;
+  }
+  AutocompleteChoice_Observable.builtin$cls = "AutocompleteChoice_Observable";
+  if (!"name" in AutocompleteChoice_Observable)
+    AutocompleteChoice_Observable.name = "AutocompleteChoice_Observable";
+  $desc = $collectedClasses.AutocompleteChoice_Observable;
+  if ($desc instanceof Array)
+    $desc = $desc[1];
+  AutocompleteChoice_Observable.prototype = $desc;
+  Observable.prototype.get$_changes = function(receiver) {
+    return this._changes;
+  };
+  Observable.prototype.set$_changes = function(receiver, v) {
+    return this._changes = v;
+  };
+  Observable.prototype.get$_mirror = function() {
+    return this._mirror;
+  };
+  Observable.prototype.set$_mirror = function(v) {
+    return this._mirror = v;
+  };
+  Observable.prototype.get$_values = function() {
+    return this._values;
+  };
+  Observable.prototype.set$_values = function(v) {
+    return this._values = v;
+  };
+  Observable.prototype.get$_records = function(receiver) {
+    return this._records;
+  };
+  Observable.prototype.set$_records = function(receiver, v) {
+    return this._records = v;
   };
   function BaseAutocompleteChoiceRenderer() {
   }
@@ -36127,7 +36267,9 @@ function dart_precompiled($collectedClasses) {
     return this._focusedItemIndex = v;
   };
   ValueHolder.prototype.set$_focusedItemIndex.$reflectable = 1;
-  function Object_ChangeNotifier() {
+  function Object_ChangeNotifier(_changes, _records) {
+    this._changes = _changes;
+    this._records = _records;
   }
   Object_ChangeNotifier.builtin$cls = "Object_ChangeNotifier";
   if (!"name" in Object_ChangeNotifier)
@@ -36136,6 +36278,18 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   Object_ChangeNotifier.prototype = $desc;
+  ChangeNotifier.prototype.get$_changes = function(receiver) {
+    return receiver._changes;
+  };
+  ChangeNotifier.prototype.set$_changes = function(receiver, v) {
+    return receiver._changes = v;
+  };
+  ChangeNotifier.prototype.get$_records = function(receiver) {
+    return receiver._records;
+  };
+  ChangeNotifier.prototype.set$_records = function(receiver, v) {
+    return receiver._records = v;
+  };
   function InputAutocompleteComponent(_renderer, _input_autocomplete$__$datasource, _input_autocomplete$__$model, _input_autocomplete$__$selectedchoice, _changes, _records, _changes, _records, _declaration, _observers, _unbound, _unbindAllJob, _propertyObserver, syntax, _shadowRoots, $$) {
     this._renderer = _renderer;
     this._input_autocomplete$__$datasource = _input_autocomplete$__$datasource;
@@ -36193,7 +36347,9 @@ function dart_precompiled($collectedClasses) {
     return receiver._input_autocomplete$__$selectedchoice = v;
   };
   InputAutocompleteComponent.prototype.set$_input_autocomplete$__$selectedchoice.$reflectable = 1;
-  function PolymerElement_ChangeNotifier0() {
+  function PolymerElement_ChangeNotifier0(_changes, _records) {
+    this._changes = _changes;
+    this._records = _records;
   }
   PolymerElement_ChangeNotifier0.builtin$cls = "PolymerElement_ChangeNotifier0";
   if (!"name" in PolymerElement_ChangeNotifier0)
@@ -36202,6 +36358,18 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   PolymerElement_ChangeNotifier0.prototype = $desc;
+  ChangeNotifier.prototype.get$_changes = function(receiver) {
+    return receiver._changes;
+  };
+  ChangeNotifier.prototype.set$_changes = function(receiver, v) {
+    return receiver._changes = v;
+  };
+  ChangeNotifier.prototype.get$_records = function(receiver) {
+    return receiver._records;
+  };
+  ChangeNotifier.prototype.set$_records = function(receiver, v) {
+    return receiver._records = v;
+  };
   function InputAutocompleteComponent$created_closure() {
   }
   InputAutocompleteComponent$created_closure.builtin$cls = "InputAutocompleteComponent$created_closure";
@@ -36395,7 +36563,9 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   onPropertyChange_closure.prototype = $desc;
-  function ChangeNotifier() {
+  function ChangeNotifier(_changes, _records) {
+    this._changes = _changes;
+    this._records = _records;
   }
   ChangeNotifier.builtin$cls = "ChangeNotifier";
   if (!"name" in ChangeNotifier)
@@ -36404,6 +36574,18 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   ChangeNotifier.prototype = $desc;
+  ChangeNotifier.prototype.get$_changes = function(receiver) {
+    return receiver._changes;
+  };
+  ChangeNotifier.prototype.set$_changes = function(receiver, v) {
+    return receiver._changes = v;
+  };
+  ChangeNotifier.prototype.get$_records = function(receiver) {
+    return receiver._records;
+  };
+  ChangeNotifier.prototype.set$_records = function(receiver, v) {
+    return receiver._records = v;
+  };
   function ChangeRecord() {
   }
   ChangeRecord.builtin$cls = "ChangeRecord";
@@ -36472,6 +36654,12 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   CompoundBinding.prototype = $desc;
+  CompoundBinding.prototype.get$_values = function() {
+    return this._values;
+  };
+  CompoundBinding.prototype.set$_values = function(v) {
+    return this._values = v;
+  };
   function CompoundBinding_bind_closure(this_0, name_1) {
     this.this_0 = this_0;
     this.name_1 = name_1;
@@ -36501,6 +36689,43 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   Reflectable.prototype = $desc;
+  function Observable(_changes, _mirror, _values, _records) {
+    this._changes = _changes;
+    this._mirror = _mirror;
+    this._values = _values;
+    this._records = _records;
+  }
+  Observable.builtin$cls = "Observable";
+  if (!"name" in Observable)
+    Observable.name = "Observable";
+  $desc = $collectedClasses.Observable;
+  if ($desc instanceof Array)
+    $desc = $desc[1];
+  Observable.prototype = $desc;
+  Observable.prototype.get$_changes = function(receiver) {
+    return this._changes;
+  };
+  Observable.prototype.set$_changes = function(receiver, v) {
+    return this._changes = v;
+  };
+  Observable.prototype.get$_mirror = function() {
+    return this._mirror;
+  };
+  Observable.prototype.set$_mirror = function(v) {
+    return this._mirror = v;
+  };
+  Observable.prototype.get$_values = function() {
+    return this._values;
+  };
+  Observable.prototype.set$_values = function(v) {
+    return this._values = v;
+  };
+  Observable.prototype.get$_records = function(receiver) {
+    return this._records;
+  };
+  Observable.prototype.set$_records = function(receiver, v) {
+    return this._records = v;
+  };
   function Observable_deliverChanges_closure(box_0, this_1) {
     this.box_0 = box_0;
     this.this_1 = this_1;
@@ -36534,7 +36759,9 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   ObservableList.prototype = $desc;
-  function ListBase_ChangeNotifier() {
+  function ListBase_ChangeNotifier(_changes, _records) {
+    this._changes = _changes;
+    this._records = _records;
   }
   ListBase_ChangeNotifier.builtin$cls = "ListBase_ChangeNotifier";
   if (!"name" in ListBase_ChangeNotifier)
@@ -36543,6 +36770,18 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   ListBase_ChangeNotifier.prototype = $desc;
+  ChangeNotifier.prototype.get$_changes = function(receiver) {
+    return receiver._changes;
+  };
+  ChangeNotifier.prototype.set$_changes = function(receiver, v) {
+    return receiver._changes = v;
+  };
+  ChangeNotifier.prototype.get$_records = function(receiver) {
+    return receiver._records;
+  };
+  ChangeNotifier.prototype.set$_records = function(receiver, v) {
+    return receiver._records = v;
+  };
   function MapChangeRecord(key, oldValue, newValue, isInsert, isRemove) {
     this.key = key;
     this.oldValue = oldValue;
@@ -36606,6 +36845,12 @@ function dart_precompiled($collectedClasses) {
   PathObserver.prototype = $desc;
   PathObserver.prototype.get$path = function(receiver) {
     return this.path;
+  };
+  PathObserver.prototype.get$_values = function() {
+    return this._values;
+  };
+  PathObserver.prototype.set$_values = function(v) {
+    return this._values = v;
   };
   function PathObserver_closure() {
   }
@@ -37248,7 +37493,9 @@ function dart_precompiled($collectedClasses) {
     return receiver.$$;
   };
   Polymer.prototype.get$$$.$reflectable = 1;
-  function HtmlElement_Polymer_ChangeNotifier() {
+  function HtmlElement_Polymer_ChangeNotifier(_changes, _records) {
+    this._changes = _changes;
+    this._records = _records;
   }
   HtmlElement_Polymer_ChangeNotifier.builtin$cls = "HtmlElement_Polymer_ChangeNotifier";
   if (!"name" in HtmlElement_Polymer_ChangeNotifier)
@@ -37257,6 +37504,18 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   HtmlElement_Polymer_ChangeNotifier.prototype = $desc;
+  ChangeNotifier.prototype.get$_changes = function(receiver) {
+    return receiver._changes;
+  };
+  ChangeNotifier.prototype.set$_changes = function(receiver, v) {
+    return receiver._changes = v;
+  };
+  ChangeNotifier.prototype.get$_records = function(receiver) {
+    return receiver._records;
+  };
+  ChangeNotifier.prototype.set$_records = function(receiver, v) {
+    return receiver._records = v;
+  };
   function _PropertyValue(oldValue, newValue) {
     this.oldValue = oldValue;
     this.newValue = newValue;
@@ -38401,7 +38660,9 @@ function dart_precompiled($collectedClasses) {
     return receiver._simple_autocomplete_example$__$exampleDatasource = v;
   };
   SimpleAutocompleteExample.prototype.set$_simple_autocomplete_example$__$exampleDatasource.$reflectable = 1;
-  function PolymerElement_ChangeNotifier1() {
+  function PolymerElement_ChangeNotifier1(_changes, _records) {
+    this._changes = _changes;
+    this._records = _records;
   }
   PolymerElement_ChangeNotifier1.builtin$cls = "PolymerElement_ChangeNotifier1";
   if (!"name" in PolymerElement_ChangeNotifier1)
@@ -38410,6 +38671,18 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   PolymerElement_ChangeNotifier1.prototype = $desc;
+  ChangeNotifier.prototype.get$_changes = function(receiver) {
+    return receiver._changes;
+  };
+  ChangeNotifier.prototype.set$_changes = function(receiver, v) {
+    return receiver._changes = v;
+  };
+  ChangeNotifier.prototype.get$_records = function(receiver) {
+    return receiver._records;
+  };
+  ChangeNotifier.prototype.set$_records = function(receiver, v) {
+    return receiver._records = v;
+  };
   function ExampleDatasource(_givenChoices, _choices) {
     this._givenChoices = _givenChoices;
     this._choices = _choices;
@@ -43031,5 +43304,5 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   Closure$3.prototype = $desc;
-  return [JS_CONST, Interceptor, JSBool, JSNull, JavaScriptObject, PlainJavaScriptObject, UnknownJavaScriptObject, JSArray, BoundClosure$i1, JSMutableArray, JSFixedArray, JSExtendableArray, JSNumber, JSInt, JSDouble, JSString, startRootIsolate_closure, startRootIsolate_closure0, _Manager, _IsolateContext, _EventLoop, BoundClosure$0, _EventLoop__runHelper_next, _IsolateEvent, _MainManagerStub, IsolateNatives__processWorkerMessage_closure, _BaseSendPort, _NativeJsSendPort, _NativeJsSendPort_send_closure, _NativeJsSendPort_send__closure, _WorkerSendPort, _WorkerSendPort_send_closure, ReceivePortImpl, BoundClosure$i0, _waitForPendingPorts_closure, _PendingSendPortFinder, _JsSerializer, _JsCopier, _JsDeserializer, _JsVisitedMap, _MessageTraverserVisitedMap, _MessageTraverser, BoundClosure$1, _Copier, _Copier_visitMap_closure, _Serializer, _Deserializer, TimerImpl, TimerImpl_internalCallback, TimerImpl_internalCallback0, ConstantMap, ConstantStringMap, ConstantStringMap_containsValue_closure, ConstantStringMap_forEach_closure, ConstantStringMap_values_closure, _ConstantMapKeyIterable, JSInvocationMirror, CachedInvocation, CachedNoSuchMethodInvocation, Primitives_applyFunction_closure, Primitives_applyFunction_closure0, Primitives_applyFunction_closure1, TypeErrorDecoder, NullError, JsNoSuchMethodError, UnknownJsTypeError, unwrapException_saveStackTrace, _StackTrace, invokeClosure_closure, invokeClosure_closure0, invokeClosure_closure1, invokeClosure_closure2, invokeClosure_closure3, Closure, BoundClosure, Creates, Returns, JSName, CastErrorImplementation, RuntimeError, TypeImpl, TypeVariable, applyExperimentalFixup_newGetTagDartFunction, JSSyntaxRegExp, _MatchImplementation, _AllMatchesIterable, _AllMatchesIterator, StringMatch, AutocompleteResult, PolymerElement_ChangeNotifier, closure, ListIterable, SubListIterable, ListIterator, MappedIterable, EfficientLengthMappedIterable, MappedIterator, MappedListIterable, WhereIterable, WhereIterator, ExpandIterable, ExpandIterator, EmptyIterator, FixedLengthListMixin, UnmodifiableListMixin, UnmodifiableListBase, ReversedListIterable, Symbol0, JsMirrorSystem, JsMirrorSystem_computeLibrariesByName_closure, JsMirror, JsIsolateMirror, JsIsolateMirror_rootLibrary_closure, JsDeclarationMirror, JsTypeVariableMirror, JsTypeMirror, JsLibraryMirror, JsDeclarationMirror_JsObjectMirror, JsLibraryMirror_members_addToResult, JsMixinApplication, JsTypeMirror_JsObjectMirror, JsObjectMirror, JsInstanceMirror, JsInstanceMirror_invoke_closure, JsInstanceMirror_invoke_closure0, JsTypeBoundClassMirror, JsTypeBoundClassMirror_typeArguments_addTypeArgument, JsTypeBoundClassMirror_typeArguments_addTypeArgument_closure, JsTypeBoundClassMirror_typeArguments_closure, JsClassMirror, JsTypeMirror_JsObjectMirror0, JsClassMirror_members_closure, JsClassMirror_superinterfaces_lookupType, JsVariableMirror, JsClosureMirror, JsMethodMirror, JsParameterMirror, JsTypedefMirror, JsFunctionTypeMirror, extractMetadata_closure, UnmodifiableMapView, UnimplementedNoSuchMethodError, computeReflectiveNames_closure, _AsyncError, _BroadcastStream, _BroadcastSubscription, _BroadcastStreamController, BoundClosure$2, _SyncBroadcastStreamController, _SyncBroadcastStreamController__sendData_closure, _SyncBroadcastStreamController__sendError_closure, _SyncBroadcastStreamController__sendDone_closure, _AsyncBroadcastStreamController, Future, Future_Future$delayed_closure, Future_Future$delayed_closure0, Future_wait_handleError, Future_wait_closure, _Completer, BoundClosure$i10, _AsyncCompleter, _SyncCompleter, _Future, _Future__addListener_closure, _Future__chainFutures_closure, _Future__chainFutures_closure0, _Future__asyncComplete_closure, _Future__asyncCompleteError_closure, _Future__propagateToListeners_closure, _Future__propagateToListeners_closure0, _Future__propagateToListeners__closure, _Future__propagateToListeners__closure0, Stream, Stream_join_closure, Stream_join_closure1, Stream_join_closure0, Stream_contains_closure, Stream_contains__closure, Stream_contains__closure0, Stream_contains_closure0, Stream_forEach_closure, Stream_forEach__closure, Stream_forEach__closure0, Stream_forEach_closure0, Stream_any_closure, Stream_any__closure, Stream_any__closure0, Stream_any_closure0, Stream_length_closure, Stream_length_closure0, Stream_isEmpty_closure, Stream_isEmpty_closure0, Stream_toList_closure, Stream_toList_closure0, Stream_first_closure, Stream_first_closure0, Stream_last_closure, Stream_last_closure0, Stream_single_closure, Stream_single_closure0, Stream_firstWhere_closure, Stream_firstWhere__closure, Stream_firstWhere__closure0, Stream_firstWhere_closure0, Stream_elementAt_closure, Stream_elementAt_closure0, StreamSubscription, _StreamController, _StreamController__subscribe_closure, _StreamController__recordCancel_complete, _SyncStreamControllerDispatch, _AsyncStreamControllerDispatch, _AsyncStreamController, _StreamController__AsyncStreamControllerDispatch, _SyncStreamController, _StreamController__SyncStreamControllerDispatch, _ControllerStream, _ControllerSubscription, _EventSink, _BufferingStreamSubscription, _BufferingStreamSubscription__sendError_sendError, _BufferingStreamSubscription__sendDone_sendDone, _StreamImpl, _DelayedEvent, _DelayedData, _DelayedError, _DelayedDone, _PendingEvents, _PendingEvents_schedule_closure, _StreamImplEvents, _cancelAndError_closure, _cancelAndErrorClosure_closure, _cancelAndValue_closure, _ForwardingStream, BoundClosure$20, BoundClosure$3, _ForwardingStreamSubscription, _WhereStream, _MapStream, Timer, ZoneSpecification, _ZoneSpecification, ZoneDelegate, Zone, _ZoneDelegate, BoundClosure$4, BoundClosure$i2, _BaseZone, _BaseZone_bindCallback_closure, _BaseZone_bindCallback_closure0, _BaseZone_bindUnaryCallback_closure, _BaseZone_bindUnaryCallback_closure0, _CustomizedZone, BoundClosure$21, _rootHandleUncaughtError_closure, _rootHandleUncaughtError__closure, _rootFork_closure, _RootZoneSpecification, _RootZone, _HashMap, _HashMap_values_closure, _HashMap_containsValue_closure, _HashMap_addAll_closure, _CustomHashMap, _CustomHashMap_closure, HashMapKeyIterable, HashMapKeyIterator, _LinkedHashMap, _LinkedHashMap_values_closure, _LinkedHashMap_containsValue_closure, _LinkedHashMap_addAll_closure, _LinkedIdentityHashMap, _LinkedCustomHashMap, _LinkedCustomHashMap_closure, LinkedHashMapCell, LinkedHashMapKeyIterable, LinkedHashMapKeyIterator, _HashSet, _IdentityHashSet, HashSetIterator, _LinkedHashSet, LinkedHashSetCell, LinkedHashSetIterator, UnmodifiableListView, _HashSetBase, HashSet, IterableBase, LinkedHashSet, ListBase, ListMixin, Maps_mapToString_closure, ListQueue, _ListQueueIterator, _SplayTreeNode, _SplayTreeMapNode, _SplayTree, SplayTreeMap, SplayTreeMap_closure, SplayTreeMap_addAll_closure, SplayTreeMap_containsValue_visit, _SplayTreeIterator, _SplayTreeKeyIterable, _SplayTreeValueIterable, _SplayTreeKeyIterator, _SplayTreeValueIterator, _SplayTreeNodeIterator, _convertJsonToDart_closure, _convertJsonToDart_walk, Codec, Converter, Encoding, JsonUnsupportedObjectError, JsonCyclicError, JsonCodec, JsonEncoder, JsonDecoder, _JsonStringifier, _JsonStringifier_stringifyJsonValue_closure, Utf8Codec, Utf8Encoder, _Utf8Encoder, Utf8Decoder, _Utf8Decoder, Function__toMangledNames_closure, NoSuchMethodError_toString_closure, Deprecated, bool, Comparable, DateTime, DateTime_parse_parseIntOrZero, DateTime_parse_parseDoubleOrZero, DateTime_toString_fourDigits, DateTime_toString_threeDigits, DateTime_toString_twoDigits, Duration, Duration_toString_sixDigits, Duration_toString_twoDigits, Error, NullThrownError, ArgumentError, RangeError, NoSuchMethodError, UnsupportedError, UnimplementedError, StateError, ConcurrentModificationError, StackOverflowError, CyclicInitializationError, _ExceptionImplementation, FormatException, IntegerDivisionByZeroException, Expando, Function, Iterable, Iterator, Map, Null, Object, Match, StackTrace, RuneIterator, StringBuffer, Symbol, Type, Uri, Uri__makeScheme_isSchemeLowerCharacter, Uri__makeScheme_isSchemeCharacter, Uri__makePath_closure, Uri__makeQuery_closure, Uri__normalize_isNormalizedHexDigit, Uri__normalize_isLowerCaseHexDigit, Uri__normalize_isUnreserved, Uri__normalize_normalizeHexDigit, Uri__normalize_decodeHexDigitPair, Uri__normalize_fillResult, Uri_hashCode_combine, Uri_parseIPv4Address_error, Uri_parseIPv4Address_closure, Uri_parseIPv6Address_error, Uri_parseIPv6Address_parseHex, Uri_parseIPv6Address_closure, Uri__uriEncode_byteToHex, Console, Interceptor_CssStyleDeclarationBase, _CssStyleDeclarationSet, Object_CssStyleDeclarationBase, _CssStyleDeclarationSet_closure, _CssStyleDeclarationSet_setProperty_closure, CssStyleDeclarationBase, Interceptor_ListMixin, Interceptor_ListMixin_ImmutableListMixin, _ChildrenElementList, _FrozenElementList, _FrozenElementList$_wrap_closure, Element_Element$html_closure, Entry, Events, ElementEvents, Interceptor_ListMixin0, Interceptor_ListMixin_ImmutableListMixin0, Interceptor_ListMixin1, Interceptor_ListMixin_ImmutableListMixin1, Interceptor_ListMixin2, Interceptor_ListMixin_ImmutableListMixin2, _ChildNodeListLazy, Interceptor_ListMixin3, Interceptor_ListMixin_ImmutableListMixin3, Interceptor_ListMixin4, Interceptor_ListMixin_ImmutableListMixin4, EventTarget_ListMixin, EventTarget_ListMixin_ImmutableListMixin, Interceptor_ListMixin5, Interceptor_ListMixin_ImmutableListMixin5, Interceptor_ListMixin6, Interceptor_ListMixin_ImmutableListMixin6, EventTarget_ListMixin0, EventTarget_ListMixin_ImmutableListMixin0, Interceptor_ListMixin7, Interceptor_ListMixin_ImmutableListMixin7, Interceptor_ListMixin8, Interceptor_ListMixin_ImmutableListMixin8, Interceptor_ListMixin9, Interceptor_ListMixin_ImmutableListMixin9, _CSSValue_ListMixin, _CSSValue_ListMixin_ImmutableListMixin, Interceptor_ListMixin10, Interceptor_ListMixin_ImmutableListMixin10, Interceptor_ListMixin11, Interceptor_ListMixin_ImmutableListMixin11, Interceptor_ListMixin12, Interceptor_ListMixin_ImmutableListMixin12, Interceptor_ListMixin13, Interceptor_ListMixin_ImmutableListMixin13, Interceptor_ListMixin14, Interceptor_ListMixin_ImmutableListMixin14, _AttributeMap, _ElementAttributeMap, _MultiElementCssClassSet, _MultiElementCssClassSet_closure, _MultiElementCssClassSet_readClasses_closure, _MultiElementCssClassSet_modify_closure, _MultiElementCssClassSet_remove_closure, _MultiElementCssClassSet__modifyWithReturnValue_closure, _ElementCssClassSet, _EventStream, _ElementEventStreamImpl, _ElementEventStreamImpl_matches_closure, _ElementEventStreamImpl_matches_closure0, _ElementListEventStreamImpl, _ElementListEventStreamImpl_matches_closure, _ElementListEventStreamImpl_matches_closure0, _StreamPool, _StreamPool_add_closure, _EventStreamSubscription, EventStreamProvider, _CustomEventStreamProvider, _Html5NodeValidator, ImmutableListMixin, NodeValidatorBuilder, NodeValidatorBuilder_allowsElement_closure, NodeValidatorBuilder_allowsAttribute_closure, _SimpleNodeValidator, _TemplatingNodeValidator, _TemplatingNodeValidator_closure, _SvgNodeValidator, FixedSizeListIterator, _callConstructor_closure, _DOMWindowCrossFrame, _LocationCrossFrame, _LocationWrapper, NodeValidator, _SameOriginUriPolicy, _ValidatingTreeSanitizer, _ValidatingTreeSanitizer_sanitizeTree_walk, Interceptor_ListMixin15, Interceptor_ListMixin_ImmutableListMixin15, Interceptor_ListMixin16, Interceptor_ListMixin_ImmutableListMixin16, Interceptor_ListMixin17, Interceptor_ListMixin_ImmutableListMixin17, Interceptor_ListMixin18, Interceptor_ListMixin_ImmutableListMixin18, _AttributeClassSet, Interceptor_ListMixin19, Interceptor_ListMixin_ImmutableListMixin19, Interceptor_ListMixin20, Interceptor_ListMixin_ImmutableListMixin20, Interceptor_ListMixin21, Interceptor_ListMixin_ImmutableListMixin21, ReceivePort, JsObject, JsObject$_fromJs_closure, JsFunction, _convertToJS_closure, _convertToJS_closure0, _convertToDart_closure, _convertToDart_closure0, _RectangleBase, Rectangle, Mirror, InstanceMirror, LibraryMirror, ClassMirror, MethodMirror, VariableMirror, ParameterMirror, MirrorsUsed, TypedData_ListMixin, TypedData_ListMixin_FixedLengthListMixin, TypedData_ListMixin0, TypedData_ListMixin_FixedLengthListMixin0, TypedData_ListMixin1, TypedData_ListMixin_FixedLengthListMixin1, TypedData_ListMixin2, TypedData_ListMixin_FixedLengthListMixin2, TypedData_ListMixin3, TypedData_ListMixin_FixedLengthListMixin3, TypedData_ListMixin4, TypedData_ListMixin_FixedLengthListMixin4, TypedData_ListMixin5, TypedData_ListMixin_FixedLengthListMixin5, TypedData_ListMixin6, TypedData_ListMixin_FixedLengthListMixin6, TypedData_ListMixin7, TypedData_ListMixin_FixedLengthListMixin7, Int64List, Uint64List, convertNativeToDart_AcceptStructuredClone_findSlot, convertNativeToDart_AcceptStructuredClone_readSlot, convertNativeToDart_AcceptStructuredClone_writeSlot, convertNativeToDart_AcceptStructuredClone_walk, CssClassSetImpl, CssClassSetImpl_add_closure, CssClassSetImpl_addAll_closure, FilteredElementList, FilteredElementList__filtered_closure, FilteredElementList_removeRange_closure, AutocompleteChoice, AutocompleteChoiceImpl, BaseAutocompleteChoiceRenderer, AutocompleteChoiceRendererImpl, SimpleStringDatasource, SimpleStringDatasource_query_closure, SimpleStringDatasource_query_closure0, ValueHolder, Object_ChangeNotifier, InputAutocompleteComponent, PolymerElement_ChangeNotifier0, InputAutocompleteComponent$created_closure, InputAutocompleteComponent__doSearch_closure, InputAutocompleteComponent_enteredView_closure, InputAutocompleteComponent_enteredView_closure0, InputAutocompleteComponent_enteredView_closure1, Logger, Logger_Logger_closure, Level, LogRecord, SupportedBrowser, Experimental, DomName, DocsEditable, Unstable, onPropertyChange_closure, ChangeNotifier, ChangeRecord, PropertyChangeRecord, ListChangeRecord, CompoundBinding, CompoundBinding_bind_closure, ObservableProperty, Reflectable, Observable_deliverChanges_closure, ObservableBox, ObservableList, ListBase_ChangeNotifier, MapChangeRecord, ObservableMap, ObservableMap_addAll_closure, PathObserver, PathObserver_closure, PathObserver_bindSync_closure, PathObserver__observeIndex_closure, _tryGetField_closure, _trySetField_closure, closure1, _toObservableDeep_closure, dirtyCheckZoneSpec_enqueueDirtyCheck, dirtyCheckZoneSpec_enqueueDirtyCheck_closure, dirtyCheckZoneSpec_wrapCallback, dirtyCheckZoneSpec_wrapCallback_closure, dirtyCheckZoneSpec_wrapUnaryCallback, dirtyCheckZoneSpec_wrapUnaryCallback_closure, _validateArgList_closure, Builder, BoundClosure$7, Builder_join_closure, Builder_joinAll_closure, Builder_split_closure, Style, _PosixStyle, _WindowsStyle, _UrlStyle, _ParsedPath, _preventFlashOfUnstyledContent_closure, PolymerDeclaration, PolymerDeclaration_waitingForExtendee_closure, PolymerDeclaration_publishAttributes_closure, PolymerDeclaration_accumulateInstanceAttributes_closure, PolymerDeclaration_addAttributeDelegates_closure, PolymerDeclaration_installLocalSheets_closure, PolymerDeclaration_cssTextForScope_matcher, PolymerDeclaration__lowerCaseMap_closure, closure20, _closure7, PublishedProperty, Polymer, Polymer_copyInstanceAttributes_closure, Polymer_copyInstanceAttributes__closure, Polymer_cancelUnbindAll_closure, Polymer__unbindNodeTree_closure, Polymer_notifyPropertyChanges_closure, Polymer_notifyPropertyChanges_closure0, Polymer_observeArrayValue_closure, Polymer_getBindingWithEvents_closure, Polymer__invokeMethod_closure, Polymer_unveilElements_closure, Polymer_unveilElements__closure, _PolymerBinding, PolymerElement, HtmlElement_Polymer, HtmlElement_Polymer_ChangeNotifier, _PropertyValue, _PolymerExpressionsWithEventDelegate, _Job, CustomTag, _initPolymerOptimized_closure, _maybeInvoke_closure, _InitMethodAnnotation, closure0, _closure, _closure0, _closure1, _closure2, _closure3, __closure0, _closure4, __closure, closure21, _classAttributeConverter_closure, _styleAttributeConverter_closure, PolymerExpressions, _Binding, _Binding_closure, _Binding__setValue_closure, StreamBinding, StreamBinding_closure, closure3, closure4, closure5, closure6, closure7, closure8, closure9, closure10, closure11, closure12, closure13, closure14, closure15, closure16, closure17, closure18, assign_notAssignable, Scope, ExpressionObserver, Updater, ObserverBuilder, ObserverBuilder_visitInvoke_closure, ObserverBuilder_visitMapLiteral_closure, EmptyObserver, LiteralObserver, MapLiteralObserver, MapLiteralObserver__updateSelf_closure, MapLiteralEntryObserver, IdentifierObserver, IdentifierObserver__updateSelf_closure, IdentifierObserver__updateSelf__closure, UnaryObserver, BinaryObserver, InvokeObserver, InvokeObserver__updateSelf_closure, InvokeObserver__updateSelf_closure0, InvokeObserver__updateSelf__closure0, InvokeObserver__updateSelf_closure1, InvokeObserver__updateSelf__closure, InObserver, InObserver__updateSelf_closure, InObserver__updateSelf__closure, Comprehension, Method, EvalException, AstFactory, Expression, EmptyExpression, Literal, MapLiteral, MapLiteralEntry, ParenthesizedExpression, Identifier, UnaryOperator, BinaryOperator, InExpression, Invoke, _hashList_closure, Parser, IndexedValue, EnumerateIterable, EnumerateIterator, Token, Tokenizer, ParseException, Visitor, RecursiveVisitor, SimpleAutocompleteExample, PolymerElement_ChangeNotifier1, ExampleDatasource, ExampleDatasource_query_closure, ExampleDatasource_query__closure, _ElementExtension, _AttributeBinding, _OptionValueBinding, _InputBinding, closure2, _closure5, _closure6, _ValueBinding, _CheckedBinding, _CheckedBinding__getAssociatedRadioButtons_closure, _CheckedBinding__getAssociatedRadioButtons_closure0, _SelectBinding, _SelectBinding_valueChanged_delaySetSelectedIndex, _SelectBinding__toInt_closure, _InputElementExtension, NodeBindExtension, TemplateInstance, BindingDelegate, NodeBinding, _SelectElementExtension, TemplateBindExtension, TemplateBindExtension_bootstrap__bootstrap, closure19, _TemplateBinding, _parseAttributeBindings_closure, _setupBinding_closure, _TemplateIterator, _TemplateIterator__handleChanges_closure, _TextExtension, _TextBinding, _TextAreaElementExtension, ListChangeDelta, UnmodifiableMapView0, HtmlElement, _EntryArray, AnchorElement, AnimationEvent, AreaElement, AudioElement, AutocompleteErrorEvent, BRElement, BaseElement, BeforeLoadEvent, BeforeUnloadEvent, Blob, BodyElement, ButtonElement, CDataSection, CanvasElement, CharacterData, CloseEvent, Comment, CompositionEvent, ContentElement, CssCharsetRule, CssFilterRule, CssFontFaceLoadEvent, CssFontFaceRule, CssHostRule, CssImportRule, CssKeyframeRule, CssKeyframesRule, CssMediaRule, CssPageRule, CssRegionRule, CssRule, CssStyleDeclaration, CssStyleRule, CssStyleSheet, CssSupportsRule, CssViewportRule, CustomEvent, DListElement, DataListElement, DetailsElement, DeviceMotionEvent, DeviceOrientationEvent, DialogElement, DivElement, Document, DocumentFragment, DocumentType, DomError, DomException, DomImplementation, DomStringList, Element, EmbedElement, ErrorEvent, Event, EventTarget, FieldSetElement, File, FileError, FileList, FocusEvent, FormElement, Gamepad, HRElement, HashChangeEvent, HeadElement, HeadingElement, HtmlCollection, HtmlDocument, HtmlFormControlsCollection, HtmlHtmlElement, HtmlOptionsCollection, IFrameElement, ImageData, ImageElement, InputElement, KeyboardEvent, KeygenElement, LIElement, LabelElement, LegendElement, LinkElement, Location, MapElement, MediaElement, MediaError, MediaKeyError, MediaKeyEvent, MediaKeyMessageEvent, MediaKeyNeededEvent, MediaStream, MediaStreamEvent, MediaStreamTrackEvent, MenuElement, MessageEvent, MetaElement, MeterElement, MidiConnectionEvent, MidiInput, MidiMessageEvent, MidiOutput, MidiPort, MimeType, MimeTypeArray, ModElement, MouseEvent, Navigator, NavigatorUserMediaError, Node, NodeList, OListElement, ObjectElement, OptGroupElement, OptionElement, OutputElement, OverflowEvent, PageTransitionEvent, ParagraphElement, ParamElement, Plugin, PluginArray, PopStateEvent, PositionError, PreElement, ProcessingInstruction, ProgressElement, ProgressEvent, QuoteElement, Range, ResourceProgressEvent, RtcDataChannelEvent, RtcDtmfToneChangeEvent, RtcIceCandidateEvent, ScriptElement0, SecurityPolicyViolationEvent, SelectElement, ShadowElement, ShadowRoot, SourceBuffer, SourceBufferList, SourceElement, SpanElement, SpeechGrammar, SpeechGrammarList, SpeechInputEvent, SpeechInputResult, SpeechRecognitionAlternative, SpeechRecognitionError, SpeechRecognitionEvent, SpeechRecognitionResult, SpeechSynthesisEvent, StorageEvent, StyleElement, StyleSheet, TableCaptionElement, TableCellElement, TableColElement, TableElement, TableRowElement, TableSectionElement, TemplateElement, Text, TextAreaElement, TextEvent, TextTrack, TextTrackCue, TextTrackCueList, TextTrackList, TitleElement, Touch, TouchEvent, TouchList, TrackElement, TrackEvent, TransitionEvent, UIEvent, UListElement, UnknownElement, VideoElement, WheelEvent, Window, _Attr, _CSSPrimitiveValue, _CSSUnknownRule, _CSSValue, _ClientRect, _ClientRectList, _CssRuleList, _CssValueList, _Entity, _GamepadList, _HTMLAppletElement, _HTMLBaseFontElement, _HTMLDirectoryElement, _HTMLFontElement, _HTMLFrameElement, _HTMLFrameSetElement, _HTMLMarqueeElement, _MutationEvent, _NamedNodeMap, _Notation, _SpeechInputResultList, _SpeechRecognitionResultList, _StyleSheetList, _WebKitCSSFilterValue, _WebKitCSSMixFunctionValue, _WebKitCSSTransformValue, _XMLHttpRequestProgressEvent, KeyRange, VersionChangeEvent, AElement, AltGlyphElement, AnimateElement, AnimateMotionElement, AnimateTransformElement, AnimatedEnumeration, AnimatedLength, AnimatedNumberList, AnimatedString, AnimationElement, CircleElement, ClipPathElement, DefsElement, DescElement, ElementInstance, EllipseElement, FEBlendElement, FEColorMatrixElement, FEComponentTransferElement, FECompositeElement, FEConvolveMatrixElement, FEDiffuseLightingElement, FEDisplacementMapElement, FEDistantLightElement, FEFloodElement, FEFuncAElement, FEFuncBElement, FEFuncGElement, FEFuncRElement, FEGaussianBlurElement, FEImageElement, FEMergeElement, FEMergeNodeElement, FEMorphologyElement, FEOffsetElement, FEPointLightElement, FESpecularLightingElement, FESpotLightElement, FETileElement, FETurbulenceElement, FilterElement, ForeignObjectElement, GElement, GraphicsElement, ImageElement0, Length, LengthList, LineElement, LinearGradientElement, MarkerElement, MaskElement, MetadataElement, Number, NumberList, PathElement, PathSeg, PathSegArcAbs, PathSegArcRel, PathSegClosePath, PathSegCurvetoCubicAbs, PathSegCurvetoCubicRel, PathSegCurvetoCubicSmoothAbs, PathSegCurvetoCubicSmoothRel, PathSegCurvetoQuadraticAbs, PathSegCurvetoQuadraticRel, PathSegCurvetoQuadraticSmoothAbs, PathSegCurvetoQuadraticSmoothRel, PathSegLinetoAbs, PathSegLinetoHorizontalAbs, PathSegLinetoHorizontalRel, PathSegLinetoRel, PathSegLinetoVerticalAbs, PathSegLinetoVerticalRel, PathSegList, PathSegMovetoAbs, PathSegMovetoRel, PatternElement, PolygonElement, PolylineElement, RadialGradientElement, RectElement, ScriptElement, SetElement, StopElement, StringList, StyleElement0, SvgDocument, SvgElement, SvgSvgElement, SwitchElement, SymbolElement, TSpanElement, TextContentElement, TextElement, TextPathElement, TextPositioningElement, TitleElement0, Transform, TransformList, UseElement, ViewElement, ZoomEvent, _ElementInstanceList, _GradientElement, _SVGAltGlyphDefElement, _SVGAltGlyphItemElement, _SVGAnimateColorElement, _SVGComponentTransferFunctionElement, _SVGCursorElement, _SVGFEDropShadowElement, _SVGFontElement, _SVGFontFaceElement, _SVGFontFaceFormatElement, _SVGFontFaceNameElement, _SVGFontFaceSrcElement, _SVGFontFaceUriElement, _SVGGlyphElement, _SVGGlyphRefElement, _SVGHKernElement, _SVGMPathElement, _SVGMissingGlyphElement, _SVGVKernElement, AudioProcessingEvent, OfflineAudioCompletionEvent, ContextEvent, SqlError, SqlResultSetRowList, TypedData, ByteData, Float32List, Float64List, Int16List, Int32List, Int8List, Uint16List, Uint32List, Uint8ClampedList, Uint8List, Closure$2, Closure$1, Closure$0, Closure$7, Closure$22, Closure$5, Closure$4, Closure$6, Closure$3];
+  return [JS_CONST, Interceptor, JSBool, JSNull, JavaScriptObject, PlainJavaScriptObject, UnknownJavaScriptObject, JSArray, BoundClosure$i1, JSMutableArray, JSFixedArray, JSExtendableArray, JSNumber, JSInt, JSDouble, JSString, startRootIsolate_closure, startRootIsolate_closure0, _Manager, _IsolateContext, _EventLoop, BoundClosure$0, _EventLoop__runHelper_next, _IsolateEvent, _MainManagerStub, IsolateNatives__processWorkerMessage_closure, _BaseSendPort, _NativeJsSendPort, _NativeJsSendPort_send_closure, _NativeJsSendPort_send__closure, _WorkerSendPort, _WorkerSendPort_send_closure, ReceivePortImpl, BoundClosure$i0, _waitForPendingPorts_closure, _PendingSendPortFinder, _JsSerializer, _JsCopier, _JsDeserializer, _JsVisitedMap, _MessageTraverserVisitedMap, _MessageTraverser, BoundClosure$1, _Copier, _Copier_visitMap_closure, _Serializer, _Deserializer, TimerImpl, TimerImpl_internalCallback, TimerImpl_internalCallback0, ConstantMap, ConstantStringMap, ConstantStringMap_containsValue_closure, ConstantStringMap_forEach_closure, ConstantStringMap_values_closure, _ConstantMapKeyIterable, JSInvocationMirror, CachedInvocation, CachedNoSuchMethodInvocation, Primitives_applyFunction_closure, Primitives_applyFunction_closure0, Primitives_applyFunction_closure1, TypeErrorDecoder, NullError, JsNoSuchMethodError, UnknownJsTypeError, unwrapException_saveStackTrace, _StackTrace, invokeClosure_closure, invokeClosure_closure0, invokeClosure_closure1, invokeClosure_closure2, invokeClosure_closure3, Closure, BoundClosure, Creates, Returns, JSName, CastErrorImplementation, RuntimeError, TypeImpl, TypeVariable, applyExperimentalFixup_newGetTagDartFunction, JSSyntaxRegExp, _MatchImplementation, _AllMatchesIterable, _AllMatchesIterator, StringMatch, AutocompleteResult, PolymerElement_ChangeNotifier, closure, ListIterable, SubListIterable, ListIterator, MappedIterable, EfficientLengthMappedIterable, MappedIterator, MappedListIterable, WhereIterable, WhereIterator, ExpandIterable, ExpandIterator, EmptyIterator, FixedLengthListMixin, UnmodifiableListMixin, UnmodifiableListBase, ReversedListIterable, Symbol0, JsMirrorSystem, JsMirrorSystem_computeLibrariesByName_closure, JsMirror, JsIsolateMirror, JsIsolateMirror_rootLibrary_closure, JsDeclarationMirror, JsTypeVariableMirror, JsTypeMirror, JsLibraryMirror, JsDeclarationMirror_JsObjectMirror, JsLibraryMirror_members_addToResult, JsMixinApplication, JsTypeMirror_JsObjectMirror, JsObjectMirror, JsInstanceMirror, JsInstanceMirror_invoke_closure, JsInstanceMirror_invoke_closure0, JsTypeBoundClassMirror, JsTypeBoundClassMirror_typeArguments_addTypeArgument, JsTypeBoundClassMirror_typeArguments_addTypeArgument_closure, JsTypeBoundClassMirror_typeArguments_closure, JsClassMirror, JsTypeMirror_JsObjectMirror0, JsClassMirror_members_closure, JsClassMirror_superinterfaces_lookupType, JsVariableMirror, JsClosureMirror, JsMethodMirror, JsParameterMirror, JsTypedefMirror, JsFunctionTypeMirror, extractMetadata_closure, UnmodifiableMapView, UnimplementedNoSuchMethodError, computeReflectiveNames_closure, _AsyncError, _BroadcastStream, _BroadcastSubscription, _BroadcastStreamController, BoundClosure$2, _SyncBroadcastStreamController, _SyncBroadcastStreamController__sendData_closure, _SyncBroadcastStreamController__sendError_closure, _SyncBroadcastStreamController__sendDone_closure, _AsyncBroadcastStreamController, Future, Future_Future$delayed_closure, Future_Future$delayed_closure0, Future_wait_handleError, Future_wait_closure, _Completer, BoundClosure$i10, _AsyncCompleter, _SyncCompleter, _Future, _Future__addListener_closure, _Future__chainFutures_closure, _Future__chainFutures_closure0, _Future__asyncComplete_closure, _Future__asyncCompleteError_closure, _Future__propagateToListeners_closure, _Future__propagateToListeners_closure0, _Future__propagateToListeners__closure, _Future__propagateToListeners__closure0, Stream, Stream_join_closure, Stream_join_closure1, Stream_join_closure0, Stream_contains_closure, Stream_contains__closure, Stream_contains__closure0, Stream_contains_closure0, Stream_forEach_closure, Stream_forEach__closure, Stream_forEach__closure0, Stream_forEach_closure0, Stream_any_closure, Stream_any__closure, Stream_any__closure0, Stream_any_closure0, Stream_length_closure, Stream_length_closure0, Stream_isEmpty_closure, Stream_isEmpty_closure0, Stream_toList_closure, Stream_toList_closure0, Stream_first_closure, Stream_first_closure0, Stream_last_closure, Stream_last_closure0, Stream_single_closure, Stream_single_closure0, Stream_firstWhere_closure, Stream_firstWhere__closure, Stream_firstWhere__closure0, Stream_firstWhere_closure0, Stream_elementAt_closure, Stream_elementAt_closure0, StreamSubscription, _StreamController, _StreamController__subscribe_closure, _StreamController__recordCancel_complete, _SyncStreamControllerDispatch, _AsyncStreamControllerDispatch, _AsyncStreamController, _StreamController__AsyncStreamControllerDispatch, _SyncStreamController, _StreamController__SyncStreamControllerDispatch, _ControllerStream, _ControllerSubscription, _EventSink, _BufferingStreamSubscription, _BufferingStreamSubscription__sendError_sendError, _BufferingStreamSubscription__sendDone_sendDone, _StreamImpl, _DelayedEvent, _DelayedData, _DelayedError, _DelayedDone, _PendingEvents, _PendingEvents_schedule_closure, _StreamImplEvents, _cancelAndError_closure, _cancelAndErrorClosure_closure, _cancelAndValue_closure, _ForwardingStream, BoundClosure$20, BoundClosure$3, _ForwardingStreamSubscription, _WhereStream, _MapStream, Timer, ZoneSpecification, _ZoneSpecification, ZoneDelegate, Zone, _ZoneDelegate, BoundClosure$4, BoundClosure$i2, _BaseZone, _BaseZone_bindCallback_closure, _BaseZone_bindCallback_closure0, _BaseZone_bindUnaryCallback_closure, _BaseZone_bindUnaryCallback_closure0, _CustomizedZone, BoundClosure$21, _rootHandleUncaughtError_closure, _rootHandleUncaughtError__closure, _rootFork_closure, _RootZoneSpecification, _RootZone, _HashMap, _HashMap_values_closure, _HashMap_containsValue_closure, _HashMap_addAll_closure, _CustomHashMap, _CustomHashMap_closure, HashMapKeyIterable, HashMapKeyIterator, _LinkedHashMap, _LinkedHashMap_values_closure, _LinkedHashMap_containsValue_closure, _LinkedHashMap_addAll_closure, _LinkedIdentityHashMap, _LinkedCustomHashMap, _LinkedCustomHashMap_closure, LinkedHashMapCell, LinkedHashMapKeyIterable, LinkedHashMapKeyIterator, _HashSet, _IdentityHashSet, HashSetIterator, _LinkedHashSet, LinkedHashSetCell, LinkedHashSetIterator, UnmodifiableListView, _HashSetBase, HashSet, IterableBase, LinkedHashSet, ListBase, ListMixin, Maps_mapToString_closure, ListQueue, _ListQueueIterator, _SplayTreeNode, _SplayTreeMapNode, _SplayTree, SplayTreeMap, SplayTreeMap_closure, SplayTreeMap_addAll_closure, SplayTreeMap_containsValue_visit, _SplayTreeIterator, _SplayTreeKeyIterable, _SplayTreeValueIterable, _SplayTreeKeyIterator, _SplayTreeValueIterator, _SplayTreeNodeIterator, _convertJsonToDart_closure, _convertJsonToDart_walk, Codec, Converter, Encoding, JsonUnsupportedObjectError, JsonCyclicError, JsonCodec, JsonEncoder, JsonDecoder, _JsonStringifier, _JsonStringifier_stringifyJsonValue_closure, Utf8Codec, Utf8Encoder, _Utf8Encoder, Utf8Decoder, _Utf8Decoder, Function__toMangledNames_closure, NoSuchMethodError_toString_closure, Deprecated, bool, Comparable, DateTime, DateTime_parse_parseIntOrZero, DateTime_parse_parseDoubleOrZero, DateTime_toString_fourDigits, DateTime_toString_threeDigits, DateTime_toString_twoDigits, Duration, Duration_toString_sixDigits, Duration_toString_twoDigits, Error, NullThrownError, ArgumentError, RangeError, NoSuchMethodError, UnsupportedError, UnimplementedError, StateError, ConcurrentModificationError, StackOverflowError, CyclicInitializationError, _ExceptionImplementation, FormatException, IntegerDivisionByZeroException, Expando, Function, Iterable, Iterator, Map, Null, Object, Match, StackTrace, RuneIterator, StringBuffer, Symbol, Type, Uri, Uri__makeScheme_isSchemeLowerCharacter, Uri__makeScheme_isSchemeCharacter, Uri__makePath_closure, Uri__makeQuery_closure, Uri__normalize_isNormalizedHexDigit, Uri__normalize_isLowerCaseHexDigit, Uri__normalize_isUnreserved, Uri__normalize_normalizeHexDigit, Uri__normalize_decodeHexDigitPair, Uri__normalize_fillResult, Uri_hashCode_combine, Uri_parseIPv4Address_error, Uri_parseIPv4Address_closure, Uri_parseIPv6Address_error, Uri_parseIPv6Address_parseHex, Uri_parseIPv6Address_closure, Uri__uriEncode_byteToHex, Console, Interceptor_CssStyleDeclarationBase, _CssStyleDeclarationSet, Object_CssStyleDeclarationBase, _CssStyleDeclarationSet_closure, _CssStyleDeclarationSet_setProperty_closure, CssStyleDeclarationBase, Interceptor_ListMixin, Interceptor_ListMixin_ImmutableListMixin, _ChildrenElementList, _FrozenElementList, _FrozenElementList$_wrap_closure, Element_Element$html_closure, Entry, Events, ElementEvents, Interceptor_ListMixin0, Interceptor_ListMixin_ImmutableListMixin0, Interceptor_ListMixin1, Interceptor_ListMixin_ImmutableListMixin1, Interceptor_ListMixin2, Interceptor_ListMixin_ImmutableListMixin2, _ChildNodeListLazy, Interceptor_ListMixin3, Interceptor_ListMixin_ImmutableListMixin3, Interceptor_ListMixin4, Interceptor_ListMixin_ImmutableListMixin4, EventTarget_ListMixin, EventTarget_ListMixin_ImmutableListMixin, Interceptor_ListMixin5, Interceptor_ListMixin_ImmutableListMixin5, Interceptor_ListMixin6, Interceptor_ListMixin_ImmutableListMixin6, EventTarget_ListMixin0, EventTarget_ListMixin_ImmutableListMixin0, Interceptor_ListMixin7, Interceptor_ListMixin_ImmutableListMixin7, Interceptor_ListMixin8, Interceptor_ListMixin_ImmutableListMixin8, Interceptor_ListMixin9, Interceptor_ListMixin_ImmutableListMixin9, _CSSValue_ListMixin, _CSSValue_ListMixin_ImmutableListMixin, Interceptor_ListMixin10, Interceptor_ListMixin_ImmutableListMixin10, Interceptor_ListMixin11, Interceptor_ListMixin_ImmutableListMixin11, Interceptor_ListMixin12, Interceptor_ListMixin_ImmutableListMixin12, Interceptor_ListMixin13, Interceptor_ListMixin_ImmutableListMixin13, Interceptor_ListMixin14, Interceptor_ListMixin_ImmutableListMixin14, _AttributeMap, _ElementAttributeMap, _MultiElementCssClassSet, _MultiElementCssClassSet_closure, _MultiElementCssClassSet_readClasses_closure, _MultiElementCssClassSet_modify_closure, _MultiElementCssClassSet_remove_closure, _MultiElementCssClassSet__modifyWithReturnValue_closure, _ElementCssClassSet, _EventStream, _ElementEventStreamImpl, _ElementEventStreamImpl_matches_closure, _ElementEventStreamImpl_matches_closure0, _ElementListEventStreamImpl, _ElementListEventStreamImpl_matches_closure, _ElementListEventStreamImpl_matches_closure0, _StreamPool, _StreamPool_add_closure, _EventStreamSubscription, EventStreamProvider, _CustomEventStreamProvider, _Html5NodeValidator, ImmutableListMixin, NodeValidatorBuilder, NodeValidatorBuilder_allowsElement_closure, NodeValidatorBuilder_allowsAttribute_closure, _SimpleNodeValidator, _TemplatingNodeValidator, _TemplatingNodeValidator_closure, _SvgNodeValidator, FixedSizeListIterator, _callConstructor_closure, _DOMWindowCrossFrame, _LocationCrossFrame, _LocationWrapper, NodeValidator, _SameOriginUriPolicy, _ValidatingTreeSanitizer, _ValidatingTreeSanitizer_sanitizeTree_walk, Interceptor_ListMixin15, Interceptor_ListMixin_ImmutableListMixin15, Interceptor_ListMixin16, Interceptor_ListMixin_ImmutableListMixin16, Interceptor_ListMixin17, Interceptor_ListMixin_ImmutableListMixin17, Interceptor_ListMixin18, Interceptor_ListMixin_ImmutableListMixin18, _AttributeClassSet, Interceptor_ListMixin19, Interceptor_ListMixin_ImmutableListMixin19, Interceptor_ListMixin20, Interceptor_ListMixin_ImmutableListMixin20, Interceptor_ListMixin21, Interceptor_ListMixin_ImmutableListMixin21, ReceivePort, JsObject, JsObject$_fromJs_closure, JsFunction, _convertToJS_closure, _convertToJS_closure0, _convertToDart_closure, _convertToDart_closure0, _RectangleBase, Rectangle, Mirror, InstanceMirror, LibraryMirror, ClassMirror, MethodMirror, VariableMirror, ParameterMirror, MirrorsUsed, TypedData_ListMixin, TypedData_ListMixin_FixedLengthListMixin, TypedData_ListMixin0, TypedData_ListMixin_FixedLengthListMixin0, TypedData_ListMixin1, TypedData_ListMixin_FixedLengthListMixin1, TypedData_ListMixin2, TypedData_ListMixin_FixedLengthListMixin2, TypedData_ListMixin3, TypedData_ListMixin_FixedLengthListMixin3, TypedData_ListMixin4, TypedData_ListMixin_FixedLengthListMixin4, TypedData_ListMixin5, TypedData_ListMixin_FixedLengthListMixin5, TypedData_ListMixin6, TypedData_ListMixin_FixedLengthListMixin6, TypedData_ListMixin7, TypedData_ListMixin_FixedLengthListMixin7, Int64List, Uint64List, convertNativeToDart_AcceptStructuredClone_findSlot, convertNativeToDart_AcceptStructuredClone_readSlot, convertNativeToDart_AcceptStructuredClone_writeSlot, convertNativeToDart_AcceptStructuredClone_walk, CssClassSetImpl, CssClassSetImpl_add_closure, CssClassSetImpl_addAll_closure, FilteredElementList, FilteredElementList__filtered_closure, FilteredElementList_removeRange_closure, AutocompleteChoice, AutocompleteChoiceImpl, AutocompleteChoice_Observable, BaseAutocompleteChoiceRenderer, AutocompleteChoiceRendererImpl, SimpleStringDatasource, SimpleStringDatasource_query_closure, SimpleStringDatasource_query_closure0, ValueHolder, Object_ChangeNotifier, InputAutocompleteComponent, PolymerElement_ChangeNotifier0, InputAutocompleteComponent$created_closure, InputAutocompleteComponent__doSearch_closure, InputAutocompleteComponent_enteredView_closure, InputAutocompleteComponent_enteredView_closure0, InputAutocompleteComponent_enteredView_closure1, Logger, Logger_Logger_closure, Level, LogRecord, SupportedBrowser, Experimental, DomName, DocsEditable, Unstable, onPropertyChange_closure, ChangeNotifier, ChangeRecord, PropertyChangeRecord, ListChangeRecord, CompoundBinding, CompoundBinding_bind_closure, ObservableProperty, Reflectable, Observable, Observable_deliverChanges_closure, ObservableBox, ObservableList, ListBase_ChangeNotifier, MapChangeRecord, ObservableMap, ObservableMap_addAll_closure, PathObserver, PathObserver_closure, PathObserver_bindSync_closure, PathObserver__observeIndex_closure, _tryGetField_closure, _trySetField_closure, closure1, _toObservableDeep_closure, dirtyCheckZoneSpec_enqueueDirtyCheck, dirtyCheckZoneSpec_enqueueDirtyCheck_closure, dirtyCheckZoneSpec_wrapCallback, dirtyCheckZoneSpec_wrapCallback_closure, dirtyCheckZoneSpec_wrapUnaryCallback, dirtyCheckZoneSpec_wrapUnaryCallback_closure, _validateArgList_closure, Builder, BoundClosure$7, Builder_join_closure, Builder_joinAll_closure, Builder_split_closure, Style, _PosixStyle, _WindowsStyle, _UrlStyle, _ParsedPath, _preventFlashOfUnstyledContent_closure, PolymerDeclaration, PolymerDeclaration_waitingForExtendee_closure, PolymerDeclaration_publishAttributes_closure, PolymerDeclaration_accumulateInstanceAttributes_closure, PolymerDeclaration_addAttributeDelegates_closure, PolymerDeclaration_installLocalSheets_closure, PolymerDeclaration_cssTextForScope_matcher, PolymerDeclaration__lowerCaseMap_closure, closure20, _closure7, PublishedProperty, Polymer, Polymer_copyInstanceAttributes_closure, Polymer_copyInstanceAttributes__closure, Polymer_cancelUnbindAll_closure, Polymer__unbindNodeTree_closure, Polymer_notifyPropertyChanges_closure, Polymer_notifyPropertyChanges_closure0, Polymer_observeArrayValue_closure, Polymer_getBindingWithEvents_closure, Polymer__invokeMethod_closure, Polymer_unveilElements_closure, Polymer_unveilElements__closure, _PolymerBinding, PolymerElement, HtmlElement_Polymer, HtmlElement_Polymer_ChangeNotifier, _PropertyValue, _PolymerExpressionsWithEventDelegate, _Job, CustomTag, _initPolymerOptimized_closure, _maybeInvoke_closure, _InitMethodAnnotation, closure0, _closure, _closure0, _closure1, _closure2, _closure3, __closure0, _closure4, __closure, closure21, _classAttributeConverter_closure, _styleAttributeConverter_closure, PolymerExpressions, _Binding, _Binding_closure, _Binding__setValue_closure, StreamBinding, StreamBinding_closure, closure3, closure4, closure5, closure6, closure7, closure8, closure9, closure10, closure11, closure12, closure13, closure14, closure15, closure16, closure17, closure18, assign_notAssignable, Scope, ExpressionObserver, Updater, ObserverBuilder, ObserverBuilder_visitInvoke_closure, ObserverBuilder_visitMapLiteral_closure, EmptyObserver, LiteralObserver, MapLiteralObserver, MapLiteralObserver__updateSelf_closure, MapLiteralEntryObserver, IdentifierObserver, IdentifierObserver__updateSelf_closure, IdentifierObserver__updateSelf__closure, UnaryObserver, BinaryObserver, InvokeObserver, InvokeObserver__updateSelf_closure, InvokeObserver__updateSelf_closure0, InvokeObserver__updateSelf__closure0, InvokeObserver__updateSelf_closure1, InvokeObserver__updateSelf__closure, InObserver, InObserver__updateSelf_closure, InObserver__updateSelf__closure, Comprehension, Method, EvalException, AstFactory, Expression, EmptyExpression, Literal, MapLiteral, MapLiteralEntry, ParenthesizedExpression, Identifier, UnaryOperator, BinaryOperator, InExpression, Invoke, _hashList_closure, Parser, IndexedValue, EnumerateIterable, EnumerateIterator, Token, Tokenizer, ParseException, Visitor, RecursiveVisitor, SimpleAutocompleteExample, PolymerElement_ChangeNotifier1, ExampleDatasource, ExampleDatasource_query_closure, ExampleDatasource_query__closure, _ElementExtension, _AttributeBinding, _OptionValueBinding, _InputBinding, closure2, _closure5, _closure6, _ValueBinding, _CheckedBinding, _CheckedBinding__getAssociatedRadioButtons_closure, _CheckedBinding__getAssociatedRadioButtons_closure0, _SelectBinding, _SelectBinding_valueChanged_delaySetSelectedIndex, _SelectBinding__toInt_closure, _InputElementExtension, NodeBindExtension, TemplateInstance, BindingDelegate, NodeBinding, _SelectElementExtension, TemplateBindExtension, TemplateBindExtension_bootstrap__bootstrap, closure19, _TemplateBinding, _parseAttributeBindings_closure, _setupBinding_closure, _TemplateIterator, _TemplateIterator__handleChanges_closure, _TextExtension, _TextBinding, _TextAreaElementExtension, ListChangeDelta, UnmodifiableMapView0, HtmlElement, _EntryArray, AnchorElement, AnimationEvent, AreaElement, AudioElement, AutocompleteErrorEvent, BRElement, BaseElement, BeforeLoadEvent, BeforeUnloadEvent, Blob, BodyElement, ButtonElement, CDataSection, CanvasElement, CharacterData, CloseEvent, Comment, CompositionEvent, ContentElement, CssCharsetRule, CssFilterRule, CssFontFaceLoadEvent, CssFontFaceRule, CssHostRule, CssImportRule, CssKeyframeRule, CssKeyframesRule, CssMediaRule, CssPageRule, CssRegionRule, CssRule, CssStyleDeclaration, CssStyleRule, CssStyleSheet, CssSupportsRule, CssViewportRule, CustomEvent, DListElement, DataListElement, DetailsElement, DeviceMotionEvent, DeviceOrientationEvent, DialogElement, DivElement, Document, DocumentFragment, DocumentType, DomError, DomException, DomImplementation, DomStringList, Element, EmbedElement, ErrorEvent, Event, EventTarget, FieldSetElement, File, FileError, FileList, FocusEvent, FormElement, Gamepad, HRElement, HashChangeEvent, HeadElement, HeadingElement, HtmlCollection, HtmlDocument, HtmlFormControlsCollection, HtmlHtmlElement, HtmlOptionsCollection, IFrameElement, ImageData, ImageElement, InputElement, KeyboardEvent, KeygenElement, LIElement, LabelElement, LegendElement, LinkElement, Location, MapElement, MediaElement, MediaError, MediaKeyError, MediaKeyEvent, MediaKeyMessageEvent, MediaKeyNeededEvent, MediaStream, MediaStreamEvent, MediaStreamTrackEvent, MenuElement, MessageEvent, MetaElement, MeterElement, MidiConnectionEvent, MidiInput, MidiMessageEvent, MidiOutput, MidiPort, MimeType, MimeTypeArray, ModElement, MouseEvent, Navigator, NavigatorUserMediaError, Node, NodeList, OListElement, ObjectElement, OptGroupElement, OptionElement, OutputElement, OverflowEvent, PageTransitionEvent, ParagraphElement, ParamElement, Plugin, PluginArray, PopStateEvent, PositionError, PreElement, ProcessingInstruction, ProgressElement, ProgressEvent, QuoteElement, Range, ResourceProgressEvent, RtcDataChannelEvent, RtcDtmfToneChangeEvent, RtcIceCandidateEvent, ScriptElement0, SecurityPolicyViolationEvent, SelectElement, ShadowElement, ShadowRoot, SourceBuffer, SourceBufferList, SourceElement, SpanElement, SpeechGrammar, SpeechGrammarList, SpeechInputEvent, SpeechInputResult, SpeechRecognitionAlternative, SpeechRecognitionError, SpeechRecognitionEvent, SpeechRecognitionResult, SpeechSynthesisEvent, StorageEvent, StyleElement, StyleSheet, TableCaptionElement, TableCellElement, TableColElement, TableElement, TableRowElement, TableSectionElement, TemplateElement, Text, TextAreaElement, TextEvent, TextTrack, TextTrackCue, TextTrackCueList, TextTrackList, TitleElement, Touch, TouchEvent, TouchList, TrackElement, TrackEvent, TransitionEvent, UIEvent, UListElement, UnknownElement, VideoElement, WheelEvent, Window, _Attr, _CSSPrimitiveValue, _CSSUnknownRule, _CSSValue, _ClientRect, _ClientRectList, _CssRuleList, _CssValueList, _Entity, _GamepadList, _HTMLAppletElement, _HTMLBaseFontElement, _HTMLDirectoryElement, _HTMLFontElement, _HTMLFrameElement, _HTMLFrameSetElement, _HTMLMarqueeElement, _MutationEvent, _NamedNodeMap, _Notation, _SpeechInputResultList, _SpeechRecognitionResultList, _StyleSheetList, _WebKitCSSFilterValue, _WebKitCSSMixFunctionValue, _WebKitCSSTransformValue, _XMLHttpRequestProgressEvent, KeyRange, VersionChangeEvent, AElement, AltGlyphElement, AnimateElement, AnimateMotionElement, AnimateTransformElement, AnimatedEnumeration, AnimatedLength, AnimatedNumberList, AnimatedString, AnimationElement, CircleElement, ClipPathElement, DefsElement, DescElement, ElementInstance, EllipseElement, FEBlendElement, FEColorMatrixElement, FEComponentTransferElement, FECompositeElement, FEConvolveMatrixElement, FEDiffuseLightingElement, FEDisplacementMapElement, FEDistantLightElement, FEFloodElement, FEFuncAElement, FEFuncBElement, FEFuncGElement, FEFuncRElement, FEGaussianBlurElement, FEImageElement, FEMergeElement, FEMergeNodeElement, FEMorphologyElement, FEOffsetElement, FEPointLightElement, FESpecularLightingElement, FESpotLightElement, FETileElement, FETurbulenceElement, FilterElement, ForeignObjectElement, GElement, GraphicsElement, ImageElement0, Length, LengthList, LineElement, LinearGradientElement, MarkerElement, MaskElement, MetadataElement, Number, NumberList, PathElement, PathSeg, PathSegArcAbs, PathSegArcRel, PathSegClosePath, PathSegCurvetoCubicAbs, PathSegCurvetoCubicRel, PathSegCurvetoCubicSmoothAbs, PathSegCurvetoCubicSmoothRel, PathSegCurvetoQuadraticAbs, PathSegCurvetoQuadraticRel, PathSegCurvetoQuadraticSmoothAbs, PathSegCurvetoQuadraticSmoothRel, PathSegLinetoAbs, PathSegLinetoHorizontalAbs, PathSegLinetoHorizontalRel, PathSegLinetoRel, PathSegLinetoVerticalAbs, PathSegLinetoVerticalRel, PathSegList, PathSegMovetoAbs, PathSegMovetoRel, PatternElement, PolygonElement, PolylineElement, RadialGradientElement, RectElement, ScriptElement, SetElement, StopElement, StringList, StyleElement0, SvgDocument, SvgElement, SvgSvgElement, SwitchElement, SymbolElement, TSpanElement, TextContentElement, TextElement, TextPathElement, TextPositioningElement, TitleElement0, Transform, TransformList, UseElement, ViewElement, ZoomEvent, _ElementInstanceList, _GradientElement, _SVGAltGlyphDefElement, _SVGAltGlyphItemElement, _SVGAnimateColorElement, _SVGComponentTransferFunctionElement, _SVGCursorElement, _SVGFEDropShadowElement, _SVGFontElement, _SVGFontFaceElement, _SVGFontFaceFormatElement, _SVGFontFaceNameElement, _SVGFontFaceSrcElement, _SVGFontFaceUriElement, _SVGGlyphElement, _SVGGlyphRefElement, _SVGHKernElement, _SVGMPathElement, _SVGMissingGlyphElement, _SVGVKernElement, AudioProcessingEvent, OfflineAudioCompletionEvent, ContextEvent, SqlError, SqlResultSetRowList, TypedData, ByteData, Float32List, Float64List, Int16List, Int32List, Int8List, Uint16List, Uint32List, Uint8ClampedList, Uint8List, Closure$2, Closure$1, Closure$0, Closure$7, Closure$22, Closure$5, Closure$4, Closure$6, Closure$3];
 }

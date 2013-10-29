@@ -6,8 +6,8 @@ abstract class AutocompleteChoice {
   String get key;
 }
 
-class AutocompleteChoiceImpl extends AutocompleteChoice {
-  String key;
+class AutocompleteChoiceImpl extends AutocompleteChoice with Observable {
+  @reflectable String key;
   String label;
   var obj;
   
