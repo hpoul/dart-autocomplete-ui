@@ -12,7 +12,7 @@
               <ul class="autocomplete-content">
                 <template repeat="{{ choice in model.filteredChoices }}">
                   <!--li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-down="mouseDownChoice(choice, $event)" on-mouse-up="selectChoice(choice)"-->
-                  <li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouseover="mouseOverChoice" on-mousedown="mouseDown" on-mouseup="mouseUpChoice">
+                  <li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouseover="{{ mouseOverChoice }}" on-mousedown="{{ mouseDown }}" on-mouseup="{{ mouseUpChoice }}">
                     <div><tapo-autocomplete-result choice="{{ choice }}" searchquery="{{ model.searchquery }}" renderer="{{ renderer }}"></tapo-autocomplete-result></div>
                     <!--content select=".choiceTemplate"></content-->
                   </li>
@@ -23,7 +23,7 @@
               </ul>
             </template>
           </div>
-          <input type="text" on-focus="inputFocus" on-blur="inputBlur" on-keydown="keyDown" on-keyup="keyUp" value="{{ model.searchquery }}" />
+          <input type="text" on-focus="{{ inputFocus }}" on-blur="{{ inputBlur }}" on-keydown="{{ keyDown }}" on-keyup="{{ keyUp }}" value="{{ model.searchquery }}" />
         </div>
         <style>
           .autocomplete-wrapper {
