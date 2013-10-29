@@ -3,46 +3,37 @@
 // BSD-style license that can be found in the LICENSE file.
 
 /**
- * This library contains the definitions of annotations that provide additional
- * semantic information about the program being annotated. These annotations are
- * intended to be used by tools to provide a better user experience.
+ * Constants for use in metadata annotations such as
+ * `@proxy`.
  *
- * ## Installing ##
+ * See also `@deprecated` and `@override` in the `dart:core` library.
  *
- * Use [pub][] to install this package. Add the following to your `pubspec.yaml`
- * file.
+ * Annotations provide semantic information
+ * that tools can use to provide a better user experience.
+ * For example, an IDE might not autocomplete
+ * the name of a function that's been marked `@deprecated`,
+ * or it might display the function's name differently.
  *
- *     dependencies:
- *       meta: any
- *
- * Then run `pub install`.
- *
- * For more information, see the
- * [meta package on pub.dartlang.org](http://pub.dartlang.org/packages/meta).
- *
- * [pub]: http://pub.dartlang.org
+ * For information on installing and importing this library, see the
+ * [meta package on pub.dartlang.org]
+ * (http://pub.dartlang.org/packages/meta).
+ * For examples of using annotations, see
+ * [Metadata](https://www.dartlang.org/docs/dart-up-and-running/contents/ch02.html#ch02-metadata)
+ * in the language tour.
  */
 library meta;
 
 /**
- * An annotation used to mark a class, field, getter, setter, method, top-level
- * variable, or top-level function as one that should no longer be used. Tools
- * can use this annotation to provide a warning on references to the marked
- * element.
+ * An annotation used to mark a class that should be considered to implement
+ * every possible getter, setter and method. Tools can use this annotation to
+ * suppress warnings when there is no explicit implementation of a referenced
+ * member. Tools should provide a hint if this annotation is applied to a class
+ * that does not implement or inherit an implementation of the method
+ * [:noSuchMethod:] (other than the implementation in [Object]). Note that
+ * classes are not affected by the use of this annotation on a supertype.
  */
-const deprecated = const _Deprecated();
+const proxy = const _Proxy();
 
-class _Deprecated {
-  const _Deprecated();
-}
-
-/**
- * An annotation used to mark an instance member (method, field, getter or
- * setter) as overriding an inherited class member. Tools can use this
- * annotation to provide a warning if there is no overridden member.
- */
-const override = const _Override();
-
-class _Override {
-  const _Override();
+class _Proxy {
+  const _Proxy();
 }

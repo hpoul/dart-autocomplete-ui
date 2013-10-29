@@ -1,7 +1,7 @@
 library inputstream;
 
 import 'dart:collection';
-import 'dart:utf';
+import 'package:utf/utf.dart';
 import 'package:source_maps/span.dart' show SourceFile;
 import 'char_encodings.dart';
 import 'constants.dart';
@@ -27,10 +27,10 @@ class HtmlInputStream {
    * Number of bytes to use when looking for a meta element with
    * encoding information.
    */
-  const int numBytesMeta = 512;
+  static const int numBytesMeta = 512;
 
   /** Encoding to use if no other information can be found. */
-  const String defaultEncoding = 'windows-1252';
+  static const String defaultEncoding = 'windows-1252';
 
   /** The name of the character encoding. */
   String charEncodingName;

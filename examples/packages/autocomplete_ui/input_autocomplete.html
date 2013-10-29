@@ -1,25 +1,27 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html><head>
+    <link rel="import" href="autocomplete_result.html">
+  </head>
   <body>
-    <element name="tapo-input-autocomplete" constructor="InputAutocompleteComponentProxy" extends="div" apply-author-styles>
+    <polymer-element name="tapo-input-autocomplete">
       <template>
         <div class="autocomplete-wrapper">
-          <div class="autocomplete-content-wrapper-marker autocomplete-content-wrapper {{ inputHasFocus && filteredChoices != null ? 'autocomplete-content-visible' : 'autocomplete-content-hidden' }} ">
-            <template instantiate="if inputHasFocus && filteredChoices != null">
+          <div class="{{ { 'autocomplete-content-wrapper-marker': true, 'autocomplete-content-wrapper': true, 'asdf': true, 'xyz': false, 'autocomplete-content-visible': model.inputHasFocus, 'autocomplete-content-hidden': !(model.inputHasFocus) } }}">
+            <template if="{{ model.inputHasFocus &amp;&amp; model.hasSearched }}">
               <ul class="autocomplete-content">
-                <template iterate="choice in filteredChoices">
-                  <li class="{{ isFocused(choice) ? 'focused' : 'notfocused' }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-down="mouseDownChoice(choice, $event)" on-mouse-up="selectChoice(choice)">
-                    <div>{{ renderChoice(choice) }}</div>
+                <template repeat="{{ choice in model.filteredChoices }}">
+                  <!--li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-down="mouseDownChoice(choice, $event)" on-mouse-up="selectChoice(choice)"-->
+                  <li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouseover="{{ mouseOverChoice }}" on-mousedown="{{ mouseDown }}" on-mouseup="{{ mouseUpChoice }}">
+                    <div><tapo-autocomplete-result choice="{{ choice }}" searchquery="{{ model.searchquery }}" renderer="{{ renderer }}"></tapo-autocomplete-result></div>
                     <!--content select=".choiceTemplate"></content-->
                   </li>
                 </template>
-                <template instantiate="if filteredChoices.length == 0">
+                <template if="{{ model.filteredChoices.length == 0 }}">
                   <li>No matches.</li>
                 </template>
               </ul>
             </template>
           </div>
-          <input type="text" on-focus="inputFocus($event)" on-blur="inputBlur($event)" on-key-down="keyDown($event)" on-key-up="keyUp($event)" />
+          <input type="text" on-focus="{{ inputFocus }}" on-blur="{{ inputBlur }}" on-keydown="{{ keyDown }}" on-keyup="{{ keyUp }}" value="{{ model.searchquery }}">
         </div>
         <style>
           .autocomplete-wrapper {
@@ -69,7 +71,9 @@
           }
         </style>
       </template>
-      <script type="application/dart" src="input_autocomplete_component_proxy.dart"></script>
-    </element>
-  </body>
-</html>
+      <!-- script type="application/dart" src="input_autocomplete.dart"></script -->
+      <script type="application/dart" src="input_autocomplete.html.0.dart"></script>
+    </polymer-element>
+  
+
+</body></html>

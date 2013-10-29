@@ -29,6 +29,7 @@ class SimpleStringDatasource implements AutocompleteDatasource {
     if (query.isEmpty) {
       completer.complete(_choices);
     } else {
+      print("looking for ${query} in ${_choices.where((choice) => choice.key.toLowerCase().contains(query)).length}");
       completer.complete(_choices.where((choice) => choice.key.toLowerCase().contains(query)));
     }
     return completer.future;

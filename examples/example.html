@@ -1,38 +1,112 @@
-<!DOCTYPE html>
-<!-- This file was auto-generated from web/example.html. -->
-<html><head><style>template { display: none; }</style>
+<!DOCTYPE html><html><head><script src="packages/shadow_dom/shadow_dom.debug.js"></script>
+<script src="packages/custom_element/custom-elements.debug.js"></script>
+<script src="packages/browser/interop.js"></script>
+
     <meta charset="utf-8">
     <title>Autocomplete_ui</title>
     
+    
+    
+    
     <link rel="stylesheet" href="example.css">
-  <link rel="stylesheet" type="text/css" href="example.html.css"></head>
-  <body>
+    <script src="example.html_bootstrap.dart.js"></script>
+    
+  </head>
+  <body><polymer-element name="tapo-autocomplete-result">
+  <template>
+    <div class="result-label">re</div>
+  </template>
+  
+</polymer-element><polymer-element name="tapo-input-autocomplete">
+      <template>
+        <div class="autocomplete-wrapper">
+          <div class="{{ { 'autocomplete-content-wrapper-marker': true, 'autocomplete-content-wrapper': true, 'asdf': true, 'xyz': false, 'autocomplete-content-visible': model.inputHasFocus, 'autocomplete-content-hidden': !(model.inputHasFocus) } }}">
+            <template if="{{ model.inputHasFocus &amp;&amp; model.hasSearched }}">
+              <ul class="autocomplete-content">
+                <template repeat="{{ choice in model.filteredChoices }}">
+                  <!--li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-down="mouseDownChoice(choice, $event)" on-mouse-up="selectChoice(choice)"-->
+                  <li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouseover="{{ mouseOverChoice }}" on-mousedown="{{ mouseDown }}" on-mouseup="{{ mouseUpChoice }}">
+                    <div><tapo-autocomplete-result choice="{{ choice }}" searchquery="{{ model.searchquery }}" renderer="{{ renderer }}"></tapo-autocomplete-result></div>
+                    <!--content select=".choiceTemplate"></content-->
+                  </li>
+                </template>
+                <template if="{{ model.filteredChoices.length == 0 }}">
+                  <li>No matches.</li>
+                </template>
+              </ul>
+            </template>
+          </div>
+          <input type="text" on-focus="{{ inputFocus }}" on-blur="{{ inputBlur }}" on-keydown="{{ keyDown }}" on-keyup="{{ keyUp }}" value="{{ model.searchquery }}">
+        </div>
+        <style>
+          .autocomplete-wrapper {
+            position: relative;
+          }
+          .autocomplete-wrapper input {
+            border: 1px solid black;
+            padding: 3px;
+          }
+          .autocomplete-wrapper input.loading {
+            background-image: url('data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH+GkNyZWF0ZWQgd2l0aCBhamF4bG9hZC5pbmZvACH5BAAKAAAAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQACgABACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkEAAoAAgAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkEAAoAAwAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkEAAoABAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQACgAFACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQACgAGACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAAKAAcALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==');
+            background-repeat: no-repeat;
+            background-position: right center;
+          }
+          .autocomplete-content-hidden {
+            display: none;
+          }
+          .autocomplete-content-hidden {
+            display: none;
+          }
+          .autocomplete-content-wrapper {
+            position: absolute;
+            border: 1px solid black;
+            padding: 0px;
+            margin: 0px;
+            background-color: #fff;
+            overflow-x: scroll;
+            z-index: 1;
+          }
+          .autocomplete-content-wrapper ul {
+            padding: 0px;
+            margin: 0px;
+          }
+          .autocomplete-content li {
+            list-style-type: none;
+            padding: 2px;
+            margin: 0px;
+            margin-top: 2px;
+            background-color: #fafafa;
+          }
+          .autocomplete-content li.focused {
+            background-color: #ddd;
+          }
+          .autocomplete-content div {
+            padding: 0px;
+            margin: 0px;
+          }
+        </style>
+      </template>
+      <!-- script type="application/dart" src="input_autocomplete.dart"></script -->
+      
+    </polymer-element><polymer-element name="simple-autocomplete-example">
+      <template>
+        <h2>Simple Array:</h2>
+        <p>Example for a very simple auto complete input dialog for dart web components. Enter the cursor in the following input field and start typing:</p>
+        <p>(You can also use cursor up/down to select options.)</p>
+        <p>Your current Choice: {{ selectedchoice.key }}</p>
+        
+        <tapo-input-autocomplete choices="{{ autocompleteChoices }}" selectedchoice="{{ selectedchoice }}">
+        </tapo-input-autocomplete>
+        
+        <h2>Datasource:</h2>
+        <tapo-input-autocomplete datasource="{{ exampleDatasource }}" selectedchoice="{{ selectedchoice }}">
+        </tapo-input-autocomplete>
+      </template>
+      
+    </polymer-element>
     <h1>Dart AutoComplete UI</h1>
     
-    <p>Example for a very simple auto complete input dialog for dart web components. Enter the cursor in the following input field and start typing:</p>
-    <p>(You can also use cursor up/down to select options.)</p>
-    
-    <div is="tapo-input-autocomplete">
-    </div>
-    
-    <template></template>
-    
-    
-    <p>Custom datasource example (1 seconds delayed)</p>
-    
-    <div is="tapo-input-autocomplete">
-    </div>
-    
-    <p>Testing absolute positioning</p>
-    
-    <div style="position: absolute;">
-      <p>Absolute position.</p>
-      <div is="tapo-input-autocomplete">
-      </div>
-    </div>
-
-    
-    <script type="text/javascript" src="packages/browser/dart.js"></script>
+    <simple-autocomplete-example></simple-autocomplete-example>
   
 
-<script type="application/dart" src="example.html_bootstrap.dart"></script></body></html>
+</body></html>

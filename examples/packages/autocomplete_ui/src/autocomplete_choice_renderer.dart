@@ -36,7 +36,8 @@ class AutocompleteChoiceRendererImpl extends BaseAutocompleteChoiceRenderer
       implements AutocompleteChoiceRenderer {
   Element renderChoice(AutocompleteChoice choice, String query) {
     if (choice is AutocompleteChoiceImpl) {
-      return new Element.tag("div")..innerHtml = highlightTextAndHtmlEscape("${choice.label}", query);
+      var choiceImpl = choice as AutocompleteChoiceImpl;
+      return new Element.tag("div")..innerHtml = highlightTextAndHtmlEscape("${choiceImpl.label}", query);
     }
     throw new ArgumentError("Invalid choice ${choice}");
   }
