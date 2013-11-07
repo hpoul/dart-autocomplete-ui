@@ -3,6 +3,7 @@ part of input_autocomplete;
 
 
 abstract class AutocompleteChoice {
+  @reflectable
   String get key;
 }
 
