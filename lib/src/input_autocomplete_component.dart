@@ -6,15 +6,16 @@ class ValueHolder extends Object with Observable {
   @observable
   List<AutocompleteChoice> filteredChoices;
   @observable
-  String xyz;
-  @observable
   bool hasSearched = false;
   @observable
   Object mynull = null;
   @observable
   String searchquery = "";
   @observable
-  int _focusedItemIndex = -1;
+  int focusedItemIndex = -1;
+  
+  @observable
+  AutocompleteChoice focusedChoice;
 }
 
 /**
@@ -42,7 +43,7 @@ class InputAutocompleteComponent extends PolymerElement {
   
   InputAutocompleteComponent.created() : super.created() {
     onPropertyChange(this, #datasource, () {
-      print('datasource changed.');
+      _logger.finer('datasource changed.');
     });
   }
 
@@ -61,15 +62,8 @@ class InputAutocompleteComponent extends PolymerElement {
     return _renderer;
   }
   
-  bool isFocused(AutocompleteChoice choice) {
-    if (model._focusedItemIndex < 0 || model._focusedItemIndex >= model.filteredChoices.length) {
-      return false;
-    }
-    return model.filteredChoices[model._focusedItemIndex] == choice;
-  }
-  
   @published void set choices(List choices) {
-    print("Setting choices. to ${choices}");
+    _logger.finest("Setting choices. to ${choices}");
     this.datasource = new SimpleStringDatasource(choices);
   }
   
@@ -79,14 +73,21 @@ class InputAutocompleteComponent extends PolymerElement {
   
   
   void _focusNext(int next) {
-    var newfocus = model._focusedItemIndex + next;
+    var newfocus = model.focusedItemIndex + next;
     if (newfocus < 0) {
       newfocus = 0;
     }
     if (newfocus >= model.filteredChoices.length) {
       newfocus = model.filteredChoices.length - 1;
     }
-    model._focusedItemIndex = newfocus;
+    _focusItemAtIndex(newfocus);
+  }
+  
+  void _focusItemAtIndex(int index) {
+    model.focusedItemIndex = index;
+    if (index < model.filteredChoices.length) {
+      model.focusedChoice = model.filteredChoices[index];
+    }
   }
   
   void keyDown(KeyboardEvent event, var detail, Node target) {
@@ -106,11 +107,10 @@ class InputAutocompleteComponent extends PolymerElement {
   }
   
   void selectCurrentFocus() {
-    selectChoice(model.filteredChoices[model._focusedItemIndex]);
+    selectChoice(model.filteredChoices[model.focusedItemIndex]);
   }
   
   void selectChoice(AutocompleteChoice choice) {
-    print("selectChoice");
     selectedchoice = choice;
     _input.blur();
     if (choice != null) {
@@ -121,10 +121,10 @@ class InputAutocompleteComponent extends PolymerElement {
   }
   void mouseUpChoice(Event event, var detail, Node target) {
     if (target is Element) {
-      var choiceKey = (target as Element).attributes['choice-key'];
+      var choiceKey = target.attributes['choice-key'];
       var choice = datasource.objectByKey(choiceKey);
       if (choice == null) {
-        print('could not find choice with key ${choiceKey}');
+        _logger.info('could not find choice with key ${choiceKey}');
       }
       selectChoice(choice);
     }
@@ -132,21 +132,18 @@ class InputAutocompleteComponent extends PolymerElement {
   
 //  void mouseOverChoice(AutocompleteChoice choice, Event event) {
   void mouseOverChoice(Event event, var detail, Node target) {
-    print('mouseOver');
     if (target is Element) {
-      var choiceKey = (target as Element).attributes['choice-key'];
+      var choiceKey = target.attributes['choice-key'];
       var choice = datasource.objectByKey(choiceKey);
       var idx = model.filteredChoices.indexOf(choice);
-      if (idx == model._focusedItemIndex || idx < 0) {
+      if (idx == model.focusedItemIndex || idx < 0) {
         return;
       }
-      model._focusedItemIndex = idx;
-      print("focusedItemIndex: ${idx}");
+      _focusItemAtIndex(idx);
     }
   }
   
   void mouseDown(Event event, var detail, Node target) {
-    print('mouse down');
     // prevent default action, which would blur our input field.
     event.preventDefault();
   }
@@ -156,22 +153,25 @@ class InputAutocompleteComponent extends PolymerElement {
   }
   
   /// returns the current inputfield (TODO: add caching?)
-  InputElement get _input => this.getShadowRoot("tapo-input-autocomplete").query('input');
+  InputElement get _input => this.getShadowRoot("tapo-input-autocomplete").querySelector('input');
   
   void _doSearch() {
     // TODO would it be nicer to do this in HTML?
     this._input.classes.add("loading");
-    this.datasource.query(this._input.value.toLowerCase()).then((matches) {
+    // We are query'ing case sensitive, the datasource is responsible for searching 
+    // case insensitive, if it chooses to.
+    this.datasource.query(this._input.value).then((matches) {
       model.filteredChoices = toObservable(matches.toList());
+      _focusItemAtIndex(0);
       this._input.classes.remove("loading");
       _positionCompleteBox();
     });
   }
   
   void inputFocus(Event e, var detail, Node target) {
-    model.xyz = 'haha ${new DateTime.now()}';print("inputFocus ${model.xyz}");
     _positionCompleteBox();
     model.inputHasFocus = true;
+    _doSearch();
   }
   
   void inputBlur(Event e, var detail, Node target) {
@@ -185,7 +185,7 @@ class InputAutocompleteComponent extends PolymerElement {
       model.hasSearched = model.filteredChoices != null;
     });
     _positionCompleteBox();
-    InputElement el = this.getShadowRoot('tapo-input-autocomplete').query('input');
+    InputElement el = this.getShadowRoot('tapo-input-autocomplete').querySelector('input');
     el.onFocus.listen((e) => inputFocus(null, null, null));
     el.onBlur.listen((e) => inputBlur(null, null, null));
   }
@@ -193,7 +193,6 @@ class InputAutocompleteComponent extends PolymerElement {
   renderChoice(AutocompleteChoice choice) {
     InputElement input = this._input;
     Element tmp = this.renderer.renderChoice(choice, input.value);
-    print("we need to set ${tmp.outerHtml}");
 //    return tmp;//new SafeHtml.unsafe(tmp.outerHtml);
     
     return new Element.html('<span>test<strong>asdf</strong></span>');
@@ -208,9 +207,9 @@ class InputAutocompleteComponent extends PolymerElement {
   }
   
   void _positionCompleteBox() {
-    var content = this.getShadowRoot('tapo-input-autocomplete').query('.autocomplete-content-wrapper-marker');
+    var content = this.getShadowRoot('tapo-input-autocomplete').querySelector('.autocomplete-content-wrapper-marker');
     if (content == null) {
-      print("unable to find autocomplete-content");
+      _logger.warning("unable to find autocomplete-content");
       return;
     }
     var input = this._input;

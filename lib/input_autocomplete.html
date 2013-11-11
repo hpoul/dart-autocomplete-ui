@@ -7,12 +7,12 @@
     <polymer-element name="tapo-input-autocomplete">
       <template>
         <div class="autocomplete-wrapper">
-          <div class="{{ { 'autocomplete-content-wrapper-marker': true, 'autocomplete-content-wrapper': true, 'asdf': true, 'xyz': false, 'autocomplete-content-visible': model.inputHasFocus, 'autocomplete-content-hidden': !(model.inputHasFocus) } }}">
+          <div class="{{ { 'autocomplete-content-wrapper-marker': true, 'autocomplete-content-wrapper': true, 'autocomplete-content-visible': model.inputHasFocus && model.hasSearched, 'autocomplete-content-hidden': !(model.inputHasFocus && model.hasSearched) } }}">
             <template if="{{ model.inputHasFocus && model.hasSearched }}">
               <ul class="autocomplete-content">
                 <template repeat="{{ choice in model.filteredChoices }}">
                   <!--li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouse-over="mouseOverChoice(choice, $event)" on-mouse-down="mouseDownChoice(choice, $event)" on-mouse-up="selectChoice(choice)"-->
-                  <li class="{{ { 'focused': isFocused(choice), 'notfocused': !isFocused(choice) } }}" choice-key="{{ choice.key }}" on-mouseover="{{ mouseOverChoice }}" on-mousedown="{{ mouseDown }}" on-mouseup="{{ mouseUpChoice }}">
+                  <li class="{{ { 'focused': choice == model.focusedChoice, 'notfocused': choice != model.focusedChoice } }}" choice-key="{{ choice.key }}" on-mouseover="{{ mouseOverChoice }}" on-mousedown="{{ mouseDown }}" on-mouseup="{{ mouseUpChoice }}">
                     <div><tapo-autocomplete-result choice="{{ choice }}" searchquery="{{ model.searchquery }}" renderer="{{ renderer }}"></tapo-autocomplete-result></div>
                     <!--content select=".choiceTemplate"></content-->
                   </li>

@@ -15,7 +15,7 @@ class AutocompleteResult extends PolymerElement with Observable {
   
   dynamic enteredView() {
     super.enteredView();
-    Element resultLabel = getShadowRoot('tapo-autocomplete-result').query('.result-label');
+    Element resultLabel = getShadowRoot('tapo-autocomplete-result').querySelector('.result-label');
     resultLabel.innerHtml = renderer.renderChoice(choice, searchquery).outerHtml;
   }
 }

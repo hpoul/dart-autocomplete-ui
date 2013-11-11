@@ -11,6 +11,7 @@ String highlightTextAndHtmlEscape(String text, String query) {
   if (query.isEmpty) {
     return html;
   }
+  query = query.toLowerCase();
   int idx = html.toLowerCase().indexOf(query);
   if (idx >= 0) {
     String prefix = html.substring(0, idx);
