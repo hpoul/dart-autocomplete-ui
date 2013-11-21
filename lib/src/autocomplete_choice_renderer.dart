@@ -1,7 +1,7 @@
 part of input_autocomplete;
 
 /**
- * Highlights the given [query] in the [text] using html strong tags.
+ * Highlights the given query in the [text] using html strong tags.
  * The returned string is save to be used in innerHtml.
  */
 String highlightTextAndHtmlEscape(String text, String query) {
@@ -37,8 +37,7 @@ class AutocompleteChoiceRendererImpl extends BaseAutocompleteChoiceRenderer
       implements AutocompleteChoiceRenderer {
   Element renderChoice(AutocompleteChoice choice, String query) {
     if (choice is AutocompleteChoiceImpl) {
-      var choiceImpl = choice as AutocompleteChoiceImpl;
-      return new Element.tag("div")..innerHtml = highlightTextAndHtmlEscape("${choiceImpl.label}", query);
+      return new Element.tag("div")..innerHtml = highlightTextAndHtmlEscape("${choice.label}", query);
     }
     throw new ArgumentError("Invalid choice ${choice}");
   }

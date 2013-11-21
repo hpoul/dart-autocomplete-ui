@@ -40,6 +40,7 @@ class InputAutocompleteComponent extends PolymerElement {
   ValueHolder model = new ValueHolder();
   @observable @published
   AutocompleteChoice selectedchoice;
+  @published @observable String placeholder = null;
   
   InputAutocompleteComponent.created() : super.created() {
     onPropertyChange(this, #datasource, () {
