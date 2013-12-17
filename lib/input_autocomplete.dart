@@ -5,7 +5,7 @@ import 'dart:html';
 import 'dart:async';
 import 'package:logging/logging.dart';
 
-@MirrorsUsed(symbols: 'key', override: '*')
+//@MirrorsUsed(symbols: 'key', override: '*')
 import 'dart:mirrors';
 
 part 'src/input_autocomplete_component.dart';

@@ -8,6 +8,10 @@ dependencies:
   html5lib: any
   logging: any
   polymer: any
+transformers:
+- polymer:
+    entry_points: 
+      - web/example.html
 
 #  js: any
 #  unittest: any
