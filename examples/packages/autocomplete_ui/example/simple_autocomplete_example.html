@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <link rel="import" href="packages/autocomplete_ui/input_autocomplete.html">
-  </head>
-  <body>   
+<link rel="import" href="../../../packages/polymer/polymer.html">
+    <link rel="import" href="../../../packages/autocomplete_ui/input_autocomplete.html">
     <polymer-element name="simple-autocomplete-example">
       <template>
         <h2>Simple Array:</h2>
@@ -11,7 +7,7 @@
         <p>(You can also use cursor up/down to select options.)</p>
         <p>Your current Choice: {{ selectedchoice.key }}</p>
         
-        <tapo-input-autocomplete choices="{{ autocompleteChoices }}" selectedchoice="{{ selectedchoice }}">
+        <tapo-input-autocomplete choices="{{ autocompleteChoices }}" selectedchoice="{{ selectedchoice }}" placeholder="Placeholder Test">
         </tapo-input-autocomplete>
         
         <h2>Datasource:</h2>
