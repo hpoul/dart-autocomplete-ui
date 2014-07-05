@@ -179,8 +179,9 @@ class InputAutocompleteComponent extends PolymerElement {
     model.inputHasFocus = false;
   }
   
-  void enteredView() {
-    super.enteredView();
+  @override
+  void attached() {
+    super.attached();
     //_positionCompleteBox();
     model.changes.listen((records){
       model.hasSearched = model.filteredChoices != null;

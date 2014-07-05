@@ -12,9 +12,9 @@ if ! test -d $tmpdir ; then
 	exit 1
 fi
 
-$DART_SDK/bin/dart deploy.dart
+$DART_SDK/bin/pub build
 
-if ! test -f $basedir/out/web/example.html ; then
+if ! test -f $basedir/build/web/example.html ; then
 	echo "Unable to find example.html - in $basedir ?!"
 	exit 1
 fi
@@ -26,8 +26,8 @@ export GIT_DIR=$tmpdir/gh-pages/.git
 rm -rf $tmpdir/gh-pages/examples
 mkdir -p $tmpdir/gh-pages/examples
 
-#cp -r $basedir/out/web/packages $tmpdir/gh-pages/examples/
-cp -a -L $basedir/out/web/* $tmpdir/gh-pages/examples/
+#cp -r $basedir/build/web/packages $tmpdir/gh-pages/examples/
+cp -a -L $basedir/build/web/* $tmpdir/gh-pages/examples/
 
 git add -A
 

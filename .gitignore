@@ -7,3 +7,4 @@ web/out
 tmp
 .buildlog
 docs
+/build

@@ -1,9 +1,5 @@
-//import 'package:polymer/builder.dart';
-import 'dart:io';
+import 'package:polymer/builder.dart';
 
-main() {
-//  var args = new Options().arguments;
-//  args.addAll(['--', '--deploy']); // Note: the --deploy is what makes this work
-//  build(args, ['web/example.html']);
-  //build(entryPoints: ['web/example.html']);
+void main(List<String> args) {
+  lint(entryPoints: ['web/index.html'], options: parseOptions(args));
 }
