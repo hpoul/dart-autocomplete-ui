@@ -1,3 +1,4 @@
+### 0.2.0+2 (2014-09-30): Polymer 0.15
 ### 0.2.0+1 (2014-09-05): Upgraded to polymer 0.13
 ### 0.2.0 (2014-07-05): Upgraded to polymer 0.11
 
